@@ -31,19 +31,6 @@
 	// include the configure file
 	require_once('../config/config.php');
 
-	// load the login class
-	require_once('../classes/Login.php');
-
-	$login = new Login();
-
-	if ($login->isUserLoggedIn() == true) {
-	   //echo $_SESSION['user_name'];
-	} else {	
-		//just for the nav bar and if they click add to cart it forces login.
-		header("Location: http://www.scriptencryption.com/"); //Error code 1146 - unable to find database. //return 'Internal_Server_Error'; //Error.
-		die();
-	}
-
 //Functions.
 	//The insert into the abbreviated functions.
 	function FN_Product_Abbreviated_Insert($JSON){
@@ -681,12 +668,7 @@
 	
 ?>
 
-<?php 
-	require_once('../global/nav-bar.php');
-	
-	//Everything is inside pagewrapper
-?>
- 
+
 
 <?php
 /*---------------------------------------------------------------------
@@ -709,125 +691,14 @@ Product_Extended
 */
  ?>
 
-
- 
- 
- <div class="container_12 backgroundwhite">
-	
-			<div class="grid_12">
-			<p style="text-align:center;font-size: 200%;margin-top:-10px;"><b>Create new product</b></p>
-			</div>
-			
-		<form method="post" action="product_create.php" id="create_product_new" name="create_product_new">
-		
-			<div class="grid_6">
-				<label for="title"><b>Title - Maximum of 80 characters</b></label>	
-				<input id="title" class="textbox" type="text" pattern="[ ()a-zA-Z0-9-]{6,80}" name="title" placeholder="Ex: Naturally grown grain for sheep feed" value="<?php echo $_POST['title']; ?>" required /></input>			
-			</div>
-				<div class="grid_5">			
-				<label for="category"><b>Category</b></label>
-				<div class="select-style">
-				<select id="category" name="category">
-				<?php 
-					//Display the Categories.
-					foreach ($Categorise as &$item) {
-						echo '<option value="' . $item . '">' . $item .'</option>';
-					}	
-				?>	
-				</select>
-				</div>
-			</div>
-			<div class="grid_6">
-				<label for="short_description"><b>Short Description - Maximum of 140 characters </b></label>	
-				<input id="short_description" class="textbox" type="text" pattern="{12,300}" name="short_description" placeholder="Ex: The grain is a mixture of 25% soy beans and 75% wheat" value="<?php echo $_POST['short_description']; ?>"  required /></input>		
-			</div>
-		
-			<div class="grid_5">
-				<label for="quantity_for_sale"><b>Quantity for sale</b></label>
-				<input id="quantity_for_sale" class="textbox" style="width:50px;" type="text" pattern="[0-9]{1,4}" name="quantity_for_sale" placeholder="1000" value="<?php echo $_POST['quantity_for_sale']; ?>"  required /></input>
-			</div>
-			<div class="grid_5">
-			<label for="price"><b>Price</b></label>
-			<input id="price" class="textbox" type="text" name="price" style="width:60px;" placeholder="19.99" pattern="[0-9.]{1,6}" value="<?php echo $_POST['price']; ?>"  required /></input>
-			<br>
-			</div>
-			<div class="grid_6">
-				<label for="shipping_cost"><b>Shipping Cost</b></label>
-				<input id="shipping_cost" class="textbox" type="text" style="width:50px;" pattern="[0-9.]{1,4}" name="shipping_cost" placeholder="4.99" value="<?php echo $_POST['shipping_cost']; ?>"  required /></input>
-		
-			</div>
-			<div class="grid_6">						
-				<input type="checkbox" class="textbox" name="shipping_cost_multiple" value="yes">Should each unit charge an additional shipping?<br>			
-			</div>
-			<div class="grid_12">
-				<label for="long_description"><b>Long Description</b></label>
-			
-				<textarea rows="0" cols="50" id="long_description" name="long_description" value="<?php echo $_POST['long_description']; ?>" class="textbox" style="resize: none;width:938px;height:100px;" placeholder="Ex: The grain is produced on my small farm of 23 acres and processed in my barn during the winter. I grow it to feed my own sheep but I produce more then required so I decided to sell some. The grain is shipped in large feed sacks with a red rip tag to open them on the top."></textarea> 
-			</div>
-			
-			<div class="grid_6">
-				<label for="terms_of_sale"><b>Terms of sale</b></label>
-				<textarea rows="0" cols="50" id="terms_of_sale" name="terms_of_sale" value="<?php echo $_POST['long_description']; ?>" class="textbox" style="resize: none;width:938px;height:100px;" placeholder="Ex: I do not accept returns because of the cost of shipping."></textarea> 
-			
-			<br>
-			</div>
-
-		
-			</form>
-			 <script>
-	function picture_click(arg){
-		var r = confirm("Press a button");
-		if (r == true) {
-			confirm(arg);
-		} else {
-			confirm("Pressss a button");
-		} 
-	}
- 
- </script>
-
-			<div class="grid_12">
-			<br>
-			<div class="img">
-				<img src="..\Assets\img\blank_photo.png" onclick="picture_click('NEAT')" width="110" height="90">
-			</div>
-			<div class="img">
-				<a target="_blank" href="/Assets/img/blank_photo.png"><img src="..\Assets\img\blank_photo.png" width="110" height="90"></a>
-
-			</div>
-			<div class="img">
-				<a target="_blank" href="/Assets/img/blank_photo.png"><img src="..\Assets\img\blank_photo.png" width="110" height="90"></a>
-	
-			</div>
-
-			<div class="img">
-				<a target="_blank" href="/Assets/img/blank_photo.png"><img src="..\Assets\img\blank_photo.png" width="110" height="90"></a>
-
-			</div>
-			<div class="img">
-				<a target="_blank" href="/Assets/img/blank_photo.png"><img src="..\Assets\img\blank_photo.png" width="110" height="90"></a>
-
-			</div>
-			<div class="img">
-				<a target="_blank" href="/Assets/img/blank_photo.png"><img src="..\Assets\img\blank_photo.png" width="110" height="90"></a>
-	
-			</div>
-
-			</div>
-			
-			<div class="grid_2" style="float:right;">
-				<input type="submit"  class="buynow addtocart" name="register" value="Submit" />
-			</div>
-			
-			</div>
- 
-
-
+<!DOCTYPE html>
+<html>
+<head>
 <style>
 div.img {
-    margin: 2px;
-    padding: 0px;
-    border: 1px solid #BDC3C7;
+    margin: 5px;
+    padding: 5px;
+    border: 1px solid #0000ff;
     height: auto;
     width: auto;
     float: left;
@@ -836,12 +707,12 @@ div.img {
 
 div.img img {
     display: inline;
-    margin: 0px;
+    margin: 5px;
     border: 1px solid #ffffff;
 }
 
 div.img a:hover img {
-    border: 1px solid #2ECC71;
+    border: 1px solid #0000ff;
 }
 
 div.desc {
@@ -851,13 +722,99 @@ div.desc {
   margin: 5px;
 }
 </style>
+</head>
+<body>
 
+<br>
+<div class="img">
+	<a target="_blank" href="/Assets/img/blank_photo.png"><img src="..\Assets\img\blank_photo.png" width="110" height="90"></a>
+	<img id="myImage" src="..\Assets\img\cancel_icon.png" width="25" height="25" style="cursor:pointer">
+</div>
+<div class="img">
+	<a target="_blank" href="/Assets/img/blank_photo.png"><img src="..\Assets\img\blank_photo.png" width="110" height="90"></a>
+	<img id="myImage" src="..\Assets\img\cancel_icon.png" width="25" height="25" style="cursor:pointer">
+</div>
+<div class="img">
+	<a target="_blank" href="/Assets/img/blank_photo.png"><img src="..\Assets\img\blank_photo.png" width="110" height="90"></a>
+	<img id="myImage" src="..\Assets\img\cancel_icon.png" width="25" height="25" style="cursor:pointer">
+</div>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<div class="img">
+	<a target="_blank" href="/Assets/img/blank_photo.png"><img src="..\Assets\img\blank_photo.png" width="110" height="90"></a>
+	<img id="myImage" src="..\Assets\img\cancel_icon.png" width="25" height="25" style="cursor:pointer">
+</div>
+<div class="img">
+	<a target="_blank" href="/Assets/img/blank_photo.png"><img src="..\Assets\img\blank_photo.png" width="110" height="90"></a>
+	<img id="myImage" src="..\Assets\img\cancel_icon.png" width="25" height="25" style="cursor:pointer">
+</div>
+<div class="img">
+	<a target="_blank" href="/Assets/img/blank_photo.png"><img src="..\Assets\img\blank_photo.png" width="110" height="90"></a>
+	<img id="myImage" src="..\Assets\img\cancel_icon.png" width="25" height="25" style="cursor:pointer">
+</div>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+end of debugging stuff
+<br>
 
+ 
 
+<form method="post" action="product_create.php" id="create_product_new" name="create_product_new">
 
+	<label for="title">title</label>	
+    <input id="title" type="text" pattern="[ ()a-zA-Z0-9-]{6,80}" name="title" value="<?php echo $_POST['title']; ?>" required /></input>
+	<br>
 
+    <label for="short_description">short description</label>	
+    <input id="short_description" type="text" pattern="{12,300}" name="short_description" value="<?php echo $_POST['short_description']; ?>"  required /></input>
+	<br>
+	
+	<label for="category">category</label>
+	<select id="category" name="category">
+	<?php 
+		//Display the Categories.
+		foreach ($Categorise as &$item) {
+			echo '<option value="' . $item . '">' . $item .'</option>';
+		}	
+	?>	
+	</select>
+	<br>
+  
+	<label for="quantity_for_sale">Quantity for sale</label>
+    <input id="quantity_for_sale" type="text" pattern="[0-9]{1,4}" name="quantity_for_sale" value="<?php echo $_POST['quantity_for_sale']; ?>"  required /></input>
+	<br>
+	
+	<label for="shipping_cost">Shipping Cost</label>
+    <input id="shipping_cost" type="text" pattern="[0-9.]{1,4}" name="shipping_cost" value="<?php echo $_POST['shipping_cost']; ?>"  required /></input>
+	<br>
+	
+	<input type="checkbox" name="shipping_cost_multiple" value="yes">Should each unit charge an additional shipping?<br>
+	
+	<label for="long_description">Long description</label>
+    <input id="long_description" type="text" name="long_description" value="<?php echo $_POST['long_description']; ?>"  required/></input>
+	<br>
+	
+	<label for="terms_of_sale">Terms of sale</label>
+    <input id="terms_of_sale" type="text" name="terms_of_sale" value="<?php echo $_POST['terms_of_sale']; ?>" /></input>
+	<br>
+	
+	<label for="price">Price</label>
+    <input id="price" type="text" name="price" pattern="[0-9.]{1,4}" value="<?php echo $_POST['price']; ?>"  required /></input>
+	<br>
+		
+  	
+    <input type="submit" name="register" value="Submit" />
+</form>
 
-<?php 
-	//End of page wrap.
-	require_once('../global/footer-bar.php');	
-?> 
+</body>
+</html>

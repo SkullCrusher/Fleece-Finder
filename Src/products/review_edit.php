@@ -196,9 +196,9 @@
 		//CHECK IF THE USER IS BANNED FROM POSTING REVIEWS.
 		$Banned_From_Rating = FN_User_Check_Banned_Rating(FN_User_Get_Id($_SESSION['user_name']));
 		
-		$Already_Rated = FN_Review_Check_Already_Rated($_GET['p'], $_SESSION['user_name']);
+		$Already_Rated = FN_Review_Check_Already_Rated(114, $_SESSION['user_name']);
 		
-		if($Banned_From_Rating == 'true' || $Already_Rated == true){
+		if($Banned_From_Rating == 'true' || $Already_Rated == false){
 			if($Banned_From_Rating == 'true'){
 				//They are not logged in so they can't rate
 				$Sanitize_Problem = true;
@@ -206,73 +206,18 @@
 			}else{
 				//They already rated so block.
 				$Sanitize_Problem = true;
-				$Sanitize_Problem_Details = "You have already posted on this product, please edit your previous post or delete it to make a new one.";
+				$Sanitize_Problem_Details = "You have not rated this product so how could you edit it?";
 			}
 		}else{
-			
-			//Check to see if it just loaded or was posted to.
-			if(strlen($_POST['title']) >= 6){
-				
-				//Title (6-80) letters
-				if(strlen($_POST['title']) > 80 ||  strlen($_POST['title']) < 6){
-					//The title can be no longer then 80 characters long and has to be at least 6.
-					
-					$Sanitize_Problem = true;
-					$Sanitize_Problem_Details = "The title must be between 6 to 80 characters long.";
-				}else{
-					//Replace all non-standard characters.
-					$Sanitized_Rating_Title = preg_replace("/[^A-Za-z0-9 \-\(\)]/", '', $_POST['title']);		
-				}
-				
-				//Long Description(6-1000) letters
-				if(strlen($_POST['long_description']) > 1000 ||  strlen($_POST['long_description']) < 6){
-					//The title can be no longer then 80 characters long and has to be at least 6.
-					
-					$Sanitize_Problem = true;
-					$Sanitize_Problem_Details = "The title must be between 6 to 80 characters long.";
-				}else{
-					//Replace all non-standard characters.
-					$Sanitized_Rating_Long_Description = preg_replace("/[^A-Za-z0-9 \-\(\)]/", '', $_POST['long_description']);		
-				}
-				
-				//Rating (0-5) stars
-				//We need to check to make sure the stars are correct.
-				//TO FURTURE SELF I AM SO SORRY ABOUT THIS LINE ;( BUT MY MATH WAS NOT WORKING SO </3
-				if($_POST['rating'] == '0.0' || $_POST['rating'] == '0.5' || $_POST['rating'] == '1.0' || $_POST['rating'] == '1.5' || $_POST['rating'] == '2.0' || $_POST['rating'] == '2.5' || $_POST['rating'] == '3.0' || $_POST['rating'] == '3.5' || $_POST['rating'] == '4.0' || $_POST['rating'] == '4.5' || $_POST['rating'] == '5.0') {
-					$Sanitized_Rating_Star = $_POST['rating'];		
-				}else{
-					$Sanitize_Problem = true;
-					$Sanitize_Problem_Details = "The unknown error, please refresh the page.";
-				}
-						
-				
-				//Set the post date
-				$Sanitized_Rating_Post_Date = date('m/d/Y - h:i:s A');
-				
-				//Check if the purchased the product before.
-				$Sanitized_Rating_Verified_Owner = true; //Debugging
-				
-				if($Sanitize_Problem == false){
-				
-					//No problems so we add it to the reviews.			
-					$New_Review = array('title' => $Sanitized_Rating_Title, 'long_description' => $Sanitized_Rating_Long_Description, 'rating' => $Sanitized_Rating_Star, 'username' => $Sanitized_Rating_Username, 'verified_owner' => $Sanitized_Rating_Verified_Owner, 'post_date' => $Sanitized_Rating_Post_Date);
-					
-					FN_Review_Add_New($_GET['p'], $New_Review);
-
-					//ADDED AND COMPLETE ALL THAT.
-					echo "ADDED!"; //Debugging
-				}else{
-					//Display the error
-					echo $Sanitize_Problem_Details;
-				}
-			}
 		
-		}
+		
+		
+		}	
 	
 	} else {	
 		//They are not logged in so they can't rate
 		$Sanitize_Problem = true;
-		$Sanitize_Problem_Details = "You have to be logged in to rate a product.";
+		$Sanitize_Details = "You have to be logged in to edit a rating.";
 	}
 	
 	
@@ -280,6 +225,8 @@
 		echo $Sanitize_Problem_Details;
 	}
 
+	
+	echo $_GET['p'];
 	
 ?>
 
@@ -290,7 +237,7 @@ create rating
 -----
  
 
-<form method="post" action="review_debug.php?<?php echo 'p=' . $_GET['p']; ?>" id="create_rating_new" name="create_rating_new">
+<form method="post" action="review_edit.php" id="create_rating_new" name="create_rating_new">
 
 	
 	<label for="rating">Rating</label>
@@ -314,9 +261,8 @@ create rating
 	<br>
   	
 		<label for="long_description">Long Description</label>	
-		<input id="long_description" type="text" pattern="[ ()a-zA-Z0-9-]{6,1000}" name="long_description" value="<?php echo $_POST['long_description']; ?>" required /></input>
+		<input id="long_description" type="text" pattern="[ ()a-zA-Z0-9-]{6,80}" name="long_description" value="<?php echo $_POST['long_description']; ?>" required /></input>
 	<br>
-
   	
     <input type="submit" name="register" value="Submit" />
 </form>

@@ -35,21 +35,17 @@
 	
 ?>
 
+<?php 
+	require_once('../global/nav-bar.php');
+	
+	//Everything is inside pagewrapper
+?>
+
 error
 <?php echo $Error_Reason; ?>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+ 
+<?php 
+	//End of page wrap.
+	require_once('../global/footer-bar.php');	
+?> 

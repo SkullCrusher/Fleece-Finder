@@ -189,12 +189,45 @@
 	
 
 ?>
-
-<?php 
-	require_once('../global/nav-bar.php');
-	
-	//Everything is inside pagewrapper
-?>
+<!DOCTYPE html>
+<html>
+ <head>
+  <title>Debuging</title>
+  <link rel="stylesheet" type="text/css" href="../Assets/CSS/normalize.css?<?php echo time(); ?>">
+  <link rel="stylesheet" type="text/css" href="../Assets/CSS/960.css?<?php echo time(); ?>">
+  <link rel="stylesheet" type="text/css" href="../Assets/CSS/font-awesome.css?<?php echo time(); ?>">
+  <link rel="stylesheet" type="text/css" href="../Assets/CSS/theme.css?<?php echo time(); ?>">
+  <script type="text/javascript" src="../Assets/Javascript/html5shiv.js?<?php echo time(); ?>"></script>
+  <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+ </head>
+ <body>
+  <header class="clearfix">
+   <div class="container_12">
+    <div class="logo">
+     <a href="index.php"><img src="../Assets/Images/logo.png"></a>
+     <div class="search">
+      <form action="/search.html" class="search-wrapper cf">
+       <input type="text" placeholder="Search here..." required="">
+       <button type="submit">Search</button>
+      </form>
+     </div>
+    </div>
+   </div>
+  </header>
+  <div class="bottom-nav">
+   <div class="container_12">
+    <ul>
+   	 <li><a href="index.php"><i class="fa fa-home"></i></a></li>
+   	 <li><a href="#">Browse</a></li>
+   	 <li><a href="#">Categories</a></li>
+   	 <li><a href="#">Most Popular</a></li>
+   	 <li><a href="#">Create an Account</a></li>
+   	 <li><a href="#">Login</a></li>
+    </ul>
+   </div>
+  </div>
+  
+   <div class="page-wrap">	
 	
 		<div class="container_12 backgroundwhite">
 		
@@ -240,7 +273,7 @@
 				  <option value="50">50</option>
 				</select><br>
 				
-				<a href="index.php?fleece" class="buynow addtocart" style="margin-top: 8px;"><span><i class="icon-github"></i></span>Add to cart</a>
+				<a href="index.php?feece" class="buynow addtocart" style="margin-top: 8px;"><span><i class="icon-github"></i></span>Add to cart</a>
 				</form>
 			</div>
 			<div class="grid_3">
@@ -465,7 +498,7 @@
     
 			</script>
 			
-  
+  </div>
   
   <script>
 	function change_img_1(){document.getElementById("img_large").src="Assets/Images/300x300.gif";}
@@ -474,10 +507,40 @@
 	
 	function change_img_4(){document.getElementById("img_large").src="Assets/Images/300x300.gif";}
 	function change_img_5(){document.getElementById("img_large").src="Assets/Images/300x300.gif";}
-	function change_img_6(){document.getElementById("img_large").src="http://i.gyazo.com/091998f67a1e5115e7a5632d8a86f8ad.png";}   
+	function change_img_6(){document.getElementById("img_large").src="http://i.gyazo.com/091998f67a1e5115e7a5632d8a86f8ad.png";}
+	
+  
+   
   </script>
+  
+  
+ <footer class="site-footer">
+	 <div class="container_12">
+	 
+	 <div class="options">
+		<ul>
+			<a href="#"><li>What is FleeceFinder.com?</li></a>
+			<a href="#"><li>FAQ</li></a>
+			<a href="#"><li>Support</li></a>
+			<a href="#"><li>Report bug</li></a>
+			<a href="#"><li>Terms of use</li></a>
+		</ul>
+	  </div>
+	  
+	  <div class="company">	
+		 <ul>
+		  <li><i>Copyright <?php echo date('Y'); ?> </i><b>Dwarven Knowledge, LLC</b></li>
+		  <li><i>All rights reserved.</i></li>
+		  
+		  <a href="#"><li style="padding-top:10px;"><b>Contact us</b></li></a>
+		  <li style="padding-top:5px;"><a href="http://www.twitter.com/DearRicky" target="_blank" title="Twitter"><img src="https://g.twimg.com/Twitter_logo_blue.png" width="25" height="25" /></a></li>
+		</ul> 
+	  </div>
+	  
+	    
 
-<?php 
-	//End of page wrap.
-	require_once('../global/footer-bar.php');	
-?> 
+	  </div>
+</footer>
+  
+ </body>
+</html>
