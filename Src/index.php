@@ -43,12 +43,54 @@ if ($login->isUserLoggedIn() == false) {
 ?>
 
 
-<div class="container_12 backgroundwhite">
+<?php
+// Placeholder
+?>
 
 
-Homepage maybe?
+ <head>
 
-</div>
+  <link rel="stylesheet" type="text/css" href="Assets/theme.css"> 
+  
+ </head>
+
+
+  <div class="scontainer" id="welcome">
+   <section>
+    <h2><b>Let's create something <a href="#contact" id="about">new</a></b></h2>
+   </section>
+   <div class="arrow-down"></div>
+  </div>
+  <div class="scontainer">
+   <div class="container_12">
+    <div class="grid_4">
+     <h2><b><i style="color:#06ba8f" class="fa fa-mobile"></i> About #1</b></h2>
+     <p>Lorem ipsum dolor sit amet, consectetur adipiuisat venenatis orci ultricies vel velit massa, at venenatis orci ultricies vel..</p>
+    </div>
+    <div class="grid_4" style="padding-left:20px">
+     <h2><b><a href="#about" style="text-decoration:none;color:#06ba8f"><i style="color:#06ba8f" class="fa fa-code"></i></a> About #2</b></h2>
+     <p>Lorem ipsum dolor sit amet, consectetur adipiuisat venenatis orci ultricies vel velit massa, at venenatis orci ultricies vel..</p>
+    </div>
+    <div class="grid_4">
+     <h2><b><i style="color:#06ba8f" class="fa fa-pencil"></i> About #3</b></h2>
+     <p>Lorem ipsum dolor sit amet, consectetur adipiuisat venenatis orci ultricies vel velit massa, at venenatis orci ultricies vel...</p>
+    </div>
+    <div class="grid_4">
+     <h2><b><i style="color:#06ba8f" class="fa fa-graduation-cap"></i> About #4</b></h2>
+     <p>Lorem ipsum dolor sit amet, consectetur adipiuisat venenatis orci ultricies vel velit massa, at venenatis orci ultricies vel...</p>
+    </div>
+    <div class="grid_4" style="padding-left:20px">
+     <h2><b><i style="color:#06ba8f" class="fa fa-wordpress"></i> About #5</b></h2>
+     <p>Lorem ipsum dolor sit amet, consectetur adipiuisat venenatis orci ultricies vel velit massa, at venenatis orci ultricies vel..</p>
+    </div>
+    <div class="grid_4">
+     <h2><b><i style="color:#06ba8f" class="fa fa-steam-square"></i> About #6</b></h2>
+     <p>Lorem ipsum dolor sit amet, consectetur adipiuisat venenatis orci ultricies vel velit massa, at venenatis orci ultricies vel..</p>
+    </div>
+   </div>
+  </div>
+
+
 
 <?php 
 	//End of page wrap.

@@ -100,13 +100,24 @@
 <!-- Copyright (C) DwarvenKnowledge, LLC - All Rights Reserved -->
 <html>
  <head>
-  <title>Debuging</title>
+  <title>FleeceFinder | Your number one site for trading everything farm!</title>
+  
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="The best place to sell your farm goods.">
+  <meta name="author" content="Dwarven Knowledge LLC - All rights reserved.">
+  
   <link rel="stylesheet" type="text/css" href="../Assets/CSS/normalize.css?<?php echo time(); ?>">
   <link rel="stylesheet" type="text/css" href="../Assets/CSS/960.css?<?php echo time(); ?>">
   <link rel="stylesheet" type="text/css" href="../Assets/CSS/font-awesome.css?<?php echo time(); ?>">
   <link rel="stylesheet" type="text/css" href="../Assets/CSS/theme.css?<?php echo time(); ?>">
+  
+  <link rel="shortcut icon" href="Assets/Images/favicon(13).ico" type="image/x-icon">
+  <link rel="icon" href="Assets/Images/favicon(13).ico" type="image/x-icon">
+  
   <script type="text/javascript" src="../Assets/Javascript/html5shiv.js?<?php echo time(); ?>"></script>
-  <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+  <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script> 
+  
  </head>
  <body>
   <header class="clearfix">
