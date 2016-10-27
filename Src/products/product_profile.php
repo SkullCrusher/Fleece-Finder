@@ -177,7 +177,6 @@
 		$result_4 = glob ($myFile_4 . ".*");			
 		$Picture_4 = current($result_4);
 		
-		echo $Picture_3;
 		
 		$myFile_5 = "..\\images\\upload_images\\" . $Product_Json_Decoded_Abbreviated['owner'] . '\\' . $Product_Json_Decoded_Extended['picture5'];				
 		$result_5 = glob ($myFile_5 . ".*");			

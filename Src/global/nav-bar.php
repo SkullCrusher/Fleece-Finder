@@ -23,7 +23,7 @@
   <header class="clearfix">
    <div class="container_12">
     <div class="logo">
-     <a href="index.php"><img src="../Assets/Images/logo.png"></a>
+     <a href="../index.php"><img src="../Assets/Images/logo.png"></a>
      <div class="search">
       <form action="/search.html" class="search-wrapper cf">
        <input type="text" placeholder="Search here..." required="">

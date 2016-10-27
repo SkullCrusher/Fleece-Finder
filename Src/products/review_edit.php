@@ -230,8 +230,12 @@
 	
 ?>
 
+<?php 
+	require_once('../global/nav-bar.php');
+	
+	//Everything is inside pagewrapper
+?>
 
-<br><br>
 -----
 create rating
 -----
@@ -267,10 +271,10 @@ create rating
     <input type="submit" name="register" value="Submit" />
 </form>
 
-
-
-
-
+<?php 
+	//End of page wrap.
+	require_once('../global/footer-bar.php');	
+?> 
 
 
 

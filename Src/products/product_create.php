@@ -764,12 +764,13 @@ Product_Extended
 					
 		<form method="post" action="product_create.php" id="create_product_new" name="create_product_new">
 		
-			
-				<label for="title"><b>Title - Maximum of 80 characters</b></label>	
+				<div class="grid_5">
+				<label for="title"><b>Title - Maximum of 80 characters</b></label><br>
 				<input id="title" class="textbox" type="text" pattern="[ ()a-zA-Z0-9-]{6,80}" name="title" placeholder="Ex: Naturally grown grain for sheep feed" value="<?php echo $_POST['title']; ?>" required /></input>			
-			
-							
-				<label for="category"><b>Category</b></label>
+			    </div>
+			    <br>
+				<div class="grid_5">			
+				<label for="category"><b>Category</b></label><br>
 				<div class="select-style">
 				<select id="category" name="category">
 				<?php 
@@ -779,51 +780,51 @@ Product_Extended
 					}	
 				?>	
 				</select>
-				</div>
-		
-			
-				<label for="short_description"><b>Short Description - Maximum of 140 characters </b></label>	
+				</div></div>
+				<div class="grid_2"><br></div>
+				<div class="grid_5">
+				<label for="short_description"><b>Short Description - Maximum of 140 characters </b></label>	<br>
 				<input id="short_description" class="textbox" type="text" pattern="{12,300}" name="short_description" placeholder="Ex: The grain is a mixture of 25% soy beans and 75% wheat" value="<?php echo $_POST['short_description']; ?>"  required /></input>		
-			
+			</div><br>
 		
-			
-				<label for="quantity_for_sale"><b>Quantity for sale</b></label>
+				<div class="grid_2">
+				<label for="quantity_for_sale"><b>Quantity for sale</b></label><br>
 				<input id="quantity_for_sale" class="textbox" style="width:50px;" type="text" pattern="[0-9]{1,4}" name="quantity_for_sale" placeholder="1000" value="<?php echo $_POST['quantity_for_sale']; ?>"  required /></input>
-			
-			
-				<label for="price"><b>Price</b></label>
+			</div><br>
+				<div class="grid_2">
+				<label for="price"><b>Price</b></label><br>
 				<input id="price" class="textbox" type="text" name="price" style="width:60px;" placeholder="19.99" pattern="[0-9.]{1,6}" value="<?php echo $_POST['price']; ?>"  required /></input>
-				
-				
-				<label for="amount"><b>Amount in each</b></label>
+				</div><br>
+				<div class="grid_2">
+				<label for="amount"><b>Amount in each</b></label><br>
 				<input id="amount" class="textbox" type="text" name="amount" style="width:60px;" placeholder="50" pattern="[0-9.]{1,6}" value="<?php echo $_POST['amount']; ?>"  required /></input>
-				
-				<label for="unit"><b>Units</b></label>
+				</div><br>
+				<div class="grid_5"><label for="unit"><b>Units</b></label><br>
 				<div class="select-style">
 				<select id="unit" name="unit">				
 					<option value="LB">LB</option>	
 					<option value="Square foot">Square foot</option>
 					<option value="Unit">Unit</option>
 				</select>
-				</div>
+				</div></div><br>
 				
-		
-				<label for="shipping_cost"><b>Shipping Cost</b></label>
-				<input id="shipping_cost" class="textbox" type="text" style="width:50px;" pattern="[0-9.]{1,4}" name="shipping_cost" placeholder="4.99" value="<?php echo $_POST['shipping_cost']; ?>"  required /></input>
-
-									
-				<input type="checkbox" class="textbox" name="shipping_cost_multiple" value="yes">Should each unit charge an additional shipping?<br>			
-		
-		
+				<div class="grid_4">
+				<label for="shipping_cost"><b>Shipping Cost</b></label><br>
+				<input id="shipping_cost" class="textbox" type="text" style="width:50px;" pattern="[0-9.]{1,4}" name="shipping_cost" placeholder="4.99" value="<?php echo $_POST['shipping_cost']; ?>"  required /></input><br>
+				</div>			
+				<div class="grid_2">	
+				<label><b>Additional Shipping?</b></label>
+				<input type="checkbox" class="textbox grid_3" name="shipping_cost_multiple" value="yes"></div><br>			
+				<br>
+				<div class="grid_12">
 				<label for="long_description"><b>Long Description</b></label>
-			
 				<textarea rows="0" cols="50" id="long_description" name="long_description" value="<?php echo $_POST['long_description']; ?>" class="textbox" style="resize: none;width:938px;height:100px;" placeholder="Ex: The grain is produced on my small farm of 23 acres and processed in my barn during the winter. I grow it to feed my own sheep but I produce more then required so I decided to sell some. The grain is shipped in large feed sacks with a red rip tag to open them on the top."></textarea> 
+			</div><br>
 			
-			
-			
-				<label for="terms_of_sale"><b>Terms of sale</b></label>
+				<div class="grid_12">
+				<label for="terms_of_sale"><b>Terms of sale</b></label><br>
 				<textarea rows="0" cols="50" id="terms_of_sale" name="terms_of_sale" value="<?php echo $_POST['long_description']; ?>" class="textbox" style="resize: none;width:938px;height:100px;" placeholder="Ex: I do not accept returns because of the cost of shipping."></textarea> 
-			
+			</div><br>
 
 			
 
@@ -833,9 +834,9 @@ Product_Extended
 				 <input type="hidden" name="pic_4" id="pic_4" value=""> 
 				 <input type="hidden" name="pic_5" id="pic_5" value="">
 				 <input type="hidden" name="pic_6" id="pic_6" value=""> 					 
-			
-				<input type="submit"  class="buynow addtocart" style="border: 0;" name="register" value="Submit" />	
-	</form>
+				
+				<div class="grid_12"><input type="submit"  class="buynow addtocart" style="border: 0;margin-left:400px;" name="register" value="Submit" />	</div>
+				</form>
 
 			<script>
 			function Delete_Image(index){

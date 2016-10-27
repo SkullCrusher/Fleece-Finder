@@ -27,6 +27,14 @@
 			$Error_Reason = "Sorry!, unable to find the requested product. If you are using bookmarks check to insure the product is still active.";
 		}
 		
+		if($_GET['error'] == 2){
+			$Error_Reason = "You are unable to edit a review something you have not reviewed.";
+		}
+		
+		if($_GET['error'] == 3){
+			$Error_Reason = "You are unable to edit a review something you have not reviewed.";
+		}
+		
 		if($_GET['error'] == 17){
 			$Error_Reason = "OH NO SQL ERR0RS HAVE 0CC0URED PLEAS7 ndon' Accue\$s Page - The Administration.";
 		}
