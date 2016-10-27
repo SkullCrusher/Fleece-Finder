@@ -27,8 +27,8 @@ require_once('classes/Login.php');
 $login = new Login();
 
 if ($login->isUserLoggedIn() == false) {
-	header('Location: http://www.scriptencryption.com/account/login.php');
-	die();
+	//header('Location: http://www.scriptencryption.com/account/login.php');
+	//die();
 }
 
 //home page?

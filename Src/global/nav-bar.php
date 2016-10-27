@@ -12,8 +12,6 @@
 	require_once( $_SERVER['DOCUMENT_ROOT'] . '/classes/Login.php');
 
 	$login = new Login();
-
-
 	
  
  ?>
@@ -55,14 +53,15 @@
   
 	 <?php 	 
 	 	if ($login->isUserLoggedIn() == true) {
-			echo '<li><a href="index.php">My account</a></li>';
+			echo '<li><a href="../account/profile.php">My account</a></li>';
+			echo '<li><a href="../index.php?logout">Logout</a></li>';
 		} else {	
-			echo '<li><a href="index.php">Login</a></li>';
-			echo '<li><a href=account/profile.php">Create an Account</a></li>';
+			echo '<li><a href="../account/login.php">Login</a></li>';
+			echo '<li><a href="../account/register.php">Create an Account</a></li>';
 		}	 
 	 ?>
 	 
-	 <li><a href="<?php echo '/cart/cart_checkout.php'; ?>">Cart (<?php 
+	 <li><a href="<?php echo '../cart/cart_checkout.php'; ?>">Cart (<?php 
 		$Count = 0;
 		foreach ($_SESSION['cart'] as &$value) {	
 			$Count++;

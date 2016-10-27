@@ -40,7 +40,7 @@ class Registration
 
         // if we have such a POST request, call the registerNewUser() method
         if (isset($_POST["register"])) {
-            $this->registerNewUser($_POST['user_name'], $_POST['user_email'], $_POST['user_password_new'], $_POST['user_password_repeat'], $_POST["g-recaptcha-response"]);
+            $this->registerNewUser($_POST['user_name'], $_POST['user_email'], $_POST['user_password_new'], $_POST['user_password_repeat'], $_POST["g-recaptcha-response"], $_POST['user_agree']);
 			//print_r($_POST); //debugging
 	   
 	   // if we have such a GET request, call the verifyNewUser() method
@@ -80,7 +80,7 @@ class Registration
      * handles the entire registration process. checks all error possibilities, and creates a new user in the database if
      * everything is fine
      */
-    private function registerNewUser($user_name, $user_email, $user_password, $user_password_repeat, $captcha)
+    private function registerNewUser($user_name, $user_email, $user_password, $user_password_repeat, $captcha, $agreed)
     {
         // we just remove extra space on username and email
         $user_name  = trim($user_name);
@@ -113,25 +113,26 @@ class Registration
 		
 		
 		if (empty($user_name)) {
-            $this->errors[] = MESSAGE_USERNAME_EMPTY;
+            $this->errors[] = "You must enter a username";
         } elseif (empty($user_password) || empty($user_password_repeat)) {
-            $this->errors[] = MESSAGE_PASSWORD_EMPTY;
+            $this->errors[] = "You must enter a password for your account";
         } elseif ($user_password !== $user_password_repeat) {
-            $this->errors[] = MESSAGE_PASSWORD_BAD_CONFIRM;
+            $this->errors[] = "The passwords you have entered do not match, please renter them";
         } elseif (strlen($user_password) < 6) {
-            $this->errors[] = MESSAGE_PASSWORD_TOO_SHORT;
-        } elseif (strlen($user_name) > 64 || strlen($user_name) < 4) {
-            $this->errors[] = MESSAGE_USERNAME_BAD_LENGTH;
+            $this->errors[] = "That password is too short to use, please use another";
+        } elseif (strlen($user_name) > 18 || strlen($user_name) < 4) {
+            $this->errors[] = "That username is too short to use, please use another";
         } elseif (!preg_match('/^[_a-z\d]{2,64}$/i', $user_name)) {
-            $this->errors[] = MESSAGE_USERNAME_INVALID;
+            $this->errors[] = "That email is invalid, please use another";
         } elseif (empty($user_email)) {
-            $this->errors[] = MESSAGE_EMAIL_EMPTY;
+            $this->errors[] = "A email is required to activate an account, please enter one";
         } elseif (strlen($user_email) > 64) {
-            $this->errors[] = MESSAGE_EMAIL_TOO_LONG;
+            $this->errors[] = "That email is too long";
         } elseif (!filter_var($user_email, FILTER_VALIDATE_EMAIL)) {
-            $this->errors[] = MESSAGE_EMAIL_INVALID;
-
-        // finally if all the above checks are ok
+            $this->errors[] = "Email is invalid";
+		}elseif ($agreed != "true"){
+			$this->errors[] = "You must agree to the terms and conditions to use and create an account";
+		 // finally if all the above checks are ok
         } else if ($this->databaseConnection()) {
             // check if username or email already exists
             $query_check_user_name = $this->db_connection->prepare('SELECT user_name, user_email FROM users WHERE user_name=:user_name OR user_email=:user_email');
@@ -264,11 +265,8 @@ class Registration
                     // send a verification email
                     if ($this->sendVerificationEmail($user_id, $user_email, $user_activation_hash)) {
                         // when mail has been send successfully
-                        $this->messages[] = MESSAGE_VERIFICATION_MAIL_SENT;
-                        $this->registration_successful = true;
-
-						
-					
+                        $this->messages[] = "Verification email has been sent to your email. Follow the instructions from the email.";
+                        $this->registration_successful = true;				
 						
                     } else {
                         // delete this users account immediately, as we could not send a verification email
@@ -276,10 +274,10 @@ class Registration
                         $query_delete_user->bindValue(':user_id', $user_id, PDO::PARAM_INT);
                         $query_delete_user->execute();
 
-                        $this->errors[] = MESSAGE_VERIFICATION_MAIL_ERROR;
+                        $this->errors[] = "Internal server error: Please try again in 2 minutes. If this error continues contact support.";
                     }
                 } else {
-                    $this->errors[] = MESSAGE_REGISTRATION_FAILED;
+                    $this->errors[] = "Message registration failure.";
                 }
             }
         }
