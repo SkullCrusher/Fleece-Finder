@@ -46,7 +46,7 @@
 
 //Functions.
 	//The insert into the abbreviated functions.
-	function FN_Product_Abbreviated_Insert($JSON){
+	function FN_Product_Abbreviated_Insert($JSON, $amount){
 
 		$db = new PDO('mysql:dbname=' . DB_NAME . ';host=' . DB_HOST . ';charset=utf8', DB_USER, DB_PASS);
 
@@ -56,7 +56,7 @@
 		$statement = null; //The statement
 
 		try {
-			$statement = $db->prepare('INSERT INTO product_abbreviated (json_condensed) VALUES (:json_condensed)');
+			$statement = $db->prepare('INSERT INTO product_abbreviated (json_condensed, stock_free) VALUES (:json_condensed, :stock_free)');
 		} catch (PDOException $e) {
 			//echo 'Connection failed: ' . $e->getMessage(); //Debug
 
@@ -65,7 +65,7 @@
 		}
 
 		try {
-			$statement->execute(array(':json_condensed' => $JSON));
+			$statement->execute(array(':json_condensed' => $JSON, ':stock_free' => $amount));
 		} catch (PDOException $e) {
 			//echo 'Connection failed: ' . $e->getCode(); //Debug
 
@@ -292,7 +292,7 @@
 			$statement_from = $db_from->prepare('COMMIT');
 			}
 
-			//FN_Search_Add_Product($User_Name_Id_result, $Abbreviated_result, $Product_abbreviated_json, $Product_extended_json);
+	//FN_Search_Add_Product($User_Name_Id_result, $Abbreviated_result, $Product_abbreviated_json, $Product_extended_json);
 
 	function FN_Search_Add_Product($User_Name_Id_result, $Abbreviated_result, $Product_abbreviated, $Product_extended){
 				//Load the products
@@ -391,7 +391,9 @@
 			return 'Error_Try_Again'; //Error.
 		}
 	}
-//End of functions.
+
+		
+	//End of functions.
 
 	// load the login class
 	require_once('../classes/Login.php');
@@ -432,6 +434,8 @@
 	$Sanitize_Problem_Details = "No Problem";
 
 //Sanitize Input
+	$In_Stock = 1;
+
 	$Sanitized_Title = null;
 	$Sanitized_Short_Description = null;
 	$Sanitized_Quantity = 0;
@@ -673,7 +677,7 @@
 			$Product_abbreviated_json = json_encode($Product_abbreviated);
 
 			//Insert into the abbreviated (If there was no problem it will return an id.
-			$Abbreviated_result = FN_Product_Abbreviated_Insert($Product_abbreviated_json);
+			$Abbreviated_result = FN_Product_Abbreviated_Insert($Product_abbreviated_json, $_POST['quantity_for_sale']);
 			if($Abbreviated_result == 'Internal_Server_Error' || $Abbreviated_result == 'Error_Try_Again'){
 				echo 'Error, problem: ' . $Abbreviated_result;
 			}else{
@@ -844,11 +848,11 @@ Product_Extended
         <div class="grid_12" style="padding-bottom:15px;text-align:center">
           <div class="grid_2" style="padding-left:70px;text-align:center">
   				<label for="price"><b>Price</b></label>
-  				<input id="price" class="textbox" type="text" name="price" style="width:60px;" placeholder="19.99" pattern="[0-9.]{1,6}" value="<?php echo $_POST['price']; ?>"  required /></input>
+  				<input id="price" class="textbox" type="text" name="price" style="width:60px;" placeholder="19.99" pattern="[0-9.]{1,7}" value="<?php echo $_POST['price']; ?>"  required /></input>
   				</div>
 				  <div class="grid_2">
 				   <label for="shipping_cost"><b>Shipping Cost</b></label>
-				<input id="shipping_cost" class="textbox" type="text" style="width:50px;" pattern="[0-9.]{1,4}" name="shipping_cost" placeholder="4.99" value="<?php echo $_POST['shipping_cost']; ?>"  required /></input>
+				<input id="shipping_cost" class="textbox" type="text" style="width:50px;" pattern="[0-9.]{1,6}" name="shipping_cost" placeholder="4.99" value="<?php echo $_POST['shipping_cost']; ?>"  required /></input>
 				</div>
 				<div class="grid_4">
 				<label><b>Additional Shipping?</b></label>

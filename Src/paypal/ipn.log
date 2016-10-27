@@ -320,3 +320,36 @@ Strict-Transport-Security: max-age=63072000
 
 VERIFIED
 [2015-03-16 00:01 America/Los_Angeles] Verified IPN: cmd=_notify-validate&mc_gross=0.01&protection_eligibility=Eligible&address_status=confirmed&item_number1=1&payer_id=R7ZKGLKY5ZFL6&tax=0.00&address_street=31&payment_date=23%3A34%3A20+Mar+14%2C+2015+PDT&payment_status=Completed&charset=windows-1252&address_zip=99338&mc_shipping=0.00&mc_handling=0.00&first_name=David&mc_fee=0.01&address_country_code=US&address_name=31&notify_version=3.8&custom=&payer_status=verified&business=dwarvenknowledgellc%40gmail.com&address_country=United+States&num_cart_items=1&address_city=Kennewick&verify_sign=AzRejUlg2p9.i.Pq1i.uJKppxTyRAVk7WOqDMFDFcLsQxcqYdoTv8BpO&payer_email=divad97dragon%40aim.com&txn_id=9H7693511J343732F&payment_type=instant&payer_business_name=SkullCrusher+Products&last_name=Harkins&address_state=WA&item_name1=pork&receiver_email=dwarvenknowledgellc%40gmail.com&payment_fee=0.01&quantity1=1&receiver_id=T848VD62JLL56&txn_type=cart&mc_gross_1=0.01&mc_currency=USD&residence_country=US&transaction_subject=&payment_gross=0.01&ipn_track_id=bce4f97e5169f 
+[2015-04-01 20:00 America/Los_Angeles] HTTP request of validation request:POST /cgi-bin/webscr HTTP/1.1
+Host: www.paypal.com
+Accept: */*
+Connection: Close
+Content-Length: 1008
+Content-Type: application/x-www-form-urlencoded
+
+ for IPN payload: cmd=_notify-validate&mc_gross=0.01&protection_eligibility=Eligible&address_status=confirmed&item_number1=1&payer_id=R7ZKGLKY5ZFL6&tax=0.00&address_street=52&payment_date=19%3A59%3A50+Apr+01%2C+2015+PDT&payment_status=Completed&charset=windows-1252&address_zip=99338&mc_shipping=0.00&mc_handling=0.00&first_name=David&mc_fee=0.01&address_country_code=US&address_name=52&notify_version=3.8&custom=&payer_status=verified&business=dwarvenknowledgellc%40gmail.com&address_country=United+States&num_cart_items=1&address_city=Kennewick&verify_sign=A2.c1M0u4Dr12idc3CObRkw1Qnh-AqBo7RyO-FlE-ET4x0SLH3kv59jU&payer_email=divad97dragon%40aim.com&txn_id=4SD537619C4311900&payment_type=instant&payer_business_name=SkullCrusher+Products&last_name=Harkins&address_state=WA&item_name1=pork&receiver_email=dwarvenknowledgellc%40gmail.com&payment_fee=0.01&quantity1=1&receiver_id=T848VD62JLL56&txn_type=cart&mc_gross_1=0.01&mc_currency=USD&residence_country=US&transaction_subject=&payment_gross=0.01&ipn_track_id=4168577d4e487
+[2015-04-01 20:00 America/Los_Angeles] HTTP response of validation request: HTTP/1.1 200 OK
+Server: Apache
+X-Frame-Options: SAMEORIGIN
+Cache-Control: max-age=0, no-cache, no-store, must-revalidate
+Pragma: no-cache
+Cache-Control: max-age=0, no-cache, no-store, must-revalidate
+Pragma: no-cache
+Content-Type: text/html; charset=UTF-8
+DC: slc-a-origin-www-1.paypal.com
+Date: Thu, 02 Apr 2015 03:00:03 GMT
+Content-Length: 8
+Connection: close
+Set-Cookie: cwrClyrK4LoCV1fydGbAxiNL6iG=CiafR3L7QCP8pfCrkqH7yBpAg0wbllp698XqpqChFuJqQZBbu46ynXj7AJTrIbY-Y-5O8woOFO6djR6rnU6ANaADMKWsKTnzW6GYa5JCugaOClwImFOaC2YlRtQQCwrNEBiDr_AVUAwKl8UxYH_bB4r6chKE7ruv20fjhkMOryVyP0jQJWMTj2FX8ZHi91N0OxIW0LSwc-C5pAMlc3VRfIQS-QSSxJYrClagWorK563634PqeTg-Wpxe17p8Hkl6lWJ2NwSBMvwLMP3mxv8feMNvgys91hadv0XF5LIf_-KeQKWo85qhKgSpoY83KQ1Q-0oMcdqy0e82pMYXaFcjR4Y-J6ij32rkT81NyMBQ3ov48yCwu20DiNkSzSxVPlJhk-DTRDTyUMsI51sKF0iRqxVzVoaYEiMKynPDxeh5dXLf5WRRhxQNK99oUO8; domain=.paypal.com; path=/; Secure; HttpOnly
+Set-Cookie: cookie_check=yes; expires=Sun, 30-Mar-2025 03:00:03 GMT; domain=.paypal.com; path=/; Secure; HttpOnly
+Set-Cookie: navcmd=_notify-validate; domain=.paypal.com; path=/; Secure; HttpOnly
+Set-Cookie: navlns=0.0; expires=Sat, 01-Apr-2017 03:00:03 GMT; domain=.paypal.com; path=/; Secure; HttpOnly
+Set-Cookie: Apache=10.73.8.134.1427943603009583; path=/; expires=Sat, 25-Mar-45 03:00:03 GMT
+Set-Cookie: X-PP-SILOVER=name%3DLIVE5.WEB.1%26silo_version%3D880%26app%3Dappdispatcher%26TIME%3D3014663253; domain=.paypal.com; path=/; Secure; HttpOnly
+Set-Cookie: X-PP-SILOVER=; Expires=Thu, 01 Jan 1970 00:00:01 GMT
+Set-Cookie: Apache=10.73.8.44.1427943602998647; path=/; expires=Sat, 25-Mar-45 03:00:02 GMT
+Set-Cookie: AKDC=slc-a-origin-www-1.paypal.com; expires=Thu, 02-Apr-2015 03:30:03 GMT; path=/; secure
+Strict-Transport-Security: max-age=63072000
+
+VERIFIED
+[2015-04-01 20:00 America/Los_Angeles] Verified IPN: cmd=_notify-validate&mc_gross=0.01&protection_eligibility=Eligible&address_status=confirmed&item_number1=1&payer_id=R7ZKGLKY5ZFL6&tax=0.00&address_street=52&payment_date=19%3A59%3A50+Apr+01%2C+2015+PDT&payment_status=Completed&charset=windows-1252&address_zip=99338&mc_shipping=0.00&mc_handling=0.00&first_name=David&mc_fee=0.01&address_country_code=US&address_name=52&notify_version=3.8&custom=&payer_status=verified&business=dwarvenknowledgellc%40gmail.com&address_country=United+States&num_cart_items=1&address_city=Kennewick&verify_sign=A2.c1M0u4Dr12idc3CObRkw1Qnh-AqBo7RyO-FlE-ET4x0SLH3kv59jU&payer_email=divad97dragon%40aim.com&txn_id=4SD537619C4311900&payment_type=instant&payer_business_name=SkullCrusher+Products&last_name=Harkins&address_state=WA&item_name1=pork&receiver_email=dwarvenknowledgellc%40gmail.com&payment_fee=0.01&quantity1=1&receiver_id=T848VD62JLL56&txn_type=cart&mc_gross_1=0.01&mc_currency=USD&residence_country=US&transaction_subject=&payment_gross=0.01&ipn_track_id=4168577d4e487 

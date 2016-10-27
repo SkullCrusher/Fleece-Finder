@@ -47,10 +47,41 @@ if ($login->isUserLoggedIn() == true) {
 			return 'Error_Try_Again'; //Error.
 		}		
 		
+		$result = $statement->fetch(); //was here?
+
+		return $result['user_id'];
+	}
+	
+	function FN_Product_Update_QTY($Username){
+
+		$db = new PDO('mysql:dbname=' . DB_NAME . ';host=' . DB_HOST . ';charset=utf8', DB_USER, DB_PASS);
+			
+		$db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+		$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);	
+		
+		$statement = null; //The statement
+			
+		try {
+			$statement = $db->prepare('SELECT user_id FROM users WHERE user_name = :user_name');			
+		} catch (PDOException $e) {
+				
+			//Error code 1146 - unable to find database.
+			return 'Internal_Server_Error'; //Error.
+		}
+			
+		try {
+			$statement->execute(array(':user_name' => $Username));
+		} catch (PDOException $e) {
+		
+			//Error code 23000 - unable to to create because of duplicate id.
+			return 'Error_Try_Again'; //Error.
+		}		
+		
 		$result = $statement->fetch();
 
 		return $result['user_id'];
 	}
+
 
 
 

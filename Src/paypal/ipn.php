@@ -183,7 +183,61 @@
 		}
 		
 		
-		//split the order into chunks and put into product_order
+		//split the order into chunks and put into product_order ---------------------------------
+						
+		$db_sel = new PDO('mysql:dbname=' . DB_NAME . ';host=' . DB_HOST . ';charset=utf8', DB_USER, DB_PASS);
+				
+		$db_sel->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+		$db_sel->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+							
+		$statement_sel = null; //The statement
+			
+		try {
+			$statement_sel = $db_sel->prepare('SELECT id, shipping_id, buyer_id, order_date, product_order_ids_json, buyer_id FROM order_information WHERE shipping_id = :shipping_id');			
+		} catch (PDOException $e){
+			//Error code 1146 - unable to find database.
+		}
+			
+		try {
+			$statement_sel->execute(array(':shipping_id' => $address_street));
+		} catch (PDOException $e) {				
+			//Error code 23000 - unable to to create because of duplicate id.
+		}		
+			
+		$values = $statement_sel->fetch();
+			
+		//var_dump($values);
+			
+		//split the order into chunks and put into product_order		
+		$db_insert = new PDO('mysql:dbname=' . DB_NAME . ';host=' . DB_HOST . ';charset=utf8', DB_USER, DB_PASS);
+				
+		$db_insert->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+		$db_insert->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+							
+		$statement_insert = null; //The statement
+			
+		try {
+			$statement_insert = $db_insert->prepare('INSERT INTO product_order (customer_id, seller_id, order_information_id, shipping_id, product_id, quantity, price) VALUES (:customer_id, :seller_id, :order_information_id, :shipping_id, :product_id, :quantity, :price)');			
+		} catch (PDOException $e){
+			//Error code 1146 - unable to find database.
+		}
+		
+		
+		$json_depacked = json_decode($values['product_order_ids_json'], true);
+			
+		foreach ($json_depacked as &$row) {			
+				
+			try {				
+				//var_dump($row);
+				
+				$statement_insert->execute(array(':shipping_id' => $values['shipping_id'], ':order_information_id' => $values['id'], ':customer_id' => $values['buyer_id'], ':seller_id' => '65', ':product_id' => $row['item_id'], ':quantity' => $row['qty'], ':price' => $row['price']));
+			} catch (PDOException $e) {				
+				//Error code 23000 - unable to to create because of duplicate id.
+			}				
+		}
+			
+
+			
 		
 	}
 	
