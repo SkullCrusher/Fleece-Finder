@@ -20,6 +20,7 @@ echo "ss";
 */
 
 //How server settings are packed.
+/*
 
 $array_1 = array( 'Wool (unfinished)', 'Wool (finished)', 'Hand knit', 'Spinning Equipment');
 
@@ -29,8 +30,25 @@ $array_2 = array('Categories' => $array_1);
 //$array_objects = array('Faggots' => $array_1);
 
 print_r(json_encode($array_2));
+*/
 
+$string = '<!DOCTYPE html>
+<html>
+<body>
 
+<p>the join() method joins array elements into a string.</p>
+
+<p id="demo"></p>
+
+<script>
+var fruits = ["Banana", "Orange", "Apple", "Mango"];
+document.getElementById("demo").innerHTML = fruits.join(" * ");
+</script>
+
+</body>
+</html>';
+
+echo htmlspecialchars($string, ENT_COMPAT,'ISO-8859-1', true);
 
 
 

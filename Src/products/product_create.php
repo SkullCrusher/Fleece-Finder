@@ -240,24 +240,91 @@
 	
 
 //Sanitize Input
-
+	$Sanitized_Title = null;
+	$Sanitized_Short_Description = null;
+	$Sanitized_Quantity = 0;
+	$Sanitized_Long_Description = null;
+	$Sanitized_Terms_Of_Sale = null;
+	$Sanitized_Price = 0.0;
+	
 	//Input
 	//Check for the title being posted and if so we continue.
-	
-	//Title.
+//---
+	//Title (6-300) letters
 	if(strlen($_POST['title']) > 80 ||  strlen($_POST['title']) < 6){
 		//The title can be no longer then 80 characters long and has to be at least 6.
 		
 		$Sanitize_Problem = true;
 		$Sanitize_Details = "The title must be between 6 to 80 characters long.";
-		
+	}else{
+		//Replace all non-standard characters.
+		$Sanitized_Title = preg_replace("/[^A-Za-z0-9 \-\(\)]/", '', $_POST['title']);		
 	}
 	
-		//Short Description
-		//Quantity for sale.
-		//Long description
-		//Terms of sale
-		//Price
+	
+//---		
+	//Short Description (300 letters)
+	if(strlen($_POST['short_description']) > 300 ||  strlen($_POST['short_description']) < 12){
+		//The title can be no longer then 300 characters long and has to be at least 12.
+		
+		$Sanitize_Problem = true;
+		$Sanitize_Details = "The short description must be between 12 to 300 characters long.";
+	}else{
+		//Replace all non-standard characters.
+		$Sanitized_Short_Description = preg_replace("/[^A-Za-z0-9 \-\(\)]/", '', $_POST['short_description']);		
+	}
+//---
+	//Quantity for sale (Max 9999, Min 1)
+	if(intval($_POST['quantity_for_sale']) > 9999 ||  intval($_POST['quantity_for_sale']) < 1){
+		//The title can be no longer then 300 characters long and has to be at least 12.
+		
+		$Sanitize_Problem = true;
+		$Sanitize_Details = "The quantity must be between 1 to 9999 units.";
+	}else{
+		//Replace all non-standard characters.
+		$Sanitized_Quantity = intval($_POST['quantity_for_sale']);		
+	}
+//---
+	//Long description (0 - 2000);
+	if(strlen($_POST['quantity_for_sale']) > 2000 || strlen($_POST['quantity_for_sale']) < 0){
+		//The title can be no longer then 300 characters long and has to be at least 12.
+		
+		$Sanitize_Problem = true;
+		$Sanitize_Details = "The long description is a maximum of 2000 characters.";
+	}else{
+		//Replace all non-standard characters.
+		$Sanitized_Long_Description = preg_replace("/[^A-Za-z0-9 \-\(\)]/", '', $_POST['quantity_for_sale']);		
+	}
+//---
+	//Terms of sale (0 - 2000)
+	if(strlen($_POST['terms_of_sale']) > 2000 || strlen($_POST['terms_of_sale']) < 0){
+		//The title can be no longer then 300 characters long and has to be at least 12.
+		
+		$Sanitize_Problem = true;
+		$Sanitize_Details = "The long description is a maximum of 2000 characters.";
+	}else{
+		//Replace all non-standard characters.
+		$Sanitized_Terms_Of_Sale = preg_replace("/[^A-Za-z0-9 \-\(\)]/", '', $_POST['terms_of_sale']);		
+	}
+//---
+	//Price ($1.00 to $4,999)
+	if(floatval($_POST['price']) > 4999 || floatval($_POST['price']) < 1){
+		//The price cannot be more then $4,999	
+		$Sanitize_Problem = true;
+		$Sanitize_Details = "The price has to between $1.00 and $4,999.";
+	}else{
+		//Replace all non-standard characters.
+		$Sanitized_Price = floatval($_POST['price']);		
+	}
+	
+			
+	//Debugging
+	echo $Sanitized_Title;
+	echo $Sanitized_Short_Description;
+	echo $Sanitized_Quantity;
+	echo $Sanitized_Long_Description;
+	echo $Sanitized_Terms_Of_Sale;
+	echo $Sanitized_Price;
 	
 	
 	
@@ -512,11 +579,11 @@ end of debugging stuff
 <form method="post" action="product_create.php" id="create_product_new" name="create_product_new">
 
 	<label for="title">title</label>	
-    <input id="title" type="text" pattern="[a-zA-Z0-9]{2,64}" name="title" required /></input>
+    <input id="title" type="text" pattern="[ ()a-zA-Z0-9-]{6,80}" name="title" required /></input>
 	<br>
 
     <label for="short_description">short description</label>	
-    <input id="short_description" type="text" pattern="[a-zA-Z0-9]{2,64}" name="short_description" required /></input>
+    <input id="short_description" type="text" pattern="{6,300}" name="short_description" required /></input>
 	<br>
 
 	categories
