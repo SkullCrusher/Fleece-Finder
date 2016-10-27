@@ -458,7 +458,7 @@
 					?>
 					<a href="http://www.scriptencryption.com/account/profile.php?u=<?php echo $Owner; ?>" style="color: #3A539B;text-decoration: none;" ><?php echo $Farm_Name; ?></a>
 					<br><br>
-					
+					<?php /*
 					 Feedback for <?php echo FN_Farm_Load_Rating_Count($User_Name); ?> sales: <?php 
 						
 						
@@ -526,7 +526,7 @@
 							}								
 						
 					?>
-					
+					*/?>
 				<br><br>					
 					
 				</form>

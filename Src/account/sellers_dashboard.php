@@ -21,6 +21,98 @@
 		die();
 	}
 	
+	//Load the purchase history
+	function FN_Purchase_History($id){	
+
+		$db = new PDO('mysql:dbname=' . DB_NAME . ';host=' . DB_HOST . ';charset=utf8', DB_USER, DB_PASS);
+			
+		$db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+		$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);	
+		
+		$statement = null; //The statement
+			
+		try {
+			$statement = $db->prepare('SELECT * FROM product_order WHERE customer_id = :customer_id');			
+		} catch (PDOException $e) {
+			
+			//Error code 1146 - unable to find database.
+			return 'Internal_Server_Error'; //Error.
+		}
+				
+		try {
+			$statement->execute(array(':customer_id' => $id));
+		} catch (PDOException $e) {
+		
+			//Error code 23000 - unable to to create because of duplicate id.
+			return 'Error_Try_Again'; //Error.
+		}		
+		
+		$result = $statement->fetchAll();
+
+		return $result;
+	}
+	
+	//Load the extra information
+	function FN_Order_Information($id){	
+
+		$db = new PDO('mysql:dbname=' . DB_NAME . ';host=' . DB_HOST . ';charset=utf8', DB_USER, DB_PASS);
+			
+		$db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+		$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);	
+		
+		$statement = null; //The statement
+			
+		try {
+			$statement = $db->prepare('SELECT * FROM order_information WHERE buyer_id = :buyer_id');			
+		} catch (PDOException $e) {
+			
+			//Error code 1146 - unable to find database.
+			return 'Internal_Server_Error'; //Error.
+		}
+				
+		try {
+			$statement->execute(array(':buyer_id' => $id));
+		} catch (PDOException $e) {
+		
+			//Error code 23000 - unable to to create because of duplicate id.
+			return 'Error_Try_Again'; //Error.
+		}		
+		
+		$result = $statement->fetchAll();
+
+		return $result;
+	}
+	
+	//Check to insure that the id is theirs.	
+	function FN_User_Get_Id($Username){
+
+		$db = new PDO('mysql:dbname=' . DB_NAME . ';host=' . DB_HOST . ';charset=utf8', DB_USER, DB_PASS);
+		
+		$db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+		$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);	
+	
+		$statement = null; //The statement
+		
+		try {
+			$statement = $db->prepare('SELECT user_id FROM users WHERE user_name = :user_name');			
+		} catch (PDOException $e) {
+			
+			//Error code 1146 - unable to find database.
+			return 'Internal_Server_Error'; //Error.
+		}
+		
+		try {
+			$statement->execute(array(':user_name' => $Username));
+		} catch (PDOException $e) {
+	
+			//Error code 23000 - unable to to create because of duplicate id.
+			return 'Error_Try_Again'; //Error.
+		}		
+	
+		$result = $statement->fetch();
+
+		return $result['user_id'];
+	}
 	
 ?>
 	
@@ -32,7 +124,7 @@
 	
 		<div class="container_12 backgroundwhite">			
 			<div class="grid_12 title" style="margin-bottom:20px; text-align:center;">		 
-				<b>Account Information</b>				
+				<b>Purchase History</b>				
 			</div>
 		</div>
 	
@@ -42,7 +134,7 @@
 
 			#containerz{
 			width:958px;
-			height:750px;
+			
 			margin:0 auto;
 			
 			 color:#F7F7F7;
@@ -113,6 +205,74 @@
 			<table>
 			 <thead>
 			  <tr>
+				<th scope="col">Order Id</th>
+				<th scope="col">Order Date</th>
+				
+				<th scope="col">Total Cost</th>						
+				
+				<th scope="col">Purchase Date</th>
+				<th scope="col">Details</th>
+				<th scope="col">Archive</th>
+			  </tr>
+			  </thead>
+			  <tbody>
+			  <?php
+
+				//$Purchase_History = FN_Purchase_History(FN_User_Get_Id($_SESSION['user_name']));
+				$Purchase_History = FN_Order_Information(FN_User_Get_Id($_SESSION['user_name']));
+				
+						
+				foreach ($Purchase_History as &$value) {
+					
+					//$Load_Extra = FN_Order_Information($value['order_information_id']);
+					
+					
+					echo '<tr>';
+					echo '<th><a href="#" style="text-decoration: none;color: #FFFFFF;">' . $value['id'] . '</a></th>';	
+					echo '<td><a href="#" style="text-decoration: none;color: #FFFFFF;">' . $value['order_date'] . '</a></td>';
+					
+					echo '<td>$' . $value['price'] . '</td>';
+					
+					//Handle the case where it says Ipn_pending  
+					if($value['status'] == 'ipn_pending'){
+						echo '<td>' . 'Payment Pending' . '</td>';
+					}else{
+						echo '<td>' . ucfirst($value['status']) . '</td>';
+					}
+				
+					echo '<td><a href="../account/sellers_order_overview.php?id=' . $value['id'] . '" class="btn">Details</a></td>';
+					echo '<td><a href="#" class="btn">Archive</a></td>';
+					echo '</tr>';
+				}
+			  ?>			
+			  </tbody>
+			</table>
+			</div>
+
+			
+			
+			
+			
+		
+		
+		
+		
+		</div>
+		
+
+		
+		<div class="container_12 backgroundwhite">			
+			<div class="grid_12 title" style="margin-bottom:20px; text-align:center;">		 
+				<b>Sales Information</b>				
+			</div>
+		</div>
+	
+		<div class="container_12 backgroundwhite" style="margin-bottom:10px;">
+
+			<div id="containerz" style="margin-top: -20px;">
+			<table>
+			 <thead>
+			  <tr>
 				<th scope="col">Buyer</th>
 				<th scope="col">Product</th>
 				<th scope="col">Quantity</th>				
@@ -170,7 +330,6 @@
 		</div>
 			
   
-
 
 
 <?php 

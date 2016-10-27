@@ -53,6 +53,37 @@
 		return $result['user_id'];
 	}	
 	
+	
+	function FN_User_Get_Username($Id){
+
+		$db = new PDO('mysql:dbname=' . DB_NAME . ';host=' . DB_HOST . ';charset=utf8', DB_USER, DB_PASS);
+			
+		$db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+		$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);	
+		
+		$statement = null; //The statement
+			
+		try {
+			$statement = $db->prepare('SELECT user_name FROM users WHERE user_id = :user_id');			
+		} catch (PDOException $e) {
+				
+			//Error code 1146 - unable to find database.
+			return 'Internal_Server_Error'; //Error.
+		}
+			
+		try {
+			$statement->execute(array(':user_id' => $Id));
+		} catch (PDOException $e) {
+		
+			//Error code 23000 - unable to to create because of duplicate id.
+			return 'Error_Try_Again'; //Error.
+		}		
+		
+		$result = $statement->fetch();
+
+		return $result['user_name'];
+	}
+	
 	function FN_Farm_Get_Rating($Id){
 
 		$db = new PDO('mysql:dbname=' . DB_NAME . ';host=' . DB_HOST . ';charset=utf8', DB_USER, DB_PASS);
@@ -449,10 +480,11 @@
 				 
 				 <?php 
 				 
+				 
 					$Amount = FN_Get_Instock_Amount($_GET['p']);
 					
 					//echo '<option value="' . $i . '">' . $Amount . '</option>';
-				 
+				 /*
 					for ($i = 1; $i < 10; $i += 1) {
 						echo '<option value="' . $i . '">' . $i . '</option>';
 						
@@ -468,7 +500,7 @@
 							$i = $Amount + 1;
 						}
 					}
-					
+					*/
 					echo '<option value="' . $Amount . '">' . $Amount . '</option>';
 					
 
@@ -498,10 +530,10 @@
 					$User_Name = FN_User_Get_Id($Product_Owner);
 					$Farm_Name = FN_Farm_Load_Name($User_Name);					
 					?>
-					<a href="http://www.scriptencryption.com/account/profile.php?u=<?php echo $Product_Owner; ?>" style="color: #3A539B;text-decoration: none;" ><?php echo $Farm_Name; ?></a>
+					<a href="http://www.scriptencryption.com/account/profile.php?u=<?php echo $Product_Owner; ?>" style="color: #3A539B;text-decoration: none;" ><?php echo FN_User_Get_Username($User_Name); ?> </a>
 					<br><br>
 					
-					<?php 
+					<?php /*
 						//$Product_Compressed_Rating 	
 						
 						if($Product_Compressed_Rating == -1){
@@ -526,7 +558,7 @@
 							}							
 						}
 					?> feedback for <?php echo FN_Farm_Load_Rating_Count($User_Name); ?> sales<br>
-					
+					<?php  ?>
 					
 					
 					Product rating: 
@@ -552,7 +584,7 @@
 								echo '<i class="fa fa-star" style="color:#E5E5E5"></i>';
 								$How_many_Left--;
 							}							
-						}
+						}*/
 					?>
 					
 				<br><br>					

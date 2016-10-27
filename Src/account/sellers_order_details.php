@@ -22,46 +22,47 @@
 	}
 	
 	
-	function FN_Is_Shipped($id, $Value){
+	//Check to insure that the id is theirs.	
+	function FN_User_Get_Id($Username){
 
 		$db = new PDO('mysql:dbname=' . DB_NAME . ';host=' . DB_HOST . ';charset=utf8', DB_USER, DB_PASS);
-			
+		
 		$db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 		$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);	
-		
+	
 		$statement = null; //The statement
-			
+		
 		try {
-			$statement = $db->prepare('UPDATE product_order SET shipping_date = :shipping_date WHERE id = :id');			
-		} catch (PDOException $e) {				
+			$statement = $db->prepare('SELECT user_id FROM users WHERE user_name = :user_name');			
+		} catch (PDOException $e) {
+			
 			//Error code 1146 - unable to find database.
 			return 'Internal_Server_Error'; //Error.
 		}
-			
-		try {
-			$statement->execute(array(':id' => $id, ':shipping_date' => date('Y-m-d h:i:s')));
-		} catch (PDOException $e) {
 		
+		try {
+			$statement->execute(array(':user_name' => $Username));
+		} catch (PDOException $e) {
+	
 			//Error code 23000 - unable to to create because of duplicate id.
 			return 'Error_Try_Again'; //Error.
 		}		
-		
-		//$result = $statement->fetch();
+	
+		$result = $statement->fetch();
 
-		//return $result;
-	}	
-	
-	
-	
-	
-	
-	//Mark as shipped
-	if(strlen($_GET['id']) > 1){
-		FN_Is_Shipped($_GET['id'], $_GET['ship']);
-		
+		return $result['user_id'];
 	}
 	
 	
+	$User_Id = FN_User_Get_Id($_SESSION['user_name']);		
+	
+	$Product_Loaded_temp = FN_Product_Order($_GET['id']);
+	
+	//check to see if they are the seller else go to the homepage
+	if($Product_Loaded_temp['seller_id'] != $User_Id){
+		header('Location: http://'.$_SERVER['HTTP_HOST'].'/index.php');
+		die();
+	}
 	
 	//Load all of the information.
 	//FUNCTIONS
@@ -211,7 +212,6 @@
 		return $result['user_name'];
 	}	
 	
-	
 	function FN_Mark_As_Shipped($id){
 		
 		$db = new PDO('mysql:dbname=' . DB_NAME . ';host=' . DB_HOST . ';charset=utf8', DB_USER, DB_PASS);
@@ -303,6 +303,32 @@
 		
 	}
 	
+	function FN_Cancel_Shipping($id){	
+
+		$db = new PDO('mysql:dbname=' . DB_NAME . ';host=' . DB_HOST . ';charset=utf8', DB_USER, DB_PASS);
+			
+		$db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+		$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);	
+		
+		$statement = null; //The statement
+			
+		try {
+			$statement = $db->prepare('UPDATE product_order SET canceled = :canceled WHERE id = :id');			
+		} catch (PDOException $e) {
+			
+			//Error code 1146 - unable to find database.
+			return 'Internal_Server_Error'; //Error.
+		}
+				
+		try {
+			$statement->execute(array(':id' => $id, ':canceled' => 'true'));
+		} catch (PDOException $e) {
+		
+			//Error code 23000 - unable to to create because of duplicate id.
+			return 'Error_Try_Again'; //Error.
+		}		
+		
+	}
 	
 	//FN_Mark_As_Shipped(
 	if(strlen($_GET['ship']) > 1){
@@ -315,6 +341,10 @@
 	
 	if(strlen($_POST['companycode']) > 0){
 		FN_Set_Company_Code($_GET['id'], $_POST['companycode']);
+	}
+	
+	if(strlen($_GET['canceled']) > 0){
+		FN_Cancel_Shipping($_GET['id']);
 	}
 	
 	
@@ -339,6 +369,7 @@
 	$Shipping_Multiple = htmlspecialchars($Shipping_Cost_Multiple, ENT_QUOTES);	
 	$Shipping_Price = htmlspecialchars($Product_Loaded['price'], ENT_QUOTES);
 
+	$Shipping_Price_unchanged = $Shipping_Price;
 		
 	if($Shipping_Multiple){$Shipping_Price = $Shipping_Price * $Quantity;}	
 	$Total_price = ($Unit_Price * $Quantity) + $Shipping_Price;		
@@ -371,7 +402,7 @@
 	
 		<div class="container_12 backgroundwhite">			
 			<div class="grid_12 title" style="margin-bottom:20px; text-align:center;">		 
-				<b>Account Information</b>	
+				<b>Extra information</b>	
 			</div>
 		</div>
 	
@@ -488,7 +519,12 @@
 			  <tr>
 				<th>Unit Price</th>
 				<td>$<?php echo number_format($Unit_Price, 2, '.', ','); ?></td>		
-			  </tr>			  
+			  </tr>		
+
+			  <tr>
+				<th>Shipping cost <?php if($Shipping_Multiple){ echo "unit";} ?></th>
+				<td>$<?php echo number_format($Shipping_Price_unchanged , 2, '.', ','); ?></td>		
+			  </tr>	
 			  <tr>
 			  	<th>Shipping collected</th>
 				<td>$<?php echo number_format($Shipping_Price, 2, '.', ','); ?></td>				
@@ -544,7 +580,7 @@
 			  
 			  <tr>
 			  	<th>Canceled: <?php echo $Canceled; ?></th>
-				<td><a href="#" class="btn">Cancel Order</a></td>
+				<td><a href="sellers_order_details.php?id=<?php echo $_GET['id']; ?>&canceled=true" class="btn">Cancel Order</a></td>
 			  </tr>
 			  
 			  </tbody>

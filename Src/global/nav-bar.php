@@ -146,7 +146,7 @@
 			echo '<li><a href="../account/profile.php">My account</a></li>';
 			echo '<li><a href="../products/product_create.php">Create product</a></li>';
 			echo '<li><a href="../message/inbox.php">Inbox (' . $Count . ')</a></li>';			
-			echo '<li><a href="../account/sellers_dashboard.php">Sellers dashboard</a></li>';
+			echo '<li><a href="../account/sellers_dashboard.php">Account activity</a></li>';
 			echo '<li><a href="../index.php?logout">Logout</a></li>';
 		} else {	
 			echo '<li><a href="../account/login.php">Login</a></li>';
