@@ -13,6 +13,85 @@
 
 	$login = new Login();
 	
+	//for how many emails there are.
+	
+		//Get the id of a user by username
+	function FN_User_Get_Id_nav($Username){
+
+		$db = new PDO('mysql:dbname=' . DB_NAME . ';host=' . DB_HOST . ';charset=utf8', DB_USER, DB_PASS);
+			
+		$db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+		$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);	
+		
+		$statement = null; //The statement
+			
+		try {
+			$statement = $db->prepare('SELECT user_id FROM users WHERE user_name = :user_name');			
+		} catch (PDOException $e) {
+				
+			//Error code 1146 - unable to find database.
+			return 'Internal_Server_Error'; //Error.
+		}
+			
+		try {
+			$statement->execute(array(':user_name' => $Username));
+		} catch (PDOException $e) {
+		
+			//Error code 23000 - unable to to create because of duplicate id.
+			return 'Error_Try_Again'; //Error.
+		}		
+		
+		$result = $statement->fetch();
+
+		return $result['user_id'];
+	}
+	
+		
+	//Get the user settings by users account id.
+	function FN_User_Load_Message_Headers_nav($ID){
+
+		$db = new PDO('mysql:dbname=' . DB_NAME . ';host=' . DB_HOST . ';charset=utf8', DB_USER, DB_PASS);
+			
+		$db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+		$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);	
+		
+		$statement = null; //The statement
+			
+		try {
+			$statement = $db->prepare('SELECT packed_json FROM message_header WHERE id = :id');			
+		} catch (PDOException $e) {
+								
+			//Error code 1146 - unable to find database.
+			return 'Internal_Server_Error'; //Error.
+		}
+			
+		try {
+			$statement->execute(array(':id' => $ID));
+		} catch (PDOException $e) {
+		
+			//Error code 23000 - unable to to create because of duplicate id.
+			return 'Error_Try_Again'; //Error.
+		}		
+
+		$result = $statement->fetch();
+		
+		return json_decode($result['packed_json'], true);
+	}
+		
+	$Message_Counting = FN_User_Load_Message_Headers_nav(FN_User_Get_Id_nav($_SESSION['user_name']));
+ 
+	$Count = 0;
+	foreach ($Message_Counting as &$value) {
+		
+		if($value['read'] == "false"){
+			$Count++;
+		}
+		
+	}
+	
+ 
+ 
+ 
  
  ?>
 
@@ -53,7 +132,7 @@
   
 	 <?php 	 
 	 	if ($login->isUserLoggedIn() == true) {
-			echo '<li><a href="../message/inbox.php">Inbox (0)</a></li>';
+			echo '<li><a href="../message/inbox.php">Inbox (' . $Count . ')</a></li>';
 			echo '<li><a href="../account/profile.php">My account</a></li>';
 			echo '<li><a href="../index.php?logout">Logout</a></li>';
 		} else {	

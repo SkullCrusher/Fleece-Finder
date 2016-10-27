@@ -115,3 +115,61 @@ Strict-Transport-Security: max-age=63072000
 
 INVALID
 [2015-01-31 00:13 America/Los_Angeles] Invalid IPN: cmd=_notify-validate
+[2015-02-05 22:11 America/Los_Angeles] HTTP request of validation request:POST /cgi-bin/webscr HTTP/1.1
+Host: www.paypal.com
+Accept: */*
+Connection: Close
+Content-Length: 20
+Content-Type: application/x-www-form-urlencoded
+
+ for IPN payload: cmd=_notify-validate
+[2015-02-05 22:11 America/Los_Angeles] HTTP response of validation request: HTTP/1.1 200 OK
+Server: Apache
+X-Frame-Options: SAMEORIGIN
+Content-Type: text/html; charset=UTF-8
+DC: slc-origin-www.paypal.com
+Date: Fri, 06 Feb 2015 06:11:28 GMT
+Content-Length: 7
+Connection: close
+Set-Cookie: cwrClyrK4LoCV1fydGbAxiNL6iG=gn9WWhMhUmEms4Wkj-sC2w6yhdBVFYeB0JsZyXZkY81dOBgKMBzoltwWb_7qeNgJMz1Z4lHemaC9GFNGwBRQB1YUksWJPPHoRCCmZgEGISVemOqIaA7ybhQUguVmjJkaSwhe0RKrzRsntiWSb_-IA5g0G6UCwYY9tFclekbdx0xGViXF7b-E77qYuchxanvmmGiEi1or3a5RrdLm59BMd8smMn6G7IiZGpvXXlyKeDxty53cFL9HM027k6kzLRmwbtvOXs-WbhR3YXRt0bFrfB3ux5VLLjG8F6pSLR2e6MAxkSx3q6tgvbFH8JKqvELbXEabZPHOvs0RPUciQjLRjp72rDOhyTki3HfP5rsosUf4ZRgNO3Fw5JecRv5nZLB-Ux6FBwklVpCBVGOqqTrwcqbdd6cgniRCBeLCNba9WD09NDZrhTdnESdqVHG; domain=.paypal.com; path=/; Secure; HttpOnly
+Set-Cookie: cookie_check=yes; expires=Mon, 03-Feb-2025 06:11:28 GMT; domain=.paypal.com; path=/; Secure; HttpOnly
+Set-Cookie: navcmd=_notify-validate; domain=.paypal.com; path=/; Secure; HttpOnly
+Set-Cookie: navlns=0.0; expires=Sun, 05-Feb-2017 06:11:28 GMT; domain=.paypal.com; path=/; Secure; HttpOnly
+Set-Cookie: Apache=10.16.0.14.1423203087691378; path=/; expires=Sun, 29-Jan-45 06:11:27 GMT
+Set-Cookie: X-PP-SILOVER=name%3DLIVE9.WEB.1%26silo_version%3D880%26app%3Dappdispatcher%26TIME%3D257676372; domain=.paypal.com; path=/; Secure; HttpOnly
+Set-Cookie: X-PP-SILOVER=; Expires=Thu, 01 Jan 1970 00:00:01 GMT
+Set-Cookie: Apache=10.16.0.11.1423203087685666; path=/; expires=Sun, 29-Jan-45 06:11:27 GMT
+Set-Cookie: AKDC=slc-origin-www.paypal.com; expires=Fri, 06-Feb-2015 06:41:28 GMT; path=/; secure
+Strict-Transport-Security: max-age=63072000
+
+INVALID
+[2015-02-05 22:11 America/Los_Angeles] Invalid IPN: cmd=_notify-validate
+[2015-02-06 12:58 America/Los_Angeles] HTTP request of validation request:POST /cgi-bin/webscr HTTP/1.1
+Host: www.paypal.com
+Accept: */*
+Connection: Close
+Content-Length: 20
+Content-Type: application/x-www-form-urlencoded
+
+ for IPN payload: cmd=_notify-validate
+[2015-02-06 12:58 America/Los_Angeles] HTTP response of validation request: HTTP/1.1 200 OK
+Server: Apache
+X-Frame-Options: SAMEORIGIN
+Content-Type: text/html; charset=UTF-8
+DC: slc-a-origin-www-2.paypal.com
+Date: Fri, 06 Feb 2015 20:58:48 GMT
+Content-Length: 7
+Connection: close
+Set-Cookie: cwrClyrK4LoCV1fydGbAxiNL6iG=0G9SXFQGEi6FGTpSKBov4gB7b3lhj2HaT2KHWHN1lmpBT44h027_AH0hyDxDx8EHRrzaXhWdi0FD3GGq5Gkui7FHA11khkNj8ZsTD8aL1DYuXc2SprugEq4aSHbDukboIsVPlsJB63mNIPlK2r5IK84qk-bXc0uwtg6w1oGNCYK_ncra3EU7gTxFOq7ghrph_uh2JAm6FKOxBGCJsUB_jHQJgKOTqQtsqfIsDpnikE61OlJ8Xlwzcu7-fRpLjk0yTf6HZi4key9RIoY-mpPMu6BWuqMQPeAoOzkeiLJOl-mXH6gIxCMHMUtuqbpNzRRK7cAakPJA7G8weIfhPKU4ZrUt439YFivSN8LPtDmjirmEyo0PKy0Gi2t-yDgqAyOUr7smwmfxEdPJ0t8Xsn2QOm9_Ub67QY38zSrGMbXgHHze1lulJHLtNlZUqo8; domain=.paypal.com; path=/; Secure; HttpOnly
+Set-Cookie: cookie_check=yes; expires=Mon, 03-Feb-2025 20:58:48 GMT; domain=.paypal.com; path=/; Secure; HttpOnly
+Set-Cookie: navcmd=_notify-validate; domain=.paypal.com; path=/; Secure; HttpOnly
+Set-Cookie: navlns=0.0; expires=Sun, 05-Feb-2017 20:58:48 GMT; domain=.paypal.com; path=/; Secure; HttpOnly
+Set-Cookie: Apache=10.73.8.137.1423256328355453; path=/; expires=Sun, 29-Jan-45 20:58:48 GMT
+Set-Cookie: X-PP-SILOVER=name%3DLIVE5.WEB.1%26silo_version%3D880%26app%3Dappdispatcher%26TIME%3D137090388; domain=.paypal.com; path=/; Secure; HttpOnly
+Set-Cookie: X-PP-SILOVER=; Expires=Thu, 01 Jan 1970 00:00:01 GMT
+Set-Cookie: Apache=10.73.8.57.1423256328344406; path=/; expires=Sun, 29-Jan-45 20:58:48 GMT
+Set-Cookie: AKDC=slc-a-origin-www-2.paypal.com; expires=Fri, 06-Feb-2015 21:28:48 GMT; path=/; secure
+Strict-Transport-Security: max-age=63072000
+
+INVALID
+[2015-02-06 12:58 America/Los_Angeles] Invalid IPN: cmd=_notify-validate

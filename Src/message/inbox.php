@@ -19,8 +19,7 @@
 		die();
 	}
 	
-//Functions.		
-	
+//Functions.	
 	//Get the id of a user by username
 	function FN_User_Get_Id($Username){
 
@@ -145,7 +144,7 @@
 		return json_decode($result['packed_json'], true);
 	}
 	
-		//Get the user settings by users account id.
+	//Get the user settings by users account id.
 	function FN_User_Load_Message_Body($ID){
 
 		$db = new PDO('mysql:dbname=' . DB_NAME . ';host=' . DB_HOST . ';charset=utf8', DB_USER, DB_PASS);
@@ -248,10 +247,10 @@
 	$From = "support";
 	$To = "becca";
 	
-	$JSON_Message1 = array('id' => 1, 'date' => "July 15, 2013", 'read' => 'true', 'title' => $Title . '1', 'from' => $From, 'to' => $To);
+	$JSON_Message1 = array('id' => 1, 'date' => "July 15, 2013", 'read' => 'false', 'title' => $Title . '1', 'from' => $From, 'to' => $To);
 	$JSON_Message2 = array('id' => 2, 'date' => "July 15, 2013", 'read' => 'false', 'title' => $Title . '2', 'from' => $From, 'to' => $To);
-	$JSON_Message3 = array('id' => 3, 'date' => "July 15, 2013", 'read' => 'true', 'title' => $Title . '3', 'from' => $From, 'to' => $To);
-	$JSON_Message4 = array('id' => 4, 'date' => "July 15, 2013", 'read' => 'true', 'title' => $Title . '4', 'from' => $From, 'to' => $To);
+	$JSON_Message3 = array('id' => 3, 'date' => "July 15, 2013", 'read' => 'false', 'title' => $Title . '3', 'from' => $From, 'to' => $To);
+	$JSON_Message4 = array('id' => 4, 'date' => "July 15, 2013", 'read' => 'false', 'title' => $Title . '4', 'from' => $From, 'to' => $To);
 	
 	$JSON_Header = array($JSON_Message1, $JSON_Message2, $JSON_Message3, $JSON_Message4);
 	
@@ -262,9 +261,7 @@
 	
 	//end of debug
 		
-				
-//End of functions.
-	
+//End of functions.	
 	//Load the user information
 	$User_ID = FN_User_Get_Id($_SESSION['user_name']);
 	
@@ -283,7 +280,7 @@
 			
 		if(strlen($_POST['reply_message']) > 0 && strlen($_POST['reply_message']) < 5000){
 		
-			$User_Ids = FN_User_Get_Id(preg_replace("/[^A-Za-z0-9]/", '', $_POST['reply_to']));
+			$User_Ids = FN_User_Get_Id(preg_replace("/[^A-Za-z0-9_]/", '', $_POST['reply_to']));
 			
 			if($User_Ids == "Internal_Server_Error" || $User_Ids == "Error_Try_Again" || $User_Ids == null){
 				echo '<script> alert("We are unable to complete this request. Please verify user exists and try again, if the error continues please contact support.");</script>';
@@ -291,7 +288,7 @@
 				//Send the message
 				
 				//The message body.
-				$Message_Body = json_encode(array('body' => $_POST['reply_message'], 'from' => $_SESSION['user_name'], 'to' => preg_replace("/[^A-Za-z0-9]/", '', $_POST['reply_to']), 'send_date' =>  date('M d, Y g:i a')));
+				$Message_Body = json_encode(array('body' => preg_replace("/[^A-Za-z0-9 ,.\'\";:~!@#$%^&*()-_`]/", '', $_POST['reply_message']), 'from' => $_SESSION['user_name'], 'to' => preg_replace("/[^A-Za-z0-9]/", '', $_POST['reply_to']), 'send_date' =>  date('M d, Y g:i a')));
 				
 				$db = new PDO('mysql:dbname=' . DB_NAME . ';host=' . DB_HOST . ';charset=utf8', DB_USER, DB_PASS);
 			
@@ -339,6 +336,16 @@
 	}
 	
 	if($Error == true){ echo "Error: " . $Error_Details; }
+	
+	if(strlen($_GET['id']) > 0){
+		$Unit = &$Message_Headers[$_GET['id'] - 1];
+		
+		if($Unit['read'] == 'false'){			
+			$Unit['read'] = 'true';
+
+			FN_User_Insert_Message_Headers($User_ID, json_encode($Message_Headers));
+		}		
+	}
 	
 	
 	//Delete the message if requested.
@@ -749,6 +756,30 @@ a {
   font-size: .75rem;
 }
 
+a {
+	color: #3A539B;	
+	text-decoration:none;
+}
+
+a:hover {
+	color: #e54040;
+}
+
+.reply_button{
+	width: 200px;
+	height: 50px; 
+	background-color: #3A539B; 
+	color: #FFF; 
+	border-style: none; 
+	margin-right: 10px; 
+	margin-top: 10px;
+}
+
+.reply_button:hover {
+	
+	background-color: #e54040; 
+}
+
 </style>
 
 <script>
@@ -763,7 +794,7 @@ a {
   <div class="main">   
     <div class="container">
       <div class="messages">
-        <h1 style="background-color: #333;color: #FFF;">Inbox <span class="icon icon-arrow-down"></span></h1>
+        <h1 style="background-color: #333;color: #FFF;">Inbox - <a href="compose.php" id="compose"> Compose </a><span class="icon icon-arrow-down"></span></h1>
         <form action="" style="background-color: #333"></form>
 		<div style="height: 635px; overflow-y: scroll;">
         <ul class="message-list" >
@@ -851,7 +882,7 @@ a {
 			<input type="hidden" name="reply_message" id="reply_message" value="">
 			<input type="hidden" name="reply_to" id="reply_to" value="<?php echo $Value2['from']; ?>">
 						
-			<input type="submit" value="Reply" style="width: 200px;height: 50px; background-color: #3A539B; color: #FFF; border-style: none; margin-right: 10px; margin-top: 10px;">
+			<input type="submit" value="Reply" class="reply_button" >
 		</form> 
 		
 		
