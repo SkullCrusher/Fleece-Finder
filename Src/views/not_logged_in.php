@@ -1,6 +1,10 @@
-<?php include('_header.php'); ?>
+<?php 
+	require_once('../global/nav-bar.php');
+	
+	//Everything is inside pagewrapper
+?>
 
-<form method="post" action="index.php" name="loginform">
+<form method="post" action="..\index.php" name="loginform">
     <label for="user_name"><?php echo WORDING_USERNAME; ?></label>
     <input id="user_name" type="text" name="user_name" required />
     <label for="user_password"><?php echo WORDING_PASSWORD; ?></label>
@@ -13,5 +17,8 @@
 <a href="register.php"><?php echo WORDING_REGISTER_NEW_ACCOUNT; ?></a>
 <a href="password_reset.php"><?php echo WORDING_FORGOT_MY_PASSWORD; ?></a>
 
-<?php include('_footer.php'); ?>
 
+<?php 
+	//End of page wrap.
+	require_once('../global/footer-bar.php');	
+?> 

@@ -17,8 +17,8 @@
 	   //echo $_SESSION['user_name'];
 	} else {	
 		//just for the nav bar and if they click add to cart it forces login.
-	//	include("index.php");
-	//	die();
+		include("index.php");
+		die();
 	}
 	
 	//FUNCTIONS --
@@ -202,11 +202,15 @@
 			if($Banned_From_Rating == 'true'){
 				//They are not logged in so they can't rate
 				$Sanitize_Problem = true;
-				$Sanitize_Problem_Details = "The administrator has suspended this account from rating products please contact support if you believe this is a mistake.";
+				//$Sanitize_Problem_Details = "The administrator has suspended this account from rating products please contact support if you believe this is a mistake.";
+				header('Location: http://www.scriptencryption.com/error/404.php?error=4');
+				die();
 			}else{
 				//They already rated so block.
 				$Sanitize_Problem = true;
-				$Sanitize_Problem_Details = "You have already posted on this product, please edit your previous post or delete it to make a new one.";
+				//$Sanitize_Problem_Details = "You have already posted on this product, please edit your previous post or delete it to make a new one.";
+				header('Location: http://www.scriptencryption.com/products/review_edit.php?p=' . $_GET['p'] .'&u=' . $_GET['u']);
+				die();
 			}
 		}else{
 			
@@ -229,7 +233,7 @@
 					//The title can be no longer then 80 characters long and has to be at least 6.
 					
 					$Sanitize_Problem = true;
-					$Sanitize_Problem_Details = "The title must be between 6 to 80 characters long.";
+					$Sanitize_Problem_Details = "The description must be between 6 to 1000 characters long.";
 				}else{
 					//Replace all non-standard characters.
 					$Sanitized_Rating_Long_Description = preg_replace("/[^A-Za-z0-9 \-\(\)]/", '', $_POST['long_description']);		
@@ -260,10 +264,12 @@
 					FN_Review_Add_New($_GET['p'], $New_Review);
 
 					//ADDED AND COMPLETE ALL THAT.
-					echo "ADDED!"; //Debugging
+					
+					header('Location: http://www.scriptencryption.com/products/product_profile.php?p=' . $_GET['p'] . '&u=' . $_GET['u']);		
+					die();
 				}else{
 					//Display the error
-					echo $Sanitize_Problem_Details;
+					//echo $Sanitize_Problem_Details;
 				}
 			}
 		
@@ -273,53 +279,83 @@
 		//They are not logged in so they can't rate
 		$Sanitize_Problem = true;
 		$Sanitize_Problem_Details = "You have to be logged in to rate a product.";
+		header("Location: http://www.scriptencryption.com/error/404.php?error=100"); //Error code 23000 - unable to to create because of duplicate id. //return 'Error_Try_Again'; //Error.
+		die();
 	}
 	
 	
 	if($Sanitize_Problem == true){
-		echo $Sanitize_Problem_Details;
+		//echo $Sanitize_Problem_Details;
+		
+		//header('Location: http://www.scriptencryption.com/products/product_profile.php?p=' . $_GET['p'] . '&u=' . $_GET['u']);		
+		//die();
+		
 	}
 
 	
 ?>
 
-
-<br><br>
------
-create rating
------
- 
-
-<form method="post" action="review_debug.php?<?php echo 'p=' . $_GET['p']; ?>" id="create_rating_new" name="create_rating_new">
-
+<?php 
+	require_once('../global/nav-bar.php');
 	
-	<label for="rating">Rating</label>
-	<select id="rating" name="rating">	
-		<option value="0.0">0.0</option>
-		<option value="0.5">0.5</option>
-		<option value="1.0">1.0</option>
-		<option value="1.5">1.5</option>
-		<option value="2.0">2.0</option>
-		<option value="2.5">2.5</option>
-		<option value="3.0">3.0</option>
-		<option value="3.5">3.5</option>
-		<option value="4.0">4.0</option>
-		<option value="4.5">4.5</option>
-		<option value="5.0">5.0</option>	
-	</select>
-	<br>
-	
-	<label for="title">Title</label>	
-		<input id="title" type="text" pattern="[ ()a-zA-Z0-9-]{6,80}" name="title" value="<?php echo $_POST['title']; ?>" required /></input>
-	<br>
-  	
-		<label for="long_description">Long Description</label>	
-		<input id="long_description" type="text" pattern="[ ()a-zA-Z0-9-]{6,1000}" name="long_description" value="<?php echo $_POST['long_description']; ?>" required /></input>
-	<br>
+	//Everything is inside pagewrapper
+?>
+ 	
+<div class="container_12 backgroundwhite">
+		
+	<?php  if($Sanitize_Problem == true){?>
+	<div class="grid_12">
+		<p style="text-align:center;font-size: 100%;margin-top:-10px;background-color: #D91E18;"><b><?php echo $Sanitize_Problem_Details; ?></b></p>
+	</div>
+	<?php } ?>
+		
+	<div class="grid_12">
+		<p style="text-align:center;font-size: 200%;margin-top:-10px;"><b>Share your opinion!</b></p>
+	</div>
+			
+		
+	<form method="post" action="review_create.php?<?php echo 'p=' . $_GET['p'] . '&u=' . $_GET['u']; ?>" id="create_rating_new" name="create_rating_new">
 
-  	
-    <input type="submit" name="register" value="Submit" />
-</form>
+		<div class="grid_6">
+		<label for="title"><b>Title</b></label>	
+		<input id="title" type="text" pattern="[ ()a-zA-Z0-9-]{6,80}" name="title" value="<?php echo $_POST['title']; ?>" style="width:350px;" required /></input>
+		</div>
+	
+		<div class="grid_5">
+			
+			<select id="rating" name="rating" style="float:right">	
+				<option value="0.0">0.0</option>
+				<option value="0.5">0.5</option>
+				<option value="1.0">1.0</option>
+				<option value="1.5">1.5</option>
+				<option value="2.0">2.0</option>
+				<option value="2.5">2.5</option>
+				<option value="3.0">3.0</option>
+				<option value="3.5">3.5</option>
+				<option value="4.0">4.0</option>
+				<option value="4.5">4.5</option>
+				<option value="5.0">5.0</option>	
+			</select>
+			<label for="rating" style="float:right;padding-right:5px;"><b>Rating</b></label>
+		</div>
+		
+		
+		<div class="grid_12" style="padding-top:15px;">
+		<label for="long_description"><b>Long Description</b></label>	
+			
+			<textarea rows="0" cols="50" id="long_description" name="long_description" type="text" pattern="[ ()a-zA-Z0-9-]{6,1000}"  class="textbox" style="resize: none;width:938px;height:100px;" placeholder="Ex: I really liked the product but it seemed to be poorly packaged and got wet during the shipping."><?php echo $_POST['long_description']; ?></textarea> 
+		</div><br>
+		
+		<div class="grid_12" style="padding-top: 15px;padding-bottom: 15px;"><input type="submit"  class="buynow addtocart" style="border: 0;margin-left:400px;" name="register" value="Submit" />	</div>
+
+	</form>
+
+</div>
+
+<?php 
+	//End of page wrap.
+	require_once('../global/footer-bar.php');	
+?> 
 
 
 

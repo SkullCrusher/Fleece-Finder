@@ -445,7 +445,7 @@
 							<div class="review-container" style="padding: 0px 0px 0px 0px;">					
 								<div class="review-header" >
 								<b>
-								<?php echo $Product_Ratings['title']; ?> - <div class="review-header-name"><?php echo $Product_Ratings['username']; ?></div> 
+								<?php echo ' - ' . $Product_Ratings['title']; ?> <div class="review-header-name" style="padding-right:5px;"><?php echo ucfirst ($Product_Ratings['username']) . '<br>'; ?></div> 
 								<div class="review-header-stars">								
 								<?php 
 									$StarsLeft = 5;
