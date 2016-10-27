@@ -7,12 +7,12 @@
 
 /*
 	Create a new product.
-		-Check account
-			:is banned from posting?
-			:does have required funds to post?
 		-Sanitize input
 			:Does it have javascript or html or links?
 			:special characters?
+		-Check account
+			:is banned from posting?
+			:does have required funds to post?
 		-Post
 			:Add to Product_abbreviated.
 			:Add to Product_rating (leave blank).
@@ -152,8 +152,69 @@
 		return $result['funds'];
 	}
 	
-//End of functions.
+	//Get the user settings by users account id.
+	function FN_User_Check_Settings($ID){
 
+		$db = new PDO('mysql:dbname=' . DB_NAME . ';host=' . DB_HOST . ';charset=utf8', DB_USER, DB_PASS);
+			
+		$db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+		$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);	
+		
+		$statement = null; //The statement
+			
+		try {
+			$statement = $db->prepare('SELECT json_settings FROM users_settings WHERE id = :id');			
+		} catch (PDOException $e) {
+								
+			//Error code 1146 - unable to find database.
+			return 'Internal_Server_Error'; //Error.
+		}
+			
+		try {
+			$statement->execute(array(':id' => $ID));
+		} catch (PDOException $e) {
+		
+			//Error code 23000 - unable to to create because of duplicate id.
+			return 'Error_Try_Again'; //Error.
+		}		
+
+		$result = $statement->fetch();
+		
+		return json_decode($result['json_settings'], true);
+	}
+	
+		//Get the user settings by users account id.
+	function FN_Server_Load_Settings(){
+
+		$db = new PDO('mysql:dbname=' . DB_NAME . ';host=' . DB_HOST . ';charset=utf8', DB_USER, DB_PASS);
+			
+		$db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+		$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);	
+		
+		$statement = null; //The statement
+			
+		try {
+			$statement = $db->prepare('SELECT json_server_settings FROM server_settings');			
+		} catch (PDOException $e) {
+								
+			//Error code 1146 - unable to find database.
+			return 'Internal_Server_Error'; //Error.
+		}
+			
+		try {
+			$statement->execute();
+		} catch (PDOException $e) {
+		
+			//Error code 23000 - unable to to create because of duplicate id.
+			return 'Error_Try_Again'; //Error.
+		}		
+
+		$result = $statement->fetch();
+		
+		return json_decode($result['json_server_settings'], true);
+	}
+	
+//End of functions.
 
 	// load the login class
 	require_once('../classes/Login.php');
@@ -168,41 +229,101 @@
 	   echo "logout";
 	}
 
-//Check account
-	
+		
 	//Global Variables.
 	$Error = false;
 	$Error_Details = "No Error";
+	
+	$Sanitize_Problem = false;
+	$Sanitize_Problem_Details = "No Problem";
+	
+	
+
+//Sanitize Input
+
+	//Input
+	//Check for the title being posted and if so we continue.
+	
+	//Title.
+	if(strlen($_POST['title']) > 80 ||  strlen($_POST['title']) < 6){
+		//The title can be no longer then 80 characters long and has to be at least 6.
+		
+		$Sanitize_Problem = true;
+		$Sanitize_Details = "The title must be between 6 to 80 characters long.";
+		
+	}
+	
+		//Short Description
+		//Quantity for sale.
+		//Long description
+		//Terms of sale
+		//Price
+	
+	
+	
+//Check account
+	
+	//Local Global Variables.
 
 	$User_Name_Id_result = null;
 	$User_Name_Balance_result = null;
-
+	
+	$User_Fee_To_Post = null;
+	
 
 	//Get the user_id
 	if($Error == false){		
 		$User_Name_Id_result = FN_User_Get_Id($_SESSION['user_name']);
-		if($User_Name_Id_result == 'Internal_Server_Error' || $User_Name_Id_result == 'Error_Try_Again'){
-			$Error_Details = 'An error has occoured, if the error presits please contact support and provide them with ERR:P1:150.';
+		if($User_Name_Id_result == 'Internal_Server_Error' || $User_Name_Id_result == 'Error_Try_Again' || $User_Name_Id_result == null){
+			$Error_Details = 'An error has occurred, if the error continues please contact support and provide them with ERR:P1:150.';
 			$Error = true;
 		}
 	}	
 	
-	//Get the user funds
+	//Check account settings to see if they are Banned from posting.
 	if($Error == false){
-		$User_Name_Balance_result = FN_User_Check_Balance($User_Name_Id_result);
-		if($User_Name_Balance_result == 'Internal_Server_Error' || $User_Name_Balance_result == 'Error_Try_Again'){
-			$Error_Details = 'An error has occoured, if the error presits please contact support and provide them with ERR:P1:189.';
+		$User_Name_Settings_result = FN_User_Check_Settings($User_Name_Id_result);
+		if($User_Name_Settings_result == 'Internal_Server_Error' || $User_Name_Settings_result == 'Error_Try_Again' || $User_Name_Settings_result == null){
+			$Error_Details = 'An error has occurred, if the error continues please contact support and provide them with ERR:P1:255.';
 			$Error = true;
 		}
+		
+		if($User_Name_Settings_result['Banned_From_Posting'] == 'true'){
+			$Error_Details = 'Your account has been disabled from posting new products onto the market place, if you believe this is an error please contact support.';
+			$Error = true;
+		}
+		
+		//Set the fee
+		$User_Fee_To_Post = $User_Name_Settings_result['Post_Fee'];
+		
+		//Check to make sure it is set and also is not paying to post.
+		if($User_Fee_To_Post == null || $User_Fee_To_Post < 0){
+			$Error_Details = 'An error has occurred, if the error continues please contact support and provide them with ERR:P1:241.';
+			$Error = true;
+		}
+	}	
+		
+	//Check the user funds
+	if($Error == false){
+		$User_Name_Balance_result = FN_User_Check_Balance($User_Name_Id_result);
+		if($User_Name_Balance_result == 'Internal_Server_Error' || $User_Name_Balance_result == 'Error_Try_Again' || $User_Name_Balance_result == null){
+			$Error_Details = 'An error has occurred, if the error continues please contact support and provide them with ERR:P1:189.';
+			$Error = true;
+		}
+		
+		if($User_Name_Balance_result < $User_Fee_To_Post){
+			$Error_Details = 'An error has occurred, you have insufficient funds to post a new product on the market place.';
+			$Error = true;
+		}
+
 	}
 	
 	
-	
-	echo $User_Name_Balance_result;
+	echo $Error_Details; //Debugging	
+	echo $User_Name_Balance_result; //Debugging
 	
 
 
-//Sanitize Input - (Skipped)
 
 //Post.
 
@@ -271,7 +392,6 @@ Product_abbreviated
 Product_abbreviated
 	- title (80 characters)
 	- short_description (140 characters)
-	- tags
 	NP- compressed rating
 	NP- price :lowest
 	- picture url code
@@ -366,7 +486,26 @@ end of debugging stuff
 
  
 
- 
+<?php
+
+	//Restore the posted data on error/load the categorise
+	
+		
+	//Load categorise.
+	$Categorise = null;
+	
+	$Server_Settings_Results = null;
+	
+	$Server_Settings_Results = FN_Server_Load_Settings();
+	if($Server_Settings_Results == 'Internal_Server_Error' || $Server_Settings_Results == 'Error_Try_Again' || $Server_Settings_Results == null){
+		$Error_Details = 'An error has occurred, if the error continues please contact support and provide them with ERR:P1:480.';
+		$Error = true;		
+	}else{
+		//Set the $Categorise.
+		$Categorise = $Server_Settings_Results['Categories'];
+	}
+
+?>
 
  
 
@@ -380,8 +519,16 @@ end of debugging stuff
     <input id="short_description" type="text" pattern="[a-zA-Z0-9]{2,64}" name="short_description" required /></input>
 	<br>
 
-    <label for="tags">Tags</label>
-    <input id="Tags" type="Text" name="Tags" required />
+	categories
+	<label for="categorise">categories</label>
+	<select id = "categorise">
+	<?php 
+		//Display the Categories.
+		foreach ($Categorise as &$item) {
+			echo '<option value="' . $item . '">' . $item .'</option>';
+		}	
+	?>	
+	</select>
 	<br>
   
 	<label for="quantity_for_sale">Quantity for sale</label>
