@@ -83,6 +83,37 @@
 		return $result;
 	}
 	
+		//Load the extra information
+	function FN_Order_Information_Sold($id){	
+
+		$db = new PDO('mysql:dbname=' . DB_NAME . ';host=' . DB_HOST . ';charset=utf8', DB_USER, DB_PASS);
+			
+		$db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+		$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);	
+		
+		$statement = null; //The statement
+			
+		try {
+			$statement = $db->prepare('SELECT * FROM order_information WHERE buyer_id = :seller_id');			
+		} catch (PDOException $e) {
+			
+			//Error code 1146 - unable to find database.
+			return 'Internal_Server_Error'; //Error.
+		}
+				
+		try {
+			$statement->execute(array(':seller_id' => $id));
+		} catch (PDOException $e) {
+		
+			//Error code 23000 - unable to to create because of duplicate id.
+			return 'Error_Try_Again'; //Error.
+		}		
+		
+		$result = $statement->fetchAll();
+
+		return $result;
+	}
+	
 	//Check to insure that the id is theirs.	
 	function FN_User_Get_Id($Username){
 
@@ -114,7 +145,110 @@
 		return $result['user_id'];
 	}
 	
+	
+	function FN_Archive_Id($Id, $user_id){
+				
+		$db = new PDO('mysql:dbname=' . DB_NAME . ';host=' . DB_HOST . ';charset=utf8', DB_USER, DB_PASS);
+			
+		$db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+		$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);	
+		
+		$statement = null; //The statement
+			
+		try {
+			$statement = $db->prepare('SELECT * FROM archive_table WHERE user_id = :user_id');			
+		} catch (PDOException $e) {
+			
+			//Error code 1146 - unable to find database.
+			return 'Internal_Server_Error'; //Error.
+		}
+				
+		try {
+			$statement->execute(array(':user_id' => $user_id));
+		} catch (PDOException $e) {
+		
+			//Error code 23000 - unable to to create because of duplicate id.
+			return 'Error_Try_Again'; //Error.
+		}		
+		
+		$result = $statement->fetch();
+		
+		
+
+		//check if it's null or we should +=
+		if($result == false){
+		
+			$FF = array($Id);			
+					
+			$statement = $db->prepare('INSERT INTO archive_table (user_id, blocked_numbers) VALUES (:user_id, :blocked_numbers)');
+			$statement->execute(array(':user_id' => $user_id, ':blocked_numbers' => json_encode($FF)));
+	
+		}
+		else{
+			
+			$JSONNO = json_decode($result['blocked_numbers'], true);
+			
+			array_push ($JSONNO, $Id);			
+			
+			$SS = json_encode($JSONNO);
+			
+			$statement = $db->prepare('UPDATE archive_table SET blocked_numbers = :blocked_numbers WHERE user_id = :user_id');
+			$statement->execute(array(':user_id' => $user_id, ':blocked_numbers' => $SS));
+		}
+		
+		
+		
+	}
+	
+	if(strlen($_GET['archive']) > 0){
+
+		FN_Archive_Id(preg_replace("/[^0-9,.]/", "", $_GET['archive']), FN_User_Get_Id($_SESSION['user_name']));
+	}
+	
+	
+	function FN_Archive_Block_List($user_id){
+				
+		$db = new PDO('mysql:dbname=' . DB_NAME . ';host=' . DB_HOST . ';charset=utf8', DB_USER, DB_PASS);
+			
+		$db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+		$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);	
+		
+		$statement = null; //The statement
+			
+		try {
+			$statement = $db->prepare('SELECT blocked_numbers FROM archive_table WHERE user_id = :user_id');			
+		} catch (PDOException $e) {
+			
+			//Error code 1146 - unable to find database.
+			return 'Internal_Server_Error'; //Error.
+		}
+				
+		try {
+			$statement->execute(array(':user_id' => $user_id));
+		} catch (PDOException $e) {
+		
+			//Error code 23000 - unable to to create because of duplicate id.
+			return 'Error_Try_Again'; //Error.
+		}		
+		
+		$result = $statement->fetch();
+
+var_dump($result);		
+		
+		$result = json_decode($result, true);
+		
+		
+		echo "SADASD";
+		
+		var_dump($result);
+				
+		
+		
+		return $result['blocked_numbers'];
+	}
+	
 ?>
+
 	
 <?php 
 	require_once('../global/nav-bar.php');
@@ -221,10 +355,18 @@
 				//$Purchase_History = FN_Purchase_History(FN_User_Get_Id($_SESSION['user_name']));
 				$Purchase_History = FN_Order_Information(FN_User_Get_Id($_SESSION['user_name']));
 				
+				$blocked_numbers = FN_Archive_Block_List(FN_User_Get_Id($_SESSION['user_name']));
 						
 				foreach ($Purchase_History as &$value) {
 					
 					//$Load_Extra = FN_Order_Information($value['order_information_id']);
+					
+					var_dump($blocked_numbers);
+					
+					if(in_array($value['id'], $blocked_numbers)){
+						//Blocked
+						echo "blocked";
+					}
 					
 					
 					echo '<tr>';
@@ -241,7 +383,7 @@
 					}
 				
 					echo '<td><a href="../account/sellers_order_overview.php?id=' . $value['id'] . '" class="btn">Details</a></td>';
-					echo '<td><a href="#" class="btn">Archive</a></td>';
+					echo '<td><a href="../account/sellers_dashboard.php?archive=' . $value['id'] . '" class="btn">Archive</a></td>';
 					echo '</tr>';
 				}
 			  ?>			
@@ -273,48 +415,43 @@
 			<table>
 			 <thead>
 			  <tr>
-				<th scope="col">Buyer</th>
-				<th scope="col">Product</th>
-				<th scope="col">Quantity</th>				
-				<th scope="col">Unit Price</th>
-				<th scope="col">Shipping Cost</th>
+				<th scope="col">Order Id</th>
+				<th scope="col">Order Date</th>
+				
+				<th scope="col">Total Cost</th>						
+				
 				<th scope="col">Purchase Date</th>
 				<th scope="col">Details</th>
 				<th scope="col">Archive</th>
 			  </tr>
 			  </thead>
 			  <tbody>
-			  <tr>
-				<th><a href="#" style="text-decoration: none;color: #FFFFFF;">ONE IS SMALL</a></th>
-				<td><a href="#" style="text-decoration: none;color: #FFFFFF;">TWO THEY SCALE</a></td>
-				<td>7</td>
-				<td>$3.21</td>
-				<td>$3.21</td>
-				<td>3/2/1</td>
-				<td><a href="#" class="btn">Details</a></td>
-				<td><a href="#" class="btn">Archive</a></td>
-			  </tr>
-			  <tr>
-				<th><a href="#" style="text-decoration: none;color: #FFFFFF;">ONE IS SMALL</a></th>
-				<td><a href="#" style="text-decoration: none;color: #FFFFFF;">TWO THEY SCALE</a></td>
-				<td>7</td>
-				<td>$3.21</td>
-				<td>$3.21</td>
-				<td>3/2/1</td>
-				<td><a href="#" class="btn">Details</a></td>
-				<td><a href="#" class="btn">Archive</a></td>
-			  </tr>
-			  <tr>
-			  	<th><a href="#" style="text-decoration: none;color: #FFFFFF;">ONE IS SMALL</a></th>
-				<td><a href="#" style="text-decoration: none;color: #FFFFFF;">TWO THEY SCALE</a></td>
-				<td>7</td>
-				<td>$3.21</td>
-				<td>$3.21</td>
-				<td>3/2/1</td>
-				<td><a href="#" class="btn">Details</a></td>
-				<td><a href="#" class="btn">Archive</a></td>
+			  <?php
+
+				//$Purchase_History = FN_Purchase_History(FN_User_Get_Id($_SESSION['user_name']));
+				$Purchase_History = FN_Order_Information_Sold(FN_User_Get_Id($_SESSION['user_name']));
 				
-			  </tr>
+						
+				foreach ($Purchase_History as &$value) {
+					
+					echo '<tr>';
+					echo '<th><a href="#" style="text-decoration: none;color: #FFFFFF;">' . $value['id'] . '</a></th>';	
+					echo '<td><a href="#" style="text-decoration: none;color: #FFFFFF;">' . $value['order_date'] . '</a></td>';
+					
+					echo '<td>$' . $value['price'] . '</td>';
+					
+					//Handle the case where it says Ipn_pending  
+					if($value['status'] == 'ipn_pending'){
+						echo '<td>' . 'Payment Pending' . '</td>';
+					}else{
+						echo '<td>' . ucfirst($value['status']) . '</td>';
+					}
+				
+					echo '<td><a href="../account/sellers_order_overview.php?id=' . $value['id'] . '" class="btn">Details</a></td>';
+					echo '<td><a href="../account/sellers_dashboard.php?archive=' . $value['id'] . '" class="btn">Archive</a></td>';
+					echo '</tr>';
+				}
+			  ?>			
 			  </tbody>
 			</table>
 			</div>
