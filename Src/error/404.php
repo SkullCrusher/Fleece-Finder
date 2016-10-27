@@ -38,6 +38,10 @@
 		if($_GET['error'] == 4){
 			$Error_Reason = "The administrator has suspended this account from rating/editing products please contact support if you believe this is a mistake.";
 		}
+		
+		if($_GET['error'] == 5){
+			$Error_Reason = "The administrator has suspended this account from messaging please contact support if you believe this is a mistake.";
+		}
 	
 		if($_GET['error'] == 17){
 			$Error_Reason = "OH NO SQL ERR0RS HAVE 0CC0URED PLEAS7 ndon' Accue\$s Page - The Administration.";

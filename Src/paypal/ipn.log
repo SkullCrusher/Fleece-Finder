@@ -86,3 +86,32 @@ Strict-Transport-Security: max-age=63072000
 
 INVALID
 [2015-01-25 13:53 America/Los_Angeles] Invalid IPN: cmd=_notify-validate
+[2015-01-31 00:13 America/Los_Angeles] HTTP request of validation request:POST /cgi-bin/webscr HTTP/1.1
+Host: www.paypal.com
+Accept: */*
+Connection: Close
+Content-Length: 20
+Content-Type: application/x-www-form-urlencoded
+
+ for IPN payload: cmd=_notify-validate
+[2015-01-31 00:13 America/Los_Angeles] HTTP response of validation request: HTTP/1.1 200 OK
+Server: Apache
+X-Frame-Options: SAMEORIGIN
+Content-Type: text/html; charset=UTF-8
+DC: slc-a-origin-www-2.paypal.com
+Date: Sat, 31 Jan 2015 08:13:09 GMT
+Content-Length: 7
+Connection: close
+Set-Cookie: cwrClyrK4LoCV1fydGbAxiNL6iG=aTIqCm3_TXNf3xOnR-BdTEi2403bOvv6GUs5jVzssA6rBLPOQ5Rbno_VYqZLy8xOWR4mvEiIk40ikIEU1QKimW7uTPsChOrsgBgOyDEBKWfkdHfPxHiuJb3qizp4ILpmASAWA1uukSfVZ75Y3aXxrD_tm8vAkCMUFNOhiFNnAJmh0ZYnPq9jH9otKg98ZWEVSgaURg3cHAh5KSeVvWBFgSCaNef34s6svjNQ6mqEbIR07KizPooCR1NMKtfZTUUFOHjB4ZQi_l9cyOWHaPM8zBzfmvSVLJ_R3peqgYi9VL1bHtFMKdfHApWM2OGYKl1NH2tVq53fDI7obMDxfOdPE2mGxUkviLothsXw0XZwU1AMPTd5NMg2yE7K0lQ8QxFVMFOASMrOnH76CZpdow9sdRs2zszdgbuCcTyI7dHD-flMEKanarqDkw7FA8m; domain=.paypal.com; path=/; Secure; HttpOnly
+Set-Cookie: cookie_check=yes; expires=Tue, 28-Jan-2025 08:13:09 GMT; domain=.paypal.com; path=/; Secure; HttpOnly
+Set-Cookie: navcmd=_notify-validate; domain=.paypal.com; path=/; Secure; HttpOnly
+Set-Cookie: navlns=0.0; expires=Mon, 30-Jan-2017 08:13:09 GMT; domain=.paypal.com; path=/; Secure; HttpOnly
+Set-Cookie: Apache=10.73.8.134.1422691988924818; path=/; expires=Mon, 23-Jan-45 08:13:08 GMT
+Set-Cookie: X-PP-SILOVER=name%3DLIVE5.WEB.1%26silo_version%3D880%26app%3Dappdispatcher%26TIME%3D2492386388; domain=.paypal.com; path=/; Secure; HttpOnly
+Set-Cookie: X-PP-SILOVER=; Expires=Thu, 01 Jan 1970 00:00:01 GMT
+Set-Cookie: Apache=10.73.8.71.1422691988915129; path=/; expires=Mon, 23-Jan-45 08:13:08 GMT
+Set-Cookie: AKDC=slc-a-origin-www-2.paypal.com; expires=Sat, 31-Jan-2015 08:43:09 GMT; path=/; secure
+Strict-Transport-Security: max-age=63072000
+
+INVALID
+[2015-01-31 00:13 America/Los_Angeles] Invalid IPN: cmd=_notify-validate
