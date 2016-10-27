@@ -111,9 +111,44 @@
 <div class="container_12 backgroundwhite">
 
  <head>
-
-  <link rel="stylesheet" type="text/css" href="../Assets/theme.css"> 
   
+	<style>  
+	
+	.spacer{
+		padding-top: 5px;
+		padding-bottom: 5px;
+		
+		margin-bottom: 5px;
+		
+		border-bottom:1px solid #333333;
+		text-align:center;
+		color:#06ba8f;
+	}
+	
+	.product {
+
+	  
+	}
+	
+	.product p{
+		color: #333;
+		margin: 2px;
+		
+	}
+	
+	.product img {
+		width: 225px;
+		height: 225px;
+	}	
+	.product_title{
+		color: #000000;	
+	}	
+	.product_title:hover{
+		color: #2ECC71;	
+	}
+	
+	
+	</style>
  </head>
 
 	<?php
@@ -134,23 +169,44 @@
 				//var_dump($value);
 			}
 		}
-	
-		//var_dump($Result_List);
-	
-	
+		
 	?>
+	<div class="spacer" style=""></div>
 	
-	<div class="container_12">   
-    <div class="grid_4">
-     <a href="projects/tic/index.php"><img class="work" src="../Assets/Images/section1.png"></a>
-    </div>
-    <div class="grid_8">
-     <h2 style="border-bottom:3px solid #333333;text-align:center;color:#06ba8f;padding-bottom:1px;margin-top:-12px"><b>Tic Tac Toe</b></h2>
-     <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec risus nisi, ultrices at tristique sit amet, posuere ut ante. Nullam in enim in velit venenatis fringilla eget nec purus. Sed sodales viverra commodo. Vestibulum nec egestas est. In vestibulum orci vitae scelerisque dictum. Nam erat metus, consectetur nec luctus eu, dictum quis mauris. Vestibulum fermentum velit massa, at venenatis orci ultricies vel..</p>
-     <a href="projects/tic/index.php"><div class="checkmeout">Look at this product</div></a>
-    </div>
-   </div>
 	
+	<div class="product">
+		<div class="container_12">   
+		
+		<div class="grid_3">
+		 <a href="projects/tic/index.php"><img class="work" src="../Assets/Images/section1.png"></a>
+		</div>
+		
+		<div class="grid_9" style="padding-left: 10px;">
+		 <h2><b class="product_title">Your a bitch, bitch!</b></h2>
+		 <p style="font-size: 18px;"><b><a style="color: #000;">$84,723</a> / Unit</b></p>
+		 <p>Shipping <b><a style="color: #000;">$4.32</a></b></p>
+		 
+		 <p>This product is <b><a style="color: #000;">Out of stock</a></b></p>
+		 
+		 
+		 <form method="post" style="float:right; padding-right: 10px;" action=" http://www.scriptencryption.com/cart/cart_add.php">	
+						
+			<input name="return_url" value="<?php echo base64_encode("http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]"); ?>" type="hidden">
+
+			<input name="product_code" value="142" type="hidden">
+			<input name="product_owner" value="user" type="hidden">
+			<input name="product_quantity" value="1" type="hidden">		
+
+			<input name="I amma unicorn." value="I AM TEH UNICORN AND I LIKE TO MAGIC RANDBOS ADN NO IS SCARE OF NO ONE!" type="hidden">	
+						
+			<input name="login" class="buynow addtocart" style="margin-top: 8px;border-style:none;" value="Add to cart" type="submit">
+			</form>
+		 		 
+		
+		</div>
+	   </div>  
+	</div>   
+  
 
 </div>
 

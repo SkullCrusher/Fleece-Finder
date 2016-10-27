@@ -51,12 +51,16 @@
 		}	
 	}
 
-	print_r($_SESSION['cart']);
+	
+	header('Location: ' . base64_decode($_POST['return_url']));
+	die();
+	
+	//print_r($_SESSION['cart']);
 	//$_SESSION['cart'] = null;
 	//header('Location: ');
 	//die();	
-?>
 
+/*
 CART
 
 <form method="post" action="cart_add.php">		
@@ -70,3 +74,5 @@ CART
 	
 	<input type="submit" name="login" class="buynow addtocart" value="Login" />
 </form>
+*/
+?>
