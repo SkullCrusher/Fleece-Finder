@@ -392,7 +392,70 @@
 					$Tracking_Company = htmlspecialchars($Product_Loaded['package_carrier'], ENT_QUOTES);	
 					$Canceled = htmlspecialchars($Product_Loaded['canceled'], ENT_QUOTES);	
 
+					if($_GET['sold'] == 't'){
+					
+						$ID = FN_User_Get_Id($_SESSION['user_name']);
+						
+						if($ID == $Product_Loaded['seller_id']){
+					
 			?>				
+				<table>
+				 <thead>
+				  <tr>
+					<th scope="col"></th>
+					<th scope="col"></th>				
+				  </tr>
+				  </thead>
+				  <tbody>
+				  <tr>
+					<th>Product</th>				
+					<th><a href="http://www.scriptencryption.com/products/product_profile.php?p=<?php echo $value['product_id']; ?>&u=<?php echo FN_User_Get_Username($value['seller_id']); ?>" style="text-decoration: none;color: #FFFFFF;"><?php echo ucfirst($Json_Decode['title']); ?></a></th>
+				  </tr>
+				  <tr>
+					<th>Seller</th>								
+					<th><a href="http://www.scriptencryption.com/account/profile.php?u=<?php echo FN_User_Get_Username($value['seller_id']); ?>" style="text-decoration: none;color: #FFFFFF;"><?php echo FN_User_Get_Username($value['seller_id']); ?></a></th>						
+				  </tr>
+							 
+				  <tr>
+					<th>Quantity</th>
+					<td><?php echo $value['quantity']; ?></td>				
+				  </tr>
+				  <tr>
+					<th>Unit Price</th>
+					<td>$<?php echo number_format($value['price'], 2, '.', ','); ?></td>		
+				  </tr>	 
+				  
+				  <tr>
+					<th>Status/Shipped</th>
+					<td><?php echo ucfirst($Status); ?></td>				
+				  </tr> 
+				  
+				  <tr>
+					<th>Tracking Number: </th>
+					<td><?php echo $Tracking_Number; ?></td>			
+				  </tr>
+				  
+				  <tr>
+					<th>Shipping company: </th>
+					<td><?php echo $Tracking_Company; ?></td>
+				  </tr>
+				  
+				  <tr>
+					<th>Extra Information</th>
+					<td><a href="../account/sellers_order_details.php?sold=t&id=<?php echo $value['id']; ?>" class="btn">Details</a></td>
+				  </tr>			
+				  
+				  </tbody>
+				</table>
+						<?php 
+						}}else{
+							
+							$ID = FN_User_Get_Id($_SESSION['user_name']);
+						
+						if($ID == $Product_Loaded['customer_id']){
+					
+							
+							?>				
 				<table>
 				 <thead>
 				  <tr>
@@ -441,7 +504,16 @@
 				  
 				  </tbody>
 				</table>
-			<?php } ?>
+						<?php 
+						}
+							
+							
+							
+						}
+						
+
+
+						}?>
 			
 			</div>
 

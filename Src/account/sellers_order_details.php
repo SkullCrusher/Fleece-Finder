@@ -59,7 +59,7 @@
 	$Product_Loaded_temp = FN_Product_Order($_GET['id']);
 	
 	//check to see if they are the seller else go to the homepage
-	if($Product_Loaded_temp['seller_id'] != $User_Id){
+	if($Product_Loaded_temp['seller_id'] != $User_Id || $Product_Loaded_temp['customer_id'] != $User_Id){
 		header('Location: http://'.$_SERVER['HTTP_HOST'].'/index.php');
 		die();
 	}
@@ -388,10 +388,23 @@
 	//$new = htmlspecialchars("<a href='test'>Test</a>", ENT_QUOTES);
 	//echo $new; // &lt;a href=&#039;test&#039;&gt;Test&lt;/a&gt;	
 	
+	$BLOCK = false;	
+		
+	if($_GET['sold'] == 't'){
+		
+		$ID = FN_User_Get_Id($_SESSION['user_name']);
+							
+		if($ID == $Product_Loaded['seller_id']){
+			$BLOCK = false;
+		}else{
+			$BLOCK = true;
+		}
 	
+	}else{	
+		$BLOCK = true;		
+	}
 	
-
-	
+	//var_dump($BLOCK);
 ?>
 	
 <?php 
@@ -523,11 +536,10 @@
 
 			  <tr>
 				<th>Shipping cost <?php if($Shipping_Multiple){ echo "unit";} ?></th>
-				<td>$<?php echo number_format($Shipping_Price_unchanged , 2, '.', ','); ?></td>		
-			  </tr>	
+				<td>$<?php echo number_format($Shipping_Price_unchanged , 2, '.', ','); ?></td>
 			  <tr>
 			  	<th>Shipping collected</th>
-				<td>$<?php echo number_format($Shipping_Price, 2, '.', ','); ?></td>				
+				<td>$<?php echo number_format($Shipping_Price, 2, '.', ','); ?></td>
 			  </tr>
 			  <tr>
 			  	<th>Total collected</th>
@@ -555,32 +567,44 @@
 			  </tr>
 			  <tr>
 			  	<th>Shipped: <?php echo $Status; ?></th>
-				<td><a href="sellers_order_details.php?id=<?php echo $_GET['id']; ?>&ship=true" class="btn">Mark as Shipped</a></td>				
+				<td>
+				<?php if($BLOCK == false){ ?>
+				<a href="sellers_order_details.php?id=<?php echo $_GET['id']; ?>&ship=true" class="btn">Mark as Shipped</a>	
+				<?php } ?>
+				</td>
 			  </tr> 
 			  
 			  <tr>
 			  	<th>Tracking Number: <?php echo $Tracking_Number; ?></th>
 				<td>
+				<?php if($BLOCK == false){ ?>
 				<form method="post" action="sellers_order_details.php?id=<?php echo $_GET['id']; ?>&trackingnumber=true" id="create_product_new" name="create_product_new">
 					<input id="trackingnumber" class="textbox" style="width: 100px;margin-top: 0px;" type="text" name="trackingnumber" placeholder="Ex: 102937825401"/></input>					 
 					<input type="submit" class="btn" style="margin-top: 0px;padding-top:3px" name="register" value="Set tracking number" />
 				</form>
+				<?php } ?>
 				</td>			
 			  </tr>
 			  
 			  <tr>
 			  	<th>Shipping company: <?php echo $Tracking_Company; ?></th>
 				<td>
+				<?php if($BLOCK == false){ ?>
 				<form method="post" action="sellers_order_details.php?id=<?php echo $_GET['id']; ?>&ship=true" id="create_product_new" name="create_product_new">
 					<input id="companycode" class="textbox" style="width: 100px;margin-top: 0px;" type="text" name="companycode" placeholder="Ex: USPS"/></input>					 
 					<input type="submit" class="btn" style="margin-top: 0px;padding-top:3px" name="register" value="Set shipping company" />
 				</form>
+				<?php } ?>
 				</td>
 			  </tr>
 			  
 			  <tr>
 			  	<th>Canceled: <?php echo $Canceled; ?></th>
-				<td><a href="sellers_order_details.php?id=<?php echo $_GET['id']; ?>&canceled=true" class="btn">Cancel Order</a></td>
+				<td>
+				<?php if($BLOCK == false){ ?>
+					<a href="sellers_order_details.php?id=<?php echo $_GET['id']; ?>&canceled=true" class="btn">Cancel Order</a>
+				<?php } ?>
+				</td>
 			  </tr>
 			  
 			  </tbody>

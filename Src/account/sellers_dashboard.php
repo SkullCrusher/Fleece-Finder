@@ -232,19 +232,10 @@
 		}		
 		
 		$result = $statement->fetch();
-
-var_dump($result);		
 		
-		$result = json_decode($result, true);
-		
-		
-		echo "SADASD";
-		
-		var_dump($result);
+		$result = json_decode($result['blocked_numbers'], true);
 				
-		
-		
-		return $result['blocked_numbers'];
+		return $result;
 	}
 	
 ?>
@@ -344,7 +335,7 @@ var_dump($result);
 				
 				<th scope="col">Total Cost</th>						
 				
-				<th scope="col">Purchase Date</th>
+				<th scope="col">Purchase Status</th>
 				<th scope="col">Details</th>
 				<th scope="col">Archive</th>
 			  </tr>
@@ -356,17 +347,17 @@ var_dump($result);
 				$Purchase_History = FN_Order_Information(FN_User_Get_Id($_SESSION['user_name']));
 				
 				$blocked_numbers = FN_Archive_Block_List(FN_User_Get_Id($_SESSION['user_name']));
-						
+				
+
 				foreach ($Purchase_History as &$value) {
 					
 					//$Load_Extra = FN_Order_Information($value['order_information_id']);
-					
-					var_dump($blocked_numbers);
+			
 					
 					if(in_array($value['id'], $blocked_numbers)){
 						//Blocked
-						echo "blocked";
-					}
+						
+					}else{
 					
 					
 					echo '<tr>';
@@ -385,6 +376,7 @@ var_dump($result);
 					echo '<td><a href="../account/sellers_order_overview.php?id=' . $value['id'] . '" class="btn">Details</a></td>';
 					echo '<td><a href="../account/sellers_dashboard.php?archive=' . $value['id'] . '" class="btn">Archive</a></td>';
 					echo '</tr>';
+					}
 				}
 			  ?>			
 			  </tbody>
@@ -420,7 +412,7 @@ var_dump($result);
 				
 				<th scope="col">Total Cost</th>						
 				
-				<th scope="col">Purchase Date</th>
+				<th scope="col">Purchase Status</th>
 				<th scope="col">Details</th>
 				<th scope="col">Archive</th>
 			  </tr>
@@ -431,25 +423,34 @@ var_dump($result);
 				//$Purchase_History = FN_Purchase_History(FN_User_Get_Id($_SESSION['user_name']));
 				$Purchase_History = FN_Order_Information_Sold(FN_User_Get_Id($_SESSION['user_name']));
 				
+					
+				$blocked_numbers = FN_Archive_Block_List(FN_User_Get_Id($_SESSION['user_name']));
+				
 						
 				foreach ($Purchase_History as &$value) {
 					
-					echo '<tr>';
-					echo '<th><a href="#" style="text-decoration: none;color: #FFFFFF;">' . $value['id'] . '</a></th>';	
-					echo '<td><a href="#" style="text-decoration: none;color: #FFFFFF;">' . $value['order_date'] . '</a></td>';
-					
-					echo '<td>$' . $value['price'] . '</td>';
-					
-					//Handle the case where it says Ipn_pending  
-					if($value['status'] == 'ipn_pending'){
-						echo '<td>' . 'Payment Pending' . '</td>';
+					if(in_array($value['id'], $blocked_numbers)){
+						//Blocked						
 					}else{
-						echo '<td>' . ucfirst($value['status']) . '</td>';
+					
+						echo '<tr>';
+						echo '<th><a href="#" style="text-decoration: none;color: #FFFFFF;">' . $value['id'] . '</a></th>';	
+						echo '<td><a href="#" style="text-decoration: none;color: #FFFFFF;">' . $value['order_date'] . '</a></td>';
+						
+						echo '<td>' . '*' . '</td>';
+						
+						//Handle the case where it says Ipn_pending  
+						if($value['status'] == 'ipn_pending'){
+							echo '<td>' . 'Payment Pending' . '</td>';
+						}else{
+							echo '<td>' . ucfirst($value['status']) . '</td>';
+						}
+					
+						echo '<td><a href="../account/sellers_order_overview.php?sold=t&id=' . $value['id'] . '" class="btn">Details</a></td>';
+						echo '<td><a href="../account/sellers_dashboard.php?archive=' . $value['id'] . '" class="btn">Archive</a></td>';
+						echo '</tr>';
+					
 					}
-				
-					echo '<td><a href="../account/sellers_order_overview.php?id=' . $value['id'] . '" class="btn">Details</a></td>';
-					echo '<td><a href="../account/sellers_dashboard.php?archive=' . $value['id'] . '" class="btn">Archive</a></td>';
-					echo '</tr>';
 				}
 			  ?>			
 			  </tbody>
