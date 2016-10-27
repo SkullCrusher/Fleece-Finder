@@ -81,6 +81,8 @@ class Login
         } elseif (!empty($_SESSION['user_name']) && ($_SESSION['user_logged_in'] == 1)) {
             $this->loginWithSessionData();
 
+            // checking for form submit from editing screen
+            // user try to change his username
             if (isset($_POST["user_edit_submit_name"])) {
                 // function below uses use $_SESSION['user_id'] et $_SESSION['user_email']
                 $this->editUserName($_POST['user_name']);
@@ -114,13 +116,30 @@ class Login
         } elseif (isset($_POST["submit_new_password"])) {
             $this->editNewPassword($_POST['user_name'], $_POST['user_password_reset_hash'], $_POST['user_password_new'], $_POST['user_password_repeat']);
         }
+
+        // get gravatar profile picture if user is logged in
+        if ($this->isUserLoggedIn() == true) {
+          //  $this->getGravatarImageUrl($this->user_email);
+        }
     }
 
-    private function databaseConnection(){
+    /**
+     * Checks if database connection is opened. If not, then this method tries to open it.
+     * @return bool Success status of the database connecting process
+     */
+    private function databaseConnection()
+    {
+        // if connection already exists
         if ($this->db_connection != null) {
             return true;
         } else {
             try {
+                // Generate a database connection, using the PDO connector
+                // @see http://net.tutsplus.com/tutorials/php/why-you-should-be-using-phps-pdo-for-database-access/
+                // Also important: We include the charset, as leaving it out seems to be a security issue:
+                // @see http://wiki.hashphp.org/PDO_Tutorial_for_MySQL_Developers#Connecting_to_MySQL says:
+                // "Adding the charset to the DSN is very important for security reasons,
+                // most examples you'll see around leave it out. MAKE SURE TO INCLUDE THE CHARSET!"
                 $this->db_connection = new PDO('mysql:host='. DB_HOST .';dbname='. DB_NAME . ';charset=utf8', DB_USER, DB_PASS);
                 return true;
             } catch (PDOException $e) {
@@ -131,20 +150,21 @@ class Login
         return false;
     }
 
-
-    private function getUserData($user_name){
-		
-		//echo $user_name;
-		
+    /**
+     * Search into database for the user data of user_name specified as parameter
+     * @return user data as an object if existing user
+     * @return false if user_name is not found in the database
+     * TODO: @devplanete This returns two different types. Maybe this is valid, but it feels bad. We should rework this.
+     * TODO: @devplanete After some resarch I'm VERY sure that this is not good coding style! Please fix this.
+     */
+    private function getUserData($user_name)
+    {
         // if database connection opened
         if ($this->databaseConnection()) {
             // database query, getting all the info of the selected user
             $query_user = $this->db_connection->prepare('SELECT * FROM users WHERE user_name = :user_name');
             $query_user->bindValue(':user_name', $user_name, PDO::PARAM_STR);
             $query_user->execute();
-			
-			//var_dump($query_user->fetchObject());
-			
             // get result row (as an object)
             return $query_user->fetchObject();
         } else {
@@ -152,15 +172,27 @@ class Login
         }
     }
 
- 
-    private function loginWithSessionData(){
+    /**
+     * Logs in with S_SESSION data.
+     * Technically we are already logged in at that point of time, as the $_SESSION values already exist.
+     */
+    private function loginWithSessionData()
+    {
         $this->user_name = $_SESSION['user_name'];
         $this->user_email = $_SESSION['user_email'];
 
+        // set logged in status to true, because we just checked for this:
+        // !empty($_SESSION['user_name']) && ($_SESSION['user_logged_in'] == 1)
+        // when we called this method (in the constructor)
         $this->user_is_logged_in = true;
     }
 
-    private function loginWithCookieData(){
+    /**
+     * Logs in via the Cookie
+     * @return bool success state of cookie login
+     */
+    private function loginWithCookieData()
+    {
         if (isset($_COOKIE['rememberme'])) {
             // extract data from the cookie
             list ($user_id, $token, $hash) = explode(':', $_COOKIE['rememberme']);
@@ -203,14 +235,23 @@ class Login
         return false;
     }
 
-    private function loginWithPostData($user_name, $user_password, $user_rememberme){
+    /**
+     * Logs in with the data provided in $_POST, coming from the login form
+     * @param $user_name
+     * @param $user_password
+     * @param $user_rememberme
+     */
+    private function loginWithPostData($user_name, $user_password, $user_rememberme)
+    {
         if (empty($user_name)) {
             $this->errors[] = MESSAGE_USERNAME_EMPTY;
         } else if (empty($user_password)) {
             $this->errors[] = MESSAGE_PASSWORD_EMPTY;
 
+        // if POST data (from login form) contains non-empty user_name and non-empty user_password
         } else {
-
+            // user can login with his username or his email address.
+            // if user has not typed a valid email address, we try to identify him with his user_name
             if (!filter_var($user_name, FILTER_VALIDATE_EMAIL)) {
                 // database query, getting all the info of the selected user
                 $result_row = $this->getUserData(trim($user_name));
@@ -299,7 +340,11 @@ class Login
         }
     }
 
-    private function newRememberMeCookie(){
+    /**
+     * Create all data needed for remember me cookie connection on client and server side
+     */
+    private function newRememberMeCookie()
+    {
         // if database connection opened
         if ($this->databaseConnection()) {
             // generate 64 char random string and store it in current user data
@@ -317,7 +362,11 @@ class Login
         }
     }
 
-    private function deleteRememberMeCookie(){
+    /**
+     * Delete all data needed for remember me cookie connection on client and server side
+     */
+    private function deleteRememberMeCookie()
+    {
         // if database connection opened
         if ($this->databaseConnection()) {
             // Reset rememberme token
@@ -325,10 +374,17 @@ class Login
             $sth->execute(array(':user_id' => $_SESSION['user_id']));
         }
 
+        // set the rememberme-cookie to ten years ago (3600sec * 365 days * 10).
+        // that's obivously the best practice to kill a cookie via php
+        // @see http://stackoverflow.com/a/686166/1114320
         setcookie('rememberme', false, time() - (3600 * 3650), '/', COOKIE_DOMAIN);
     }
 
-    public function doLogout(){
+    /**
+     * Perform the logout, resetting the session
+     */
+    public function doLogout()
+    {
         $this->deleteRememberMeCookie();
 
         $_SESSION = array();
@@ -338,11 +394,20 @@ class Login
         $this->messages[] = MESSAGE_LOGGED_OUT;
     }
 
-    public function isUserLoggedIn(){
+    /**
+     * Simply return the current state of the user's login
+     * @return bool user's login status
+     */
+    public function isUserLoggedIn()
+    {
         return $this->user_is_logged_in;
     }
 
-    public function editUserName($user_name){
+    /**
+     * Edit the user's name, provided in the editing form
+     */
+    public function editUserName($user_name)
+    {
         // prevent database flooding
         $user_name = substr(trim($user_name), 0, 64);
 
@@ -377,7 +442,11 @@ class Login
         }
     }
 
-    public function editUserEmail($user_email){
+    /**
+     * Edit the user's email, provided in the editing form
+     */
+    public function editUserEmail($user_email)
+    {
         // prevent database flooding
         $user_email = substr(trim($user_email), 0, 64);
 
@@ -475,8 +544,10 @@ class Login
      * Sets a random token into the database (that will verify the user when he/she comes back via the link
      * in the email) and sends the according email.
      */
-    public function setPasswordResetDatabaseTokenAndSendMail($user_name){		
-		
+    public function setPasswordResetDatabaseTokenAndSendMail($user_name)
+    {
+		var_dump($user_name);
+		die();
         $user_name = trim($user_name);
 
         if (empty($user_name)) {
@@ -486,19 +557,14 @@ class Login
             // generate timestamp (to see when exactly the user (or an attacker) requested the password reset mail)
             // btw this is an integer ;)
             $temporary_timestamp = time();
-			
             // generate random hash for email password reset verification (40 char string)
             $user_password_reset_hash = sha1(uniqid(mt_rand(), true));
-			
-			
             // database query, getting all the info of the selected user
             $result_row = $this->getUserData($user_name);
-			
-		
 
             // if this user exists
             if (isset($result_row->user_id)) {
-				
+
                 // database query:
                 $query_update = $this->db_connection->prepare('UPDATE users SET user_password_reset_hash = :user_password_reset_hash,
                                                                user_password_reset_timestamp = :user_password_reset_timestamp
@@ -508,16 +574,12 @@ class Login
                 $query_update->bindValue(':user_name', $user_name, PDO::PARAM_STR);
                 $query_update->execute();
 
-				
-				
                 // check if exactly one row was successfully changed:
                 if ($query_update->rowCount() == 1) {
                     // send a mail to the user, containing a link with that token hash string
                     $this->sendPasswordResetMail($user_name, $result_row->user_email, $user_password_reset_hash);
-					
                     return true;
                 } else {
-				
                     $this->errors[] = MESSAGE_DATABASE_ERROR;
                 }
             } else {
@@ -533,15 +595,13 @@ class Login
      */
     public function sendPasswordResetMail($user_name, $user_email, $user_password_reset_hash)
     {
-		$mail = new PHPMailer;		
+        $mail = new PHPMailer;
 
         // please look into the config/config.php for much more info on how to use this!
         // use SMTP or use mail()
         if (EMAIL_USE_SMTP) {
             // Set mailer to use SMTP
             $mail->IsSMTP();
-			
-			
             //useful for debugging, shows full SMTP errors
             //$mail->SMTPDebug = 1; // debugging: 1 = errors and messages, 2 = messages only
             // Enable SMTP authentication
@@ -586,9 +646,6 @@ class Login
         if (empty($user_name) || empty($verification_code)) {
             $this->errors[] = MESSAGE_LINK_PARAMETER_EMPTY;
         } else {
-			
-			echo $user_name;
-			
             // database query, getting all the info of the selected user
             $result_row = $this->getUserData($user_name);
 
@@ -599,14 +656,11 @@ class Login
 
                 if ($result_row->user_password_reset_timestamp > $timestamp_one_hour_ago) {
                     // set the marker to true, making it possible to show the password reset edit form view
-					echo "TRUES";
                     $this->password_reset_link_is_valid = true;
                 } else {
-					echo "FALSERS exp";
                     $this->errors[] = MESSAGE_RESET_LINK_HAS_EXPIRED;
                 }
             } else {
-				echo "FALSERS EXIST no";
                 $this->errors[] = MESSAGE_USER_DOES_NOT_EXIST;
             }
         }

@@ -96,7 +96,7 @@
 
 		FN_Logging_Receipt(hash('md5', $_GET['id']), $_GET['id'], json_encode($JSON));
 	}else{
-		include("../index.php");
+		header("Location: http://www.scriptencryption.com/"); //Error code 1146 - unable to find database. //return 'Internal_Server_Error'; //Error.
 		die();
 	}
 	

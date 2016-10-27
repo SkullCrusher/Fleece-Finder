@@ -275,7 +275,7 @@ padding-bottom:10px;
 		?>
 				
 		<div class="cart-footer">
-			<a href="../cart/cart_shipping.php" style="padding-right: 10px;"><input type="submit" name="login" class="buynow addtocart" style="border-style:none;float:right;margin-left: -120px;margin-top: -8px;margin-right: 5px;" value="Purchase" /></a>
+			<a href="../paypal/process.php?b=t" style="padding-right: 10px;"><input type="submit" name="login" class="buynow addtocart" style="border-style:none;float:right;margin-left: -120px;margin-top: -8px;margin-right: 5px;" value="Purchase" /></a>
 		
 			<form method="post" action="cart_checkout.php">
 			

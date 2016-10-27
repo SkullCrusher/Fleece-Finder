@@ -1,4 +1,5 @@
 <?php
+
 include_once("config.php");
 include_once("paypal.class.php");
 
@@ -21,7 +22,8 @@ if ($login->isUserLoggedIn() == true) {
 }
 
 
-echo 'f';
+
+echo 'Hey there.';
 
 if($_GET['b'] == 't') //Post Data received from product list page.
 {
@@ -112,9 +114,22 @@ if($_GET['b'] == 't') //Post Data received from product list page.
 	}
 	
 		
-	var_dump($Products);
+	//var_dump($Products);
 	
 	//die;
+	
+	//$Shipping_Information_DB = FN_Shipping_Get_Information($_SESSION['shipping_id']);
+	
+	if(strlen($_SESSION['shipping_id']) < 1){
+		header("Location: http://www.scriptencryption.com/error/404.php?error=6"); //Error code 23000 - unable to to create because of duplicate id. //return 'Error_Try_Again'; //Error.
+		//echo "death";
+		die();
+	}
+	
+	
+	//var_dump(FN_Shipping_Get_Information($_SESSION['shipping_id']));
+	//die();
+	
 	
 	//Parameters for SetExpressCheckout, which will be sent to PayPal
 	$padata = 	'&METHOD=SetExpressCheckout'.
@@ -140,19 +155,19 @@ if($_GET['b'] == 't') //Post Data received from product list page.
 				'&L_PAYMENTREQUEST_0_QTY1='. urlencode($ItemQty2).
 				*/
 				
-				/* 
+				
 				//Override the buyer's shipping address stored on PayPal, The buyer cannot edit the overridden address.
 				'&ADDROVERRIDE=1'.
-				'&PAYMENTREQUEST_0_SHIPTONAME=J Smith'.
-				'&PAYMENTREQUEST_0_SHIPTOSTREET=1 Main St'.
-				'&PAYMENTREQUEST_0_SHIPTOCITY=San Jose'.
-				'&PAYMENTREQUEST_0_SHIPTOSTATE=CA'.
+				'&PAYMENTREQUEST_0_SHIPTONAME=' . $_SESSION['shipping_id'] .
+				'&PAYMENTREQUEST_0_SHIPTOSTREET=Not Used'.
+				'&PAYMENTREQUEST_0_SHIPTOCITY=Kennewick'.
+				'&PAYMENTREQUEST_0_SHIPTOSTATE=Wa'.
 				'&PAYMENTREQUEST_0_SHIPTOCOUNTRYCODE=US'.
-				'&PAYMENTREQUEST_0_SHIPTOZIP=95131'.
-				'&PAYMENTREQUEST_0_SHIPTOPHONENUM=408-967-4444'.
-				*/
+				'&PAYMENTREQUEST_0_SHIPTOZIP=99338'.
+				'&PAYMENTREQUEST_0_SHIPTOPHONENUM=000-000-0000'.
 				
-				'&NOSHIPPING=0'. //set 1 to hide buyer's shipping address, in-case products that does not require shipping
+				
+				'&NOSHIPPING=1'. //set 1 to hide buyer's shipping address, in-case products that does not require shipping
 				
 				'&PAYMENTREQUEST_0_ITEMAMT='.urlencode($ItemTotalPrice).
 				'&PAYMENTREQUEST_0_TAXAMT='.urlencode($TotalTaxAmount).
@@ -285,7 +300,7 @@ if(isset($_GET["token"]) && isset($_GET["PayerID"]))
 				// we can retrive transection details using either GetTransactionDetails or GetExpressCheckoutDetails
 				// GetTransactionDetails requires a Transaction ID, and GetExpressCheckoutDetails requires Token returned by SetExpressCheckOut
 				$padata = 	'&TOKEN='.urlencode($token);
-				$paypal= new MyPayPal();
+				$paypal = new MyPayPal();
 				$httpParsedResponseAr = $paypal->PPHttpPost('GetExpressCheckoutDetails', $padata, $PayPalApiUsername, $PayPalApiPassword, $PayPalApiSignature, $PayPalMode);
 
 				if("SUCCESS" == strtoupper($httpParsedResponseAr["ACK"]) || "SUCCESSWITHWARNING" == strtoupper($httpParsedResponseAr["ACK"])) 

@@ -57,7 +57,7 @@ if ($login->isUserLoggedIn() == false) {
 
   <div class="scontainer" id="welcome">
    <section>
-    <h2><b>Let's create something <a href="#contact" id="about">new</a></b></h2>
+    <h2><b>Let's create something <a href="" id="about">new</a></b></h2>
    </section>
    <div class="arrow-down"></div>
   </div>

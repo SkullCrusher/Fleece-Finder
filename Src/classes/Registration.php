@@ -146,7 +146,7 @@ class Registration
             // TODO: this is really awful!
             if (count($result) > 0) {
                 for ($i = 0; $i < count($result); $i++) {
-                    $this->errors[] = ($result[$i]['user_name'] == $user_name) ? MESSAGE_USERNAME_EXISTS : MESSAGE_EMAIL_ALREADY_EXISTS;
+                    $this->errors[] = "Error: Username or email is already used.";
                 }
             } else {
                 // check if we have a constant HASH_COST_FACTOR defined (in config/hashing.php),
@@ -216,7 +216,7 @@ class Registration
 				$Json_User_Banned_From_Messaging = 'false';
 				
 				
-				$Json_User_Post_Fee = '0.2'; // 20 cents.
+				$Json_User_Post_Fee = '0.0'; // 20 cents.
 				
 				$Json_User_Allow_Messages = 'true'; //Can the user be messaged.
 				
