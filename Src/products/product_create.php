@@ -276,6 +276,7 @@
 			$statement_from = $db_from->prepare('UPDATE users_funds SET funds=:funds WHERE id = :id');	
 			$statement_from->execute(array(':id' => $To_User_ID, ':funds' => $result_to['funds'] + $Amount));		
 			
+			$statement_from = $db_from->prepare('COMMIT');
 			}
 
 	//Add to their products.
@@ -397,9 +398,12 @@
 	$Sanitized_Long_Description = null;
 	$Sanitized_Terms_Of_Sale = null;
 	$Sanitized_Price = 0.0;
+	$Sanitized_Shipping = 0.0;
+	$Sanitized_Cost_Multiple = false;
 	
 	$Sanitized_Category = null;
 	
+	//shipping_cost_multiple
 	//Input
 
 	//Title (6-300) letters
@@ -423,7 +427,6 @@
 		//Replace all non-standard characters.
 		$Sanitized_Short_Description = preg_replace("/[^A-Za-z0-9 \-\(\)]/", '', $_POST['short_description']);		
 	}
-
 		
 	//Category (it has to match one from the sql database);	
 	foreach ($Categorise as &$value) {
@@ -482,7 +485,20 @@
 		$Sanitized_Price = floatval($_POST['price']);		
 	}
 	
-	$Debug_amountleft = 0;
+	//Shipping cost per unit (0 - 1,000);
+	if(floatval($_POST['shipping_cost']) > 4999 || floatval($_POST['shipping_cost']) < 0){
+		//The price cannot be more then $4,999	
+		$Sanitize_Problem = true;
+		$Sanitize_Details = "The shipping cost has to between $0.00 and $4,999.";
+	}else{
+		//Replace all non-standard characters.
+		$Sanitized_Shipping = floatval($_POST['shipping_cost']);		
+	}
+	
+	//Shipping cost multiple 
+	if($_POST['shipping_cost_multiple'] == "true"){
+		$Sanitized_Cost_Multiple = true;
+	}
 	
 	//Check for all the inputs.	
 	if($Sanitized_Title != null && $Sanitized_Short_Description != null && $Sanitized_Quantity != 0 && $Sanitized_Price != 0){
@@ -597,7 +613,7 @@
 			$Compressed_Rating = -1; //unrated
 			$Quantity_For_Sale = $Sanitized_Quantity;
 			
-			$Product_extended = array('long_description' => $Long_Description, 'terms_of_sale' => $Terms_Of_Sale, 'compressed_rating' => $Compressed_Rating, 'quantity' => $Quantity_For_Sale);
+			$Product_extended = array('long_description' => $Long_Description, 'terms_of_sale' => $Terms_Of_Sale, 'compressed_rating' => $Compressed_Rating, 'quantity' => $Quantity_For_Sale, 'shipping_cost' => $Sanitized_Shipping, 'shipping_cost_multiple' => $Sanitized_Cost_Multiple);
 			
 			$Product_extended_json = json_encode($Product_extended);				
 
@@ -648,10 +664,7 @@
 	//$Error_Details = $Sanitize_Problem_Details;
 	if($Error == true){
 		echo "Error: " . $Error_Details;
-	}else{
-		echo "You posted it, your account has " . $Debug_amountleft;
 	}
-	
 	
 ?>
 
@@ -765,7 +778,6 @@ end of debugging stuff
     <label for="short_description">short description</label>	
     <input id="short_description" type="text" pattern="{12,300}" name="short_description" value="<?php echo $_POST['short_description']; ?>"  required /></input>
 	<br>
-
 	
 	<label for="category">category</label>
 	<select id="category" name="category">
@@ -781,6 +793,12 @@ end of debugging stuff
 	<label for="quantity_for_sale">Quantity for sale</label>
     <input id="quantity_for_sale" type="text" pattern="[0-9]{1,4}" name="quantity_for_sale" value="<?php echo $_POST['quantity_for_sale']; ?>"  required /></input>
 	<br>
+	
+	<label for="shipping_cost">Shipping Cost</label>
+    <input id="shipping_cost" type="text" pattern="[0-9.]{1,4}" name="shipping_cost" value="<?php echo $_POST['shipping_cost']; ?>"  required /></input>
+	<br>
+	
+	<input type="checkbox" name="shipping_cost_multiple" value="yes">Should each unit charge an additional shipping?<br>
 	
 	<label for="long_description">Long description</label>
     <input id="long_description" type="text" name="long_description" value="<?php echo $_POST['long_description']; ?>"  required/></input>

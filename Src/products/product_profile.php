@@ -42,6 +42,8 @@
 	$Product_Terms_Of_Sale		= null;
 	$Product_Compressed_Rating	= null;
 	$Quantity					= null;
+	$Shipping_Cost				= null;
+	$Shipping_Cost_Multiple		= null;
 	
 	
 	
@@ -146,6 +148,9 @@
 		$Product_Compressed_Rating	= $Product_Json_Decoded_Extended['compressed_rating'];
 		$Quantity					= $Product_Json_Decoded_Extended['quantity'];
 		
+		$Shipping_Cost = $Product_Json_Decoded_Extended['shipping_cost'];
+		$Shipping_Cost_Multiple = $Product_Json_Decoded_Extended['shipping_cost_multiple'];
+		
 	}
 	
 	
@@ -176,6 +181,10 @@
 		//echo $Product_Compressed_Rating;
 	}
 	
+	/*
+	$Shipping_Cost				= null;
+	$Shipping_Cost_Multiple		= null;
+	*/
 	
 	echo '<br>';
 	echo $Quantity;
@@ -188,7 +197,7 @@ Seller: <a href="../users/profile.php?u=<?php echo $Product_Owner; ?>"><?php ech
 <br>
 Report: <a href="../users/report.php?u=<?php echo $Product_Owner; ?>&p=<?php echo $_GET['p']; ?>">Report this user for this product</a>
 <br>
-Shipping cost: need to add
+Shipping cost: <?php echo '$' . $Shipping_Cost; if($Shipping_Cost_Multiple == true){ echo ' Each unit has it\'s own shipping cost'; }; ?>
 
 <form method="post" action="product_profile.php">  	
     <input type="submit" name="register" value="Add to cart" />
