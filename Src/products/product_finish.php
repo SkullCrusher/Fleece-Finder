@@ -16,8 +16,8 @@
 	if ($login->isUserLoggedIn() == true) {
 	   //echo $_SESSION['user_name'];
 	} else {	   
-		include("../index.php");
-		die();
+		//include("../index.php");
+	//	die();
 	}
 	
 	function FN_Logging_Receipt($id, $product_id, $json_receipt){
@@ -96,8 +96,8 @@
 
 		FN_Logging_Receipt(hash('md5', $_GET['id']), $_GET['id'], json_encode($JSON));
 	}else{
-		header("Location: http://www.scriptencryption.com/"); //Error code 1146 - unable to find database. //return 'Internal_Server_Error'; //Error.
-		die();
+		//header("Location: http://www.scriptencryption.com/"); //Error code 1146 - unable to find database. //return 'Internal_Server_Error'; //Error.
+		//die();
 	}
 	
 

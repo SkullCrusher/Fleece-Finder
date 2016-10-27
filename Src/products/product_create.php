@@ -464,50 +464,59 @@
 	//Input
 
 	//Title (6-300) letters
-	if(strlen($_POST['title']) > 80 ||  strlen($_POST['title']) < 6){
-		//The title can be no longer then 80 characters long and has to be at least 6.
+	if(strlen($_POST['title']) > 1){
+		if(strlen($_POST['title']) > 80 ||  strlen($_POST['title']) < 6){
+			//The title can be no longer then 80 characters long and has to be at least 6.
 
-		$Sanitize_Problem = true;
-		$Sanitize_Details = "The title must be between 6 to 80 characters long.";
-	}else{
-		//Replace all non-standard characters.
-		$Sanitized_Title = preg_replace("/[^A-Za-z0-9 \-\(\)]/", '', $_POST['title']);
+			$Sanitize_Problem = true;
+			$Sanitize_Details = "The title must be between 6 to 80 characters long.";
+		}else{
+			//Replace all non-standard characters.
+			$Sanitized_Title = preg_replace("/[^A-Za-z0-9 \-\(\)]/", '', $_POST['title']);
+		}
 	}
 
 	//Short Description (300 letters)
-	if(strlen($_POST['short_description']) > 300 ||  strlen($_POST['short_description']) < 12){
-		//The title can be no longer then 300 characters long and has to be at least 12.
+	if(strlen($_POST['short_description']) > 1){
+		if(strlen($_POST['short_description']) > 300 ||  strlen($_POST['short_description']) < 12){
+			//The title can be no longer then 300 characters long and has to be at least 12.
 
-		$Sanitize_Problem = true;
-		$Sanitize_Details = "The short description must be between 12 to 300 characters long.";
-	}else{
-		//Replace all non-standard characters.
-		$Sanitized_Short_Description = preg_replace("/[^A-Za-z0-9 \-\(\)]/", '', $_POST['short_description']);
+			$Sanitize_Problem = true;
+			$Sanitize_Details = "The short description must be between 12 to 300 characters long.";
+		}else{
+			//Replace all non-standard characters.
+			$Sanitized_Short_Description = preg_replace("/[^A-Za-z0-9 \-\(\)]/", '', $_POST['short_description']);
+		}
 	}
 
 	//Category (it has to match one from the sql database);
-	foreach ($Categorise as &$value) {
-		if($value == $_POST['category']){
-			$Sanitized_Category = $value;
-			break;
+	if(strlen($_POST['category']) > 1){
+		foreach ($Categorise as &$value) {
+			if($value == $_POST['category']){
+				$Sanitized_Category = $value;
+				break;
+			}
 		}
-	}
+	
 	if($Sanitized_Category == null){
 		//It was not in the sql database so tell them there was a problem.
 
 		$Sanitize_Problem = true;
 		$Sanitize_Details = "Unable to find category, please select again.";
 	}
+	}
 
 	//Quantity for sale (Max 9999, Min 1)
-	if(intval($_POST['quantity_for_sale']) > 9999 ||  intval($_POST['quantity_for_sale']) < 1){
-		//The title can be no longer then 300 characters long and has to be at least 12.
+	if(strlen($_POST['quantity_for_sale']) > 1){
+		if(intval($_POST['quantity_for_sale']) > 9999 ||  intval($_POST['quantity_for_sale']) < 1){
+			//The title can be no longer then 300 characters long and has to be at least 12.
 
-		$Sanitize_Problem = true;
-		$Sanitize_Details = "The quantity must be between 1 to 9999 units.";
-	}else{
-		//Replace all non-standard characters.
-		$Sanitized_Quantity = intval($_POST['quantity_for_sale']);
+			$Sanitize_Problem = true;
+			$Sanitize_Details = "The quantity must be between 1 to 9999 units.";
+		}else{
+			//Replace all non-standard characters.
+			$Sanitized_Quantity = intval($_POST['quantity_for_sale']);
+		}
 	}
 
 	//Long description (0 - 2000);
@@ -533,13 +542,15 @@
 	}
 
 	//Price ($1.00 to $4,999)
-	if(floatval($_POST['price']) > 4999 || floatval($_POST['price']) < 1){
-		//The price cannot be more then $4,999
-		$Sanitize_Problem = true;
-		$Sanitize_Details = "The price has to between $1.00 and $4,999.";
-	}else{
-		//Replace all non-standard characters.
-		$Sanitized_Price = floatval($_POST['price']);
+	if(strlen($_POST['price']) > 1){
+		if(floatval($_POST['price']) > 4999 || floatval($_POST['price']) < 1){
+			//The price cannot be more then $4,999
+			$Sanitize_Problem = true;
+			$Sanitize_Details = "The price has to between $1.00 and $4,999.";
+		}else{
+			//Replace all non-standard characters.
+			$Sanitized_Price = floatval($_POST['price']);
+		}
 	}
 
 	//Shipping cost per unit (0 - 1,000);
@@ -683,8 +694,10 @@
 			}else{
 				//echo 'No error: :D'; //Debugging
 			}
-
-
+			
+			$ID = $Abbreviated_result;
+			
+		
 		/*-----------------------------------------------------------------------
 			Product_Extended
 				- long_description
@@ -748,7 +761,11 @@
 			//Create Receipt
 			$Receipt = hash('md5', $User_Name_Id_result); //Don't actually use this
 			//rediect.
-			header('Location: http://www.scriptencryption.com/products/product_finish.php?id=' . $Receipt);
+			//header('Location: http://www.scriptencryption.com/products/product_finish.php?id=' . $Receipt);
+			
+			
+			//../products/product_profile.php?p=<?php echo $_GET['id']; &u=<?php echo $_SESSION['user_name'];
+			header('Location: ../products/product_profile.php?p=' . $ID . '&u=' . $_SESSION['user_name']);
 			die();
 
 		}
@@ -761,7 +778,7 @@
 	//$Error = true;
 	//$Error_Details = $Sanitize_Problem_Details;
 	if($Error == true){
-		echo "Error: " . $Error_Details;
+		//echo "Error: " . $Error_Details;
 	}
 
 ?>
@@ -795,7 +812,33 @@ Product_Extended
  ?>
 
 
-
+<?php if($Error == true){
+	
+	//	$Sanitize_Problem = true;
+	//	$Sanitize_Details
+	?>
+	<div class="container_12 backgroundwhite">			
+			<div class="grid_12 title" style="margin-bottom:20px; text-align:center;">		 
+			<b>Error: <?php echo $Error_Details; ?></b>				
+		</div>
+	</div>
+	<?php	
+}
+ ?>
+ 
+ <?php if($Sanitize_Problem == true){
+	
+	//	$Sanitize_Problem = true;
+	//	$Sanitize_Details
+	?>
+	<div class="container_12 backgroundwhite">			
+			<div class="grid_12 title" style="margin-bottom:20px; text-align:center;">		 
+			<b>Error: <?php echo $Sanitize_Details; ?></b>				
+		</div>
+	</div>
+	<?php	
+}
+ ?>
 
  <div class="container_12 backgroundwhite">
 
@@ -861,12 +904,12 @@ Product_Extended
 
         <div class="grid_12" style="padding-bottom:15px">
 				<label for="long_description"><b>Long Description</b></label>
-				<textarea rows="0" cols="50" id="long_description" name="long_description" value="<?php echo $_POST['long_description']; ?>" class="textbox" style="resize: none;width:938px;height:100px;" placeholder="Ex: The grain is produced on my small farm of 23 acres and processed in my barn during the winter. I grow it to feed my own sheep but I produce more then required so I decided to sell some. The grain is shipped in large feed sacks with a red rip tag to open them on the top."></textarea>
+				<textarea rows="0" cols="50" id="long_description" name="long_description" value="<?php echo $_POST['long_description']; ?>" class="textbox" style="resize: none;width:938px;height:100px;" placeholder="Ex: The grain is produced on my small farm of 23 acres and processed in my barn during the winter. I grow it to feed my own sheep but I produce more then required so I decided to sell some. The grain is shipped in large feed sacks with a red rip tag to open them on the top."><?php echo $_POST['long_description']; ?></textarea>
 			</div><br>
 
 				<div class="grid_12" style="padding-bottom:15px">
 				<label for="terms_of_sale"><b>Terms of sale</b></label><br>
-				<textarea rows="0" cols="50" id="terms_of_sale" name="terms_of_sale" value="<?php echo $_POST['long_description']; ?>" class="textbox" style="resize: none;width:938px;height:100px;" placeholder="Ex: I do not accept returns because of the cost of shipping."></textarea>
+				<textarea rows="0" cols="50" id="terms_of_sale" name="terms_of_sale" value="<?php echo $_POST['long_description']; ?>" class="textbox" style="resize: none;width:938px;height:100px;" placeholder="Ex: I do not accept returns because of the cost of shipping."><?php echo $_POST['long_description']; ?></textarea>
 			</div><br>
 
 
