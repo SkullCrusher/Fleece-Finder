@@ -210,12 +210,14 @@ class Registration
 				//Create the default settings and apply them.
 				$Json_User_Banned_From_Site = 'false';
 				$Json_User_Banned_From_Post = 'false';
+				$Json_User_Banned_From_Review = 'false';
+				
 				
 				$Json_User_Post_Fee = '0.2'; // 20 cents.
 				
 				$Json_User_Allow_Messages = 'true'; //Can the user be messaged.
 				
-				$Uncompressed_Settings = array('Banned_From_Site' => $Json_User_Banned_From_Site, 'Banned_From_Posting' => $Json_User_Banned_From_Post, 'Post_Fee' => $Json_User_Post_Fee, 'User_Allow_Messages' => $Json_User_Allow_Messages);
+				$Uncompressed_Settings = array('Banned_From_Site' => $Json_User_Banned_From_Site, 'Banned_From_Rating' => $Json_User_Banned_From_Review, 'Banned_From_Posting' => $Json_User_Banned_From_Post, 'Post_Fee' => $Json_User_Post_Fee, 'User_Allow_Messages' => $Json_User_Allow_Messages);
 				
 				
 				
