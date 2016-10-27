@@ -138,13 +138,15 @@
     <ul>
    	 <li><a href="../index.php"><i class="fa fa-home"></i></a></li>
    	 <li><a href="../products/product_categories.php">Browse</a></li>
-   	 <li><a href="../products/product_categories.php">Most Popular</a></li>
+   	 <!-- <li><a href="../products/product_categories.php">Most Popular</a></li> -->
    
 	 <?php 	 
 	 	if ($login->isUserLoggedIn() == true) {
-			echo '<li><a href="../message/inbox.php">Inbox (' . $Count . ')</a></li>';
+			
 			echo '<li><a href="../account/profile.php">My account</a></li>';
-			echo '<li><a href="../products/product_create.php">Create Product</a></li>';
+			echo '<li><a href="../products/product_create.php">Create product</a></li>';
+			echo '<li><a href="../message/inbox.php">Inbox (' . $Count . ')</a></li>';			
+			echo '<li><a href="../account/sellers_dashboard.php">Sellers dashboard</a></li>';
 			echo '<li><a href="../index.php?logout">Logout</a></li>';
 		} else {	
 			echo '<li><a href="../account/login.php">Login</a></li>';

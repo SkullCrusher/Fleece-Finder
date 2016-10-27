@@ -21,9 +21,40 @@ if ($login->isUserLoggedIn() == true) {
 	die();
 }
 
+	//Get the id of a user by username
+	function FN_User_Get_Id($Username){
+
+		$db = new PDO('mysql:dbname=' . DB_NAME . ';host=' . DB_HOST . ';charset=utf8', DB_USER, DB_PASS);
+			
+		$db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+		$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);	
+		
+		$statement = null; //The statement
+			
+		try {
+			$statement = $db->prepare('SELECT user_id FROM users WHERE user_name = :user_name');			
+		} catch (PDOException $e) {
+				
+			//Error code 1146 - unable to find database.
+			return 'Internal_Server_Error'; //Error.
+		}
+			
+		try {
+			$statement->execute(array(':user_name' => $Username));
+		} catch (PDOException $e) {
+		
+			//Error code 23000 - unable to to create because of duplicate id.
+			return 'Error_Try_Again'; //Error.
+		}		
+		
+		$result = $statement->fetch();
+
+		return $result['user_id'];
+	}
 
 
-echo 'Hey there.';
+
+//echo 'Hey there.';
 
 if($_GET['b'] == 't') //Post Data received from product list page.
 {
@@ -53,6 +84,11 @@ if($_GET['b'] == 't') //Post Data received from product list page.
 	$ItemQty 		= '1'; //$_POST["itemQty"]; // Item Quantity
 	 //$ItemTotalPrice = ($ItemPrice*$ItemQty); //(Item Price x Quantity = Total) Get total amount of product; 
 	
+	
+	
+	
+	//for packing into order_information
+	$Order_Information_Pack = array();
 	
 		
 	foreach($_SESSION['cart'] as &$value){
@@ -91,12 +127,48 @@ if($_GET['b'] == 't') //Post Data received from product list page.
 		}
 		
 		array_push($Item_List, $Product_Current);
+		
+		
+		//Order_Information_pack
+		$Order_in = array('item_id' => $value['product_code'], 'qty' => $value['product_quantity'], 'price' => $Json_Decode['price']);
+		array_push($Order_Information_Pack, $Order_in);
 	}
 	
-
-
 	//Grand total including all tax, insurance, shipping cost and discount
 	$GrandTotal = ($ItemTotalPrice + $TotalTaxAmount + $HandalingCost + $InsuranceCost + $ShippinCost + $ShippinDiscount);
+
+	
+	//
+	// Pack items into Order_Information
+	//
+			
+	$db_order = new PDO('mysql:dbname=' . DB_NAME . ';host=' . DB_HOST . ';charset=utf8', DB_USER, DB_PASS);
+			
+	$db_order->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+	$db_order->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+					
+	$statement_order = null; //The statement
+				
+	try {
+		$statement_order = $db_order->prepare('INSERT INTO order_information (shipping_id, price, buyer_id, product_order_ids_json, order_date, status, ip) VALUES (:shipping_id, :price, :buyer_id, :product_order_ids_json, :order_date, :status, :ip)');			
+	} catch (PDOException $e) {										
+		//Error code 1146 - unable to find database.		
+	}
+		
+	try {				
+		$statement_order->execute(array(':buyer_id' => FN_User_Get_Id($_SESSION['user_name']), ':product_order_ids_json' => json_encode($Order_Information_Pack), ':shipping_id' => $_SESSION['shipping_id'], ':price' => $GrandTotal, ':status' => 'unpaid', ':ip' => $_SERVER['REMOTE_ADDR'], ':order_date' => date('Y-m-d h:i:s')));
+	} catch (PDOException $e) {				
+		//Error code 23000 - unable to to create because of duplicate id.
+	}			
+
+	
+	
+	
+	
+	var_dump($Order_Information_Pack);
+	die();
+
+
 
 	
 	$Count = 0;
@@ -159,7 +231,7 @@ if($_GET['b'] == 't') //Post Data received from product list page.
 				//Override the buyer's shipping address stored on PayPal, The buyer cannot edit the overridden address.
 				'&ADDROVERRIDE=1'.
 				'&PAYMENTREQUEST_0_SHIPTONAME=' . $_SESSION['shipping_id'] .
-				'&PAYMENTREQUEST_0_SHIPTOSTREET=Not Used'.
+				'&PAYMENTREQUEST_0_SHIPTOSTREET='. $_SESSION['shipping_id'] .
 				'&PAYMENTREQUEST_0_SHIPTOCITY=Kennewick'.
 				'&PAYMENTREQUEST_0_SHIPTOSTATE=Wa'.
 				'&PAYMENTREQUEST_0_SHIPTOCOUNTRYCODE=US'.
@@ -178,7 +250,7 @@ if($_GET['b'] == 't') //Post Data received from product list page.
 				'&PAYMENTREQUEST_0_AMT='.urlencode($GrandTotal).
 				'&PAYMENTREQUEST_0_CURRENCYCODE='.urlencode($PayPalCurrencyCode).
 				'&LOCALECODE=GB'. //PayPal pages to match the language on your website.
-				'&LOGOIMG=http://www.scriptencryption.com/Assets/Images/logo_paypal.png'. //site logo
+				'&LOGOIMG=http://www.scriptencryption.com/Assets/Images/logo.png'. //site logo
 				'&CARTBORDERCOLOR=FFFFFF'. //border color of cart
 				'&ALLOWNOTE=1';
 				
