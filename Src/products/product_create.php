@@ -120,7 +120,7 @@
 	$result = $statement->fetch();
 
 	return $result['user_id'];
-}
+	}
 	
 	//Get the funds in a users account by id.
 	function FN_User_Check_Balance($ID){
@@ -184,7 +184,7 @@
 		return json_decode($result['json_settings'], true);
 	}
 	
-		//Get the user settings by users account id.
+	//Get the user settings by users account id.
 	function FN_Server_Load_Settings(){
 
 		$db = new PDO('mysql:dbname=' . DB_NAME . ';host=' . DB_HOST . ';charset=utf8', DB_USER, DB_PASS);
@@ -215,7 +215,7 @@
 		return json_decode($result['json_server_settings'], true);
 	}
 	
-	//Subtract the user's credit.
+	//Subtract the user's credit. (OUTDATED)
 	function FN_User_Funds_Update($ID, $Funds){
 			
 		$db = new PDO('mysql:dbname=' . DB_NAME . ';host=' . DB_HOST . ';charset=utf8', DB_USER, DB_PASS);
@@ -241,8 +241,44 @@
 			return 'Error_Try_Again'; //Error.
 		}		
 	}
+	
+	//Transfers "money" from one party to another - Tested to insure transfer's correctly.	
+	//echo FN_User_Transfer_Funds(FN_User_Get_Id('user'), FN_User_Get_Id('payments_fee'), '0.5');		
+	function FN_User_Transfer_Funds($From_User_ID, $To_User_ID, $Amount){
+				
+			//Get the amount in the account of $From_User 				
+			$db_from = new PDO('mysql:dbname=' . DB_NAME . ';host=' . DB_HOST . ';charset=utf8', DB_USER, DB_PASS);
+						
+			$db_from->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+			$db_from->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);	
+			
+			
+				
+			$statement_from = null; //The statement
+			
+			$statement_from = $db_from->prepare('START TRANSACTION');
+			
+			
+			$statement_from = $db_from->prepare('SELECT funds FROM users_funds WHERE id = :id');	
+			$statement_from->execute(array(':id' => $From_User_ID));
+			
+			$result_from = $statement_from->fetch();
+			
+			
+			$statement_from = $db_from->prepare('SELECT funds FROM users_funds WHERE id = :id');	
+			$statement_from->execute(array(':id' => $To_User_ID));
+			
+			$result_to = $statement_from->fetch();
+						
+			$statement_from = $db_from->prepare('UPDATE users_funds SET funds=:funds WHERE id = :id');
+			$statement_from->execute(array(':id' => $From_User_ID, ':funds' => $result_from['funds'] - $Amount));			
+			
+			$statement_from = $db_from->prepare('UPDATE users_funds SET funds=:funds WHERE id = :id');	
+			$statement_from->execute(array(':id' => $To_User_ID, ':funds' => $result_to['funds'] + $Amount));		
+			
+			}
 
-		//Add to their products.
+	//Add to their products.
 	function FN_User_Add_Product($ID, $ProductId){
 				//Load the products
 		$db = new PDO('mysql:dbname=' . DB_NAME . ';host=' . DB_HOST . ';charset=utf8', DB_USER, DB_PASS);
@@ -314,7 +350,6 @@
 			return 'Error_Try_Again'; //Error.
 		}					
 	}
-	
 //End of functions.
 
 	// load the login class
@@ -511,11 +546,11 @@
 			if($User_Name_Balance_result < $User_Fee_To_Post){
 				$Error_Details = 'An error has occurred, you have insufficient funds to post a new product on the market place.';
 				$Error = true;
+			}else{
+				//They can afford it so we transfer it to the admin.
+				FN_User_Transfer_Funds($User_Name_Id_result, FN_User_Get_Id('payments_fee'), $User_Fee_To_Post);			
 			}
-
 		}
-
-	$Debug_amountleft = $User_Name_Balance_result - $User_Fee_To_Post;
 
 	//Post.
 
@@ -543,7 +578,7 @@
 			if($Abbreviated_result == 'Internal_Server_Error' || $Abbreviated_result == 'Error_Try_Again'){
 				echo 'Error, problem: ' . $Abbreviated_result;
 			}else{
-				echo 'No error: :D';
+				//echo 'No error: :D'; //Debugging
 			}
 			
 			
@@ -571,27 +606,36 @@
 			if($Extended_result == 'Internal_Server_Error' || $Extended_result == 'Error_Try_Again'){
 				echo 'Error, problem: ' . $Extended_result;
 			}else{
-				echo 'No error: :D'; //Debugging
+				//echo 'No error: :D'; //Debugging
 			}
+			
+			
 			
 			//Subtract the user's credit.			
 			$User_Funds_Update_result = FN_User_Funds_Update($User_Name_Id_result, $User_Name_Balance_result - $User_Fee_To_Post);
 			if($User_Funds_Update_result == 'Internal_Server_Error' || $User_Funds_Update_result == 'Error_Try_Again'){
 				echo 'Error, problem: ' . $User_Funds_Update_result;
 			}else{
-				echo 'No error: :D';
+				//echo 'No error: :D'; //Debugging
 			}
 			
-			//Add to their products.
-			
+						
+			//Add to their products.			
 			$User_Add_Product_result = FN_User_Add_Product($User_Name_Id_result, $Abbreviated_result);
 			if($User_Add_Product_result == 'Internal_Server_Error' || $User_Add_Product_result == 'Error_Try_Again'){
 				echo 'Error, problem: ' . $User_Add_Product_result;
 			}else{
 				//echo 'No error: :D';
-			}
-		
+			}			
 			
+	
+			//It is complete so we add it receipt and redirect of finish.
+			
+			//Create Receipt
+			$Receipt = hash('md5', $User_Name_Id_result); //Don't actually use this
+			//rediect.
+			header('Location: http://www.scriptencryption.com/products/product_finish.php?id=' . $Receipt);
+			die();
 			
 		}
 
@@ -712,25 +756,14 @@ end of debugging stuff
 
  
 
-<?php
-
-	//Restore the posted data on error/load the categorise
-	
-		
-	
-
-?>
-
- 
-
 <form method="post" action="product_create.php" id="create_product_new" name="create_product_new">
 
 	<label for="title">title</label>	
-    <input id="title" type="text" pattern="[ ()a-zA-Z0-9-]{6,80}" name="title" required /></input>
+    <input id="title" type="text" pattern="[ ()a-zA-Z0-9-]{6,80}" name="title" value="<?php echo $_POST['title']; ?>" required /></input>
 	<br>
 
     <label for="short_description">short description</label>	
-    <input id="short_description" type="text" pattern="{12,300}" name="short_description" required /></input>
+    <input id="short_description" type="text" pattern="{12,300}" name="short_description" value="<?php echo $_POST['short_description']; ?>"  required /></input>
 	<br>
 
 	
@@ -746,19 +779,19 @@ end of debugging stuff
 	<br>
   
 	<label for="quantity_for_sale">Quantity for sale</label>
-    <input id="quantity_for_sale" type="text" pattern="[0-9]{1,4}" name="quantity_for_sale" value="1" required /></input>
+    <input id="quantity_for_sale" type="text" pattern="[0-9]{1,4}" name="quantity_for_sale" value="<?php echo $_POST['quantity_for_sale']; ?>"  required /></input>
 	<br>
 	
 	<label for="long_description">Long description</label>
-    <input id="long_description" type="text" name="long_description" required/></input>
+    <input id="long_description" type="text" name="long_description" value="<?php echo $_POST['long_description']; ?>"  required/></input>
 	<br>
 	
 	<label for="terms_of_sale">Terms of sale</label>
-    <input id="terms_of_sale" type="text" name="terms_of_sale"/></input>
+    <input id="terms_of_sale" type="text" name="terms_of_sale" value="<?php echo $_POST['terms_of_sale']; ?>" /></input>
 	<br>
 	
 	<label for="price">Price</label>
-    <input id="price" type="text" name="price" pattern="[0-9]{1,4}" required /></input>
+    <input id="price" type="text" name="price" pattern="[0-9.]{1,4}" value="<?php echo $_POST['price']; ?>"  required /></input>
 	<br>
 		
   	

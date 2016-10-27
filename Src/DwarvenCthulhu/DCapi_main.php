@@ -47,6 +47,7 @@ require_once('../libraries/PHPMailer.php');
 require_once('../classes/Login.php');
 
 //Add to their products.
+/*
 			function FN_User_Add_Product($ID, $ProductId){
 				//Load the products
 				$db = new PDO('mysql:dbname=' . DB_NAME . ';host=' . DB_HOST . ';charset=utf8', DB_USER, DB_PASS);
@@ -154,7 +155,156 @@ require_once('../classes/Login.php');
 	echo "ss";
 	echo FN_Product_Abbreviated_Insert("Trash");
 	echo "ss";
-
+*/
 //echo json_encode(array(4 => "four", 8 => "eight", 'index' => "eight", 'sdd' => "eight"));
+
+
+
+	//Get the id of a user by username
+	function FN_User_Get_Id($Username){
+
+	$db = new PDO('mysql:dbname=' . DB_NAME . ';host=' . DB_HOST . ';charset=utf8', DB_USER, DB_PASS);
+		
+	$db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+	$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);	
+	
+	$statement = null; //The statement
+		
+	try {
+		$statement = $db->prepare('SELECT user_id FROM users WHERE user_name = :user_name');			
+	} catch (PDOException $e) {
+			
+		//Error code 1146 - unable to find database.
+		return 'Internal_Server_Error'; //Error.
+	}
+		
+	try {
+		$statement->execute(array(':user_name' => $Username));
+	} catch (PDOException $e) {
+	
+		//Error code 23000 - unable to to create because of duplicate id.
+		return 'Error_Try_Again'; //Error.
+	}		
+	
+	$result = $statement->fetch();
+
+	return $result['user_id'];
+}
+
+
+
+
+
+		function FN_User_Transfer_Funds($From_User_ID, $To_User_ID, $Amount){
+		
+		//echo $From_User_ID . ' ' . $To_User_ID;
+			
+			//Get the amount in the account of $From_User 				
+			$db_from = new PDO('mysql:dbname=' . DB_NAME . ';host=' . DB_HOST . ';charset=utf8', DB_USER, DB_PASS);
+						
+			$db_from->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+			$db_from->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);	
+			
+			
+				
+			$statement_from = null; //The statement
+			
+			$statement_from = $db_from->prepare('START TRANSACTION');
+			
+			
+			$statement_from = $db_from->prepare('SELECT funds FROM users_funds WHERE id = :id');	
+			$statement_from->execute(array(':id' => $From_User_ID));
+			
+			$result_from = $statement_from->fetch();
+			
+			
+			$statement_from = $db_from->prepare('SELECT funds FROM users_funds WHERE id = :id');	
+			$statement_from->execute(array(':id' => $To_User_ID));
+			
+			$result_to = $statement_from->fetch();
+						
+			$statement_from = $db_from->prepare('UPDATE users_funds SET funds=:funds WHERE id = :id');
+			$statement_from->execute(array(':id' => $From_User_ID, ':funds' => $result_from['funds'] - $Amount));			
+			
+			$statement_from = $db_from->prepare('UPDATE users_funds SET funds=:funds WHERE id = :id');	
+			$statement_from->execute(array(':id' => $To_User_ID, ':funds' => $result_to['funds'] + $Amount));		
+			
+			
+			//$statement_from = $db_from->prepare('COMMIT');
+			
+			$statement_from = $db_from->prepare('ROLLBACK');
+			/*
+			
+			try {
+				$statement_from = $db_from->prepare('SELECT funds FROM users_funds WHERE id = :id');			
+			} catch (PDOException $e) {										
+				//Error code 1146 - unable to find database.
+				return 'Internal_Server_Error'; //Error.
+			}
+					
+			try {
+				$statement_from->execute(array(':id' => $From_User_ID));
+			} catch (PDOException $e) {				
+				//Error code 23000 - unable to to create because of duplicate id.
+				return 'Error_Try_Again'; //Error.
+			}		
+
+			$result_from = $statement_from->fetch();
+			
+			print_r($result_from);
+			*/
+				
+			}
+
+
+
+
+		for($i = 0; $i < 100; $i++){
+			echo FN_User_Transfer_Funds(FN_User_Get_Id('user'), FN_User_Get_Id('payments_fee'), '0.5');
+		}
+echo "xXxXxXx";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ?>
