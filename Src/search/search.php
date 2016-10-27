@@ -20,8 +20,14 @@
 		//die();
 	}
 	
+	//var_dump($_POST['nav-search']);
 	
-	
+	if(strlen($_POST['nav-search']) > 0){
+				
+		header('Location: http://www.scriptencryption.com/search/search.php?s=' . base64_encode($_POST['nav-search']));
+		die();
+	}
+		
 	//Do a search request.
 	function FN_User_Search($CATEGORIE, $TITLE, $DESCRIPTION){
 		//SELECT * FROM dwarvencthulhu.search_test WHERE title LIKE '%light%';
@@ -231,7 +237,6 @@
 		return $result;
 	}
 	
-	
 	function FN_Product_Load_By_Id($ID, &$Owner, &$Unit, &$Quantity, &$Title, &$Shipping_Cost_Multiple, &$Price){
 		
 		$ID = 141;		
@@ -301,13 +306,6 @@
 		return $Bug_Fix;
 	}
 	
-	//FN_Product_Load_By_Id(141);
-	
-	
-	
-	
-	
-	
 
 ?>
 
@@ -318,7 +316,7 @@
 ?>
 
   
-<div class="container_12 backgroundwhite">
+<div class="container_12 backgroundwhite" style="margin-bottom: 10px;">
 
  <head>
 	<style>  	
@@ -357,8 +355,82 @@
 	}
 	
 	
+	
+	
+	
+
+
+
+
+.toolbar {
+	font-weight: 400;
+  display: table-cell;
+  padding: 1em;
+  text-align: center;
+  vertical-align: middle;
+}
+
+
+
+
+.btn {
+  color: #fff;
+  cursor: pointer;
+  display: block;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 45px;
+  margin: 0 auto 2em;
+  max-width: 160px;
+  position: relative;
+  text-decoration: none;
+  text-transform: uppercase;
+  vertical-align: middle;
+  width: 100%;
+}
+
+
+
+.btn-3 {
+  background: #333;
+  border: 1px solid #da251f;
+  box-shadow: 0px 2px 0 #d6251f, 2px 4px 6px #e02a24;
+  font-weight: 900;
+  letter-spacing: 1px;
+  -webkit-transition: all 150ms linear;
+          transition: all 150ms linear;
+}
+
+.btn-3:hover {
+  background: #e02c26;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 1px 1px 2px rgba(255, 255, 255, 0.2);
+  color: #ec817d;
+  text-decoration: none;
+  text-shadow: -1px -1px 0 #c2211c;
+  -webkit-transition: all 250ms linear;
+          transition: all 250ms linear;
+}
+
+	
+	
 	</style>
  </head>
+ 
+ 
+ 
+ <div class="toolbar">
+
+  
+    
+    
+    
+    <a href="https://twitter.com/Dave_Conner" class="btn btn-3" style="width:100px;">Hover</a> 
+    <!--End of Button 3 -->
+  
+
+ </div>
+ 
  
 	<?php
 		$Search_Title = base64_decode($_GET['s'], true);
@@ -371,15 +443,14 @@
 				
 		$Result_List = FN_User_Search($Search_Categorie, $Search_Title, $Search_Title);
 		
-		if($Result_List == 'Internal_Server_Error' || $Result_List == 'Error_Try_Again'){
-			
+		if($Result_List == 'Internal_Server_Error' || $Result_List == 'Error_Try_Again' || $Result_List == null){			
+			?>		
+			<img style="border-style: none;margin-left: 175px;padding-bottom: 50px;" src="http://www.scriptencryption.com/Assets/Images/search_no_results.png"></img>			
+			<?php			
 		}else{		
 			foreach ($Result_List as &$value) {
 				//var_dump($value);
-				
-				
-				//FN_Product_Load_By_Id($value[0], &$Owner, &$Unit, &$Title, &$Shipping_Cost_Multiple, &$Price){
-					
+									
 				$Owner = null;
 				$Unit = null;
 				$Title = null;

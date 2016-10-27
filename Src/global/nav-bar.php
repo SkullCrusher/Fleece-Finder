@@ -125,8 +125,8 @@
     <div class="logo">
      <a href="../index.php"><img src="../Assets/Images/logo.png"></a>
      <div class="search">
-      <form action="/search.html" class="search-wrapper cf">
-       <input type="text" placeholder="Search here..." required="">
+      <form action="../search/search.php" method="post" class="search-wrapper cf">
+       <input type="text" name="nav-search" placeholder="Search here..." required="">
        <button type="submit">Search</button>
       </form>
      </div>
@@ -139,7 +139,7 @@
    	 <li><a href="../index.php"><i class="fa fa-home"></i></a></li>
    	 <li><a href="#">Browse</a></li>
    	 <li><a href="../products/product_categories.php">Categories</a></li>
-   	 <li><a href="#">Most Popular</a></li>
+   	 <li><a href="../products/product_categories.php">Most Popular</a></li>
   
 	 <?php 	 
 	 	if ($login->isUserLoggedIn() == true) {
