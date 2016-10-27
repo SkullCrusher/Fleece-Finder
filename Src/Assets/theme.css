@@ -4,7 +4,7 @@
 .nav li a:visited{text-decoration:none;color:#333333;text-decoration:none}
 .nav li a:hover{color:#2ECC71;text-decoration:none;-webkit-transition:color .1s ease-out .1s;-moz-transition:color .1s ease-out .1s;-o-transition:color .1s ease-out .1s;transition:color .1s ease-out .1s}
 .scontainer{width:100%;margin:0px}
-section{position:relative;padding:10em;height:12%;background-image:url("images/section1.png");background-repeat;background-size:100%;color:#FFFFFF;text-align:center}
+section{position:relative;padding:10em;background-image:url("images/section1.png");background-repeat;background-size:cover;height:auto;color:#FFFFFF;text-align:center}
 section h2{margin:0;padding:0;font-size:2.8em;font-weight:400}
 .arrow-down{margin:0 auto;width:0;height:0;border-left:20px solid transparent;border-right:20px solid transparent;border-top:20px solid #2ECC71}
 section h2 b a{color:#2ECC71;text-decoration:none;-webkit-transition:color .1s ease-out .1s;-moz-transition:color .1s ease-out .1s;-o-transition:color .1s ease-out .1s;transition:color .1s ease-out .1s}

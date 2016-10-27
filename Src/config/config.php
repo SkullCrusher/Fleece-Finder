@@ -64,8 +64,8 @@ define("COOKIE_SECRET_KEY", "eD7W6vbSU24353534525325435ktLR4yXkXp");
 define("EMAIL_USE_SMTP", true);
 define("EMAIL_SMTP_HOST", "ssl://smtp.gmail.com");
 define("EMAIL_SMTP_AUTH", true);
-define("EMAIL_SMTP_USERNAME", 'email@domain.com');
-define("EMAIL_SMTP_PASSWORD", "DB PASSWORD");
+define("EMAIL_SMTP_USERNAME", 'fleecefinder@gmail.com');
+define("EMAIL_SMTP_PASSWORD", "Mbrenmaster1");
 define("EMAIL_SMTP_PORT", 465);
 define("EMAIL_SMTP_ENCRYPTION", "ssl");
 

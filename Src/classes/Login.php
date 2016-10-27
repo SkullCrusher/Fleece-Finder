@@ -76,6 +76,8 @@ class Login
         // if user tried to log out
         if (isset($_GET["logout"])) {
             $this->doLogout();
+			
+		$_POST['user_name'] = ucfirst ($_POST['user_name']);
 
         // if user has an active session on the server
         } elseif (!empty($_SESSION['user_name']) && ($_SESSION['user_logged_in'] == 1)) {
