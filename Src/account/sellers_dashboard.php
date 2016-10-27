@@ -65,13 +65,23 @@
 			  font-weight: 400;
 			  font-size:1em;
 			  background: #2ECC71;
-			  color: #F7F7F7;
+			  color: #333;
+			  font-weight: bold;
 			  text-align:center;
 			  height:35px;
 			}
 
 			#containerz a.btn{
-			  display:inline-block;transition: all .2s ease;border-bottom-left-radius:3px;border-top-left-radius:3px;border-bottom-right-radius:3px;border-top-right-radius:3px;background:#2ECC71;color:#F7F7F7;padding-left:3px;padding-right:3px;text-decoration:none;transition: all .2s ease;padding:5px;
+			  display:inline-block;
+			  transition: all .2s ease;
+			  border-bottom-left-radius:3px;
+			  border-top-left-radius:3px;
+			  border-bottom-right-radius:3px;
+			  border-top-right-radius:3px;
+			  background:#2ECC71;
+			  color: #000;
+			  font-weight: bold;
+			  padding-left:3px;padding-right:3px;text-decoration:none;transition: all .2s ease;padding:5px;
 			}
 
 			#containerz a.btn:hover{background:#2BBB68;transition: all .2s ease}
@@ -105,45 +115,45 @@
 			  <tr>
 				<th scope="col">Buyer</th>
 				<th scope="col">Product</th>
-				<th scope="col">Quantity</th>
-				<th scope="col">Shipping Address</th>
+				<th scope="col">Quantity</th>				
 				<th scope="col">Unit Price</th>
-				<th scope="col">Shipping Price</th>
+				<th scope="col">Shipping Cost</th>
 				<th scope="col">Purchase Date</th>
-				<th scope="col">Total</th>
-				<th scope="col">Remove</th>
+				<th scope="col">Details</th>
+				<th scope="col">Archive</th>
 			  </tr>
 			  </thead>
 			  <tbody>
 			  <tr>
-				<th>ONE IS SMALL</th>
-				<td>TWO THEY SCALE</td>
-				<td>THREE</td>
-				<td>FOUR</td>
-				<td>FOUR</td>
-				<td>FOUR</td>
-				<td>FOUR</td>
-				<td><a href="#" class="btn">Button</a></td>
+				<th><a href="#" style="text-decoration: none;color: #FFFFFF;">ONE IS SMALL</a></th>
+				<td><a href="#" style="text-decoration: none;color: #FFFFFF;">TWO THEY SCALE</a></td>
+				<td>7</td>
+				<td>$3.21</td>
+				<td>$3.21</td>
+				<td>3/2/1</td>
+				<td><a href="#" class="btn">Details</a></td>
+				<td><a href="#" class="btn">Archive</a></td>
 			  </tr>
 			  <tr>
-				<th>ONE IS SMALL</th>
-				<td>TWO THEY SCALE</td>
-				<td>THREE</td>
-				<td>FOUR</td>
-				<td>FOUR</td>
-				<td>FOUR</td>
-				<td>FOUR</td>
-				<td><a href="#" class="btn">Button</a></td>
+				<th><a href="#" style="text-decoration: none;color: #FFFFFF;">ONE IS SMALL</a></th>
+				<td><a href="#" style="text-decoration: none;color: #FFFFFF;">TWO THEY SCALE</a></td>
+				<td>7</td>
+				<td>$3.21</td>
+				<td>$3.21</td>
+				<td>3/2/1</td>
+				<td><a href="#" class="btn">Details</a></td>
+				<td><a href="#" class="btn">Archive</a></td>
 			  </tr>
-				  <tr>
-				<th>ONE IS SMALL</th>
-				<td>TWO THEY SCALE</td>
-				<td>THREE</td>
-				<td>FOUR</td>
-				<td>FOUR</td>
-				<td>FOUR</td>
-				<td>FOUR</td>
-				<td><a href="#" class="btn">Button</a></td>
+			  <tr>
+			  	<th><a href="#" style="text-decoration: none;color: #FFFFFF;">ONE IS SMALL</a></th>
+				<td><a href="#" style="text-decoration: none;color: #FFFFFF;">TWO THEY SCALE</a></td>
+				<td>7</td>
+				<td>$3.21</td>
+				<td>$3.21</td>
+				<td>3/2/1</td>
+				<td><a href="#" class="btn">Details</a></td>
+				<td><a href="#" class="btn">Archive</a></td>
+				
 			  </tr>
 			  </tbody>
 			</table>
