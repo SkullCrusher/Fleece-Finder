@@ -718,13 +718,14 @@ Product_Extended
 			<p style="text-align:center;font-size: 200%;margin-top:-10px;"><b>Create new product</b></p>
 			</div>
 			
+					
 		<form method="post" action="product_create.php" id="create_product_new" name="create_product_new">
 		
-			<div class="grid_6">
+			
 				<label for="title"><b>Title - Maximum of 80 characters</b></label>	
 				<input id="title" class="textbox" type="text" pattern="[ ()a-zA-Z0-9-]{6,80}" name="title" placeholder="Ex: Naturally grown grain for sheep feed" value="<?php echo $_POST['title']; ?>" required /></input>			
-			</div>
-				<div class="grid_5">			
+			
+							
 				<label for="category"><b>Category</b></label>
 				<div class="select-style">
 				<select id="category" name="category">
@@ -736,92 +737,209 @@ Product_Extended
 				?>	
 				</select>
 				</div>
-			</div>
-			<div class="grid_6">
+		
+			
 				<label for="short_description"><b>Short Description - Maximum of 140 characters </b></label>	
 				<input id="short_description" class="textbox" type="text" pattern="{12,300}" name="short_description" placeholder="Ex: The grain is a mixture of 25% soy beans and 75% wheat" value="<?php echo $_POST['short_description']; ?>"  required /></input>		
-			</div>
+			
 		
-			<div class="grid_5">
+			
 				<label for="quantity_for_sale"><b>Quantity for sale</b></label>
 				<input id="quantity_for_sale" class="textbox" style="width:50px;" type="text" pattern="[0-9]{1,4}" name="quantity_for_sale" placeholder="1000" value="<?php echo $_POST['quantity_for_sale']; ?>"  required /></input>
-			</div>
-			<div class="grid_5">
-			<label for="price"><b>Price</b></label>
-			<input id="price" class="textbox" type="text" name="price" style="width:60px;" placeholder="19.99" pattern="[0-9.]{1,6}" value="<?php echo $_POST['price']; ?>"  required /></input>
-			<br>
-			</div>
-			<div class="grid_6">
+			
+			
+				<label for="price"><b>Price</b></label>
+				<input id="price" class="textbox" type="text" name="price" style="width:60px;" placeholder="19.99" pattern="[0-9.]{1,6}" value="<?php echo $_POST['price']; ?>"  required /></input>
+		
 				<label for="shipping_cost"><b>Shipping Cost</b></label>
 				<input id="shipping_cost" class="textbox" type="text" style="width:50px;" pattern="[0-9.]{1,4}" name="shipping_cost" placeholder="4.99" value="<?php echo $_POST['shipping_cost']; ?>"  required /></input>
 		
-			</div>
-			<div class="grid_6">						
+			
+									
 				<input type="checkbox" class="textbox" name="shipping_cost_multiple" value="yes">Should each unit charge an additional shipping?<br>			
-			</div>
-			<div class="grid_12">
+		
+		
 				<label for="long_description"><b>Long Description</b></label>
 			
 				<textarea rows="0" cols="50" id="long_description" name="long_description" value="<?php echo $_POST['long_description']; ?>" class="textbox" style="resize: none;width:938px;height:100px;" placeholder="Ex: The grain is produced on my small farm of 23 acres and processed in my barn during the winter. I grow it to feed my own sheep but I produce more then required so I decided to sell some. The grain is shipped in large feed sacks with a red rip tag to open them on the top."></textarea> 
-			</div>
 			
-			<div class="grid_6">
+			
+			
 				<label for="terms_of_sale"><b>Terms of sale</b></label>
 				<textarea rows="0" cols="50" id="terms_of_sale" name="terms_of_sale" value="<?php echo $_POST['long_description']; ?>" class="textbox" style="resize: none;width:938px;height:100px;" placeholder="Ex: I do not accept returns because of the cost of shipping."></textarea> 
 			
-			<br>
-			</div>
 
+			
+
+				 <input type="hidden" name="pic_1" id="pic_1" value="">
+				 <input type="hidden" name="pic_2" id="pic_2" value=""> 
+				 <input type="hidden" name="pic_3" id="pic_3" value=""> 
+				 <input type="hidden" name="pic_4" id="pic_4" value=""> 
+				 <input type="hidden" name="pic_5" id="pic_5" value="">
+				 <input type="hidden" name="pic_6" id="pic_6" value=""> 				 
+				 
+
+
+			
+			
 		
-			</form>
-			 <script>
-	function picture_click(arg){
-		var r = confirm("Press a button");
-		if (r == true) {
-			confirm(arg);
-		} else {
-			confirm("Pressss a button");
-		} 
-	}
- 
- </script>
+		
+		
+			
+				<input type="submit"  class="buynow addtocart" style="border: 0;" name="register" value="Submit" />
 
-			<div class="grid_12">
-			<br>
-			<div class="img">
-				<img src="..\Assets\img\blank_photo.png" onclick="picture_click('NEAT')" width="110" height="90">
-			</div>
-			<div class="img">
-				<a target="_blank" href="/Assets/img/blank_photo.png"><img src="..\Assets\img\blank_photo.png" width="110" height="90"></a>
+				
+		
+		
 
-			</div>
-			<div class="img">
-				<a target="_blank" href="/Assets/img/blank_photo.png"><img src="..\Assets\img\blank_photo.png" width="110" height="90"></a>
+	</form>
 	
-			</div>
+			<script>
+			var x = document.getElementById("pic_1")
+			
+			x.value = "yresss";
+			</script>
+			
+			<script>
+			function Delete_Image(index){
+			
+				var r = confirm("Are you sure you want to delete this photo?");
+				if (r == true) {
+					
+					var x = document.getElementById("pic_" + index);			
+					
+					
+					var xmlHttp = null;
 
-			<div class="img">
-				<a target="_blank" href="/Assets/img/blank_photo.png"><img src="..\Assets\img\blank_photo.png" width="110" height="90"></a>
-
-			</div>
-			<div class="img">
-				<a target="_blank" href="/Assets/img/blank_photo.png"><img src="..\Assets\img\blank_photo.png" width="110" height="90"></a>
-
-			</div>
-			<div class="img">
-				<a target="_blank" href="/Assets/img/blank_photo.png"><img src="..\Assets\img\blank_photo.png" width="110" height="90"></a>
+					xmlHttp = new XMLHttpRequest();
+					xmlHttp.open( "GET", "../images/delete.php?i=" + x.value, false );
+					xmlHttp.send();
+				
+					x.value = "";
+					
+					x = document.getElementById("preview_" + index);	
+					x.innerHTML = "";
+				}
+			}
+			</script>
 	
-			</div>
+	
+			<script type="text/javascript" src="../Assets/Javascript/jquery.min.js"></script>
+			<script type="text/javascript" src="../Assets/Javascript/jquery.form.js"></script>
+	
+				<script type="text/javascript" >
+			 $(document).ready(function() { 						
+				$('#photoimg1').live('change', function(){ 
+			    $("#preview1").html('');
+				$("#preview1").html('<img src="../Assets/Images/loader.gif" alt="Uploading...."/>');
+				$("#imageform1").ajaxForm({
+					target: '#preview_1'
+				}).submit();
+				});
+				});
 
+				 $(document).ready(function() { 						
+				$('#photoimg2').live('change', function(){ 
+			    $("#preview2").html('');
+				$("#preview2").html('<img src="../Assets/Images/loader.gif" alt="Uploading...."/>');
+				$("#imageform2").ajaxForm({
+					target: '#preview_2'
+				}).submit();
+				});
+				}); 
+				
+				 $(document).ready(function() { 						
+				$('#photoimg3').live('change', function(){ 
+			    $("#preview3").html('');
+				$("#preview3").html('<img src="../Assets/Images/loader.gif" alt="Uploading...."/>');
+				$("#imageform3").ajaxForm({
+					target: '#preview_3'
+				}).submit();
+				});
+				}); 
+				
+				 $(document).ready(function() { 						
+				$('#photoimg4').live('change', function(){ 
+			    $("#preview4").html('');
+				$("#preview4").html('<img src="../Assets/Images/loader.gif" alt="Uploading...."/>');
+				$("#imageform4").ajaxForm({
+					target: '#preview_4'
+				}).submit();
+				});
+				}); 
+				
+				 $(document).ready(function() { 						
+				$('#photoimg5').live('change', function(){ 
+			    $("#preview5").html('');
+				$("#preview5").html('<img src="../Assets/Images/loader.gif" alt="Uploading...."/>');
+				$("#imageform5").ajaxForm({
+					target: '#preview_5'
+				}).submit();
+				});
+				}); 
+				
+				 $(document).ready(function() { 						
+				$('#photoimg6').live('change', function(){ 
+			    $("#preview6").html('');
+				$("#preview6").html('<img src="../Assets/Images/loader.gif" alt="Uploading...."/>');
+				$("#imageform6").ajaxForm({
+					target: '#preview_6'
+				}).submit();
+				});
+				}); 
+		</script>
+			
+			<div style="width:300px">
+				<form id="imageform1" method="post" enctype="multipart/form-data" action='../images/ajaximage.php'>
+				Upload your image <input type="file" name="photoimg1" id="photoimg1" />
+				</form>
+				<div id='preview_1' name="img_1" onclick="Delete_Image('1')">
+				</div>
 			</div>
 			
-			<div class="grid_2" style="float:right;">
-				<input type="submit"  class="buynow addtocart" name="register" value="Submit" />
+			<div style="width:300px">
+				<form id="imageform2" method="post" enctype="multipart/form-data" action='../images/ajaximage.php'>
+				Upload your image <input type="file" name="photoimg2" id="photoimg2" />
+				</form>
+				<div id='preview_2' name="img_2" onclick="Delete_Image('2')">
+				</div>
 			</div>
 			
+			<div style="width:300px">
+				<form id="imageform3" method="post" enctype="multipart/form-data" action='../images/ajaximage.php'>
+				Upload your image <input type="file" name="photoimg3" id="photoimg3" />
+				</form>
+				<div id='preview_3' name="img_3" onclick="Delete_Image('3')">
+				</div>
 			</div>
- 
-
+			
+			<div style="width:300px">
+				<form id="imageform4" method="post" enctype="multipart/form-data" action='../images/ajaximage.php'>
+				Upload your image <input type="file" name="photoimg4" id="photoimg4" />
+				</form>
+				<div id='preview_4' name="img_4" onclick="Delete_Image('4')">
+				</div>
+			</div>
+			
+			<div style="width:300px">
+				<form id="imageform5" method="post" enctype="multipart/form-data" action='../images/ajaximage.php'>
+				Upload your image <input type="file" name="photoimg5" id="photoimg5" />
+				</form>
+				<div id='preview_5' name="img_5" onclick="Delete_Image('5')">
+				</div>
+			</div>
+			
+			<div style="width:300px">
+				<form id="imageform6" method="post" enctype="multipart/form-data" action='../images/ajaximage.php'>
+				Upload your image <input type="file" name="photoimg6" id="photoimg6" />
+				</form>
+				<div id='preview_6' name="img_6" onclick="Delete_Image('6')">
+				</div>
+			</div>
+			
+	
+		</div>
+			
 
 <style>
 div.img {
@@ -852,7 +970,7 @@ div.desc {
 }
 </style>
 
-
+	
 
 
 
