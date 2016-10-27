@@ -33,7 +33,7 @@
 
 //Functions.
 	//The insert into the abbreviated functions.
-	function FN_Product_Abbreviated_Insert($ID, $JSON){
+		function FN_Product_Abbreviated_Insert($JSON){
 	
 		$db = new PDO('mysql:dbname=' . DB_NAME . ';host=' . DB_HOST . ';charset=utf8', DB_USER, DB_PASS);
 		
@@ -43,7 +43,7 @@
 		$statement = null; //The statement
 		
 		try {
-			$statement = $db->prepare('INSERT INTO product_abbreviated (id, json_condensed) VALUES (:id, :json_condensed)');			
+			$statement = $db->prepare('INSERT INTO product_abbreviated (json_condensed) VALUES (:json_condensed)');			
 		} catch (PDOException $e) {
 			//echo 'Connection failed: ' . $e->getMessage(); //Debug
 			
@@ -52,13 +52,14 @@
 		}
 		
 		try {
-			$statement->execute(array(':id' => $ID,':json_condensed' => $JSON));
+			$statement->execute(array(':json_condensed' => $JSON));
 		} catch (PDOException $e) {
 			//echo 'Connection failed: ' . $e->getCode(); //Debug
 			
 			//Error code 23000 - unable to to create because of duplicate id.
 			return 'Error_Try_Again'; //Error.
 		}		
+		return $db->lastInsertId(); 
 	}
 
 	//The insert into the extended functions.
@@ -214,7 +215,106 @@
 		return json_decode($result['json_server_settings'], true);
 	}
 	
+	//Subtract the user's credit.
+	function FN_User_Funds_Update($ID, $Funds){
+			
+		$db = new PDO('mysql:dbname=' . DB_NAME . ';host=' . DB_HOST . ';charset=utf8', DB_USER, DB_PASS);
+					
+		$db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+		$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);	
+				
+		$statement = null; //The statement
+					
+		try {
+			$statement = $db->prepare('UPDATE users_funds SET funds=:funds WHERE id = :id');			
+		} catch (PDOException $e) {
+										
+			//Error code 1146 - unable to find database.
+			return 'Internal_Server_Error'; //Error.
+		}
+					
+		try {
+			$statement->execute(array(':id' => $ID, ':funds' => $Funds));
+		} catch (PDOException $e) {
+				
+			//Error code 23000 - unable to to create because of duplicate id.
+			return 'Error_Try_Again'; //Error.
+		}		
+	}
 
+		//Add to their products.
+	function FN_User_Add_Product($ID, $ProductId){
+				//Load the products
+		$db = new PDO('mysql:dbname=' . DB_NAME . ';host=' . DB_HOST . ';charset=utf8', DB_USER, DB_PASS);
+			
+		$db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+		$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);	
+				
+		$statement = null; //The statement
+					
+		try {
+			$statement = $db->prepare('SELECT json_productids FROM users_products');			
+		} catch (PDOException $e) {
+										
+			//Error code 1146 - unable to find database.
+			return 'Internal_Server_Error'; //Error.
+		}
+					
+		try {
+			$statement->execute();
+		} catch (PDOException $e) {
+				
+			//Error code 23000 - unable to to create because of duplicate id.
+			return 'Error_Try_Again'; //Error.
+		}		
+
+		$result = $statement->fetch();
+							
+		//Each Product is array(product_id, post_date)
+		$Product_ids = json_decode($result['json_productids'], true);	
+			
+		$NewProduct = array('product_id' => $ProductId, 'post_date' => date('m/d/Y'));
+					
+		if($Product_ids == null){
+			$Product_ids = $NewProduct;			
+		}else{
+			array_push($Product_ids, $NewProduct);
+		}
+				
+		$Json_User_Product = json_encode($Product_ids);
+				
+		//Subtract the user's credit.			
+		$db_update = new PDO('mysql:dbname=' . DB_NAME . ';host=' . DB_HOST . ';charset=utf8', DB_USER, DB_PASS);
+							
+		$db_update->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+		$db_update->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);	
+						
+		$statement_update = null; //The statement
+							
+		try {		
+			//if it is null then we have to insert instead of update.
+			if($result == null){
+				//Insert
+				$statement_update = $db_update->prepare('INSERT INTO users_products (id, json_productids) VALUES (:id, :json_productids)');	
+			}else{
+				//Update
+				$statement_update = $db_update->prepare('UPDATE users_products SET json_productids = :json_productids WHERE id = :id');	
+			}
+		
+		} catch (PDOException $e) {
+												
+			//Error code 1146 - unable to find database.
+			return 'Internal_Server_Error'; //Error.
+		}
+						
+		try {
+			$statement_update->execute(array(':id' => $ID, ':json_productids' => $Json_User_Product));
+		} catch (PDOException $e) {						
+			//Error code 23000 - unable to to create because of duplicate id.
+			return 'Error_Try_Again'; //Error.
+		}					
+	}
+	
 //End of functions.
 
 	// load the login class
@@ -362,7 +462,7 @@
 	//Check for all the inputs.	
 	if($Sanitized_Title != null && $Sanitized_Short_Description != null && $Sanitized_Quantity != 0 && $Sanitized_Price != 0){
 	
-		//We got all the requirements, try to post it.				
+		//We got all the requirements, try to post it.			
 		if($Sanitize_Problem == true){
 			$Error = true;
 			$Error_Details = $Sanitize_Problem_Details;
@@ -374,7 +474,6 @@
 	//Check account
 		
 		//Local Global Variables.
-
 		$User_Name_Id_result = null;
 		$User_Name_Balance_result = null;
 		
@@ -427,11 +526,6 @@
 			}
 
 		}
-		
-		
-		//echo $Error_Details; //Debugging	
-		//echo $User_Name_Balance_result; //Debugging
-		
 
 
 
@@ -452,12 +546,12 @@
 		if($Error == false){
 		
 			$category = $Sanitized_Category;
-			$Product_abbreviated = array( 'title' => $Sanitized_Title, 'short_description' => $Sanitized_Short_Description, 'category' => $category, 'price' => $Sanitized_Price, 'picture' => 'www.scriptencryption.com/pic/11213123.png');
+			$Product_abbreviated = array( 'title' => $Sanitized_Title, 'owner' => $_SESSION['user_name'], 'short_description' => $Sanitized_Short_Description, 'category' => $category, 'price' => $Sanitized_Price, 'picture' => 'www.scriptencryption.com/pic/11213123.png');
 			
 			$Product_abbreviated_json = json_encode($Product_abbreviated);
 					
-			//Insert into the abbreviated
-			$Abbreviated_result = FN_Product_Abbreviated_Insert(100, $Product_abbreviated_json);
+			//Insert into the abbreviated (If there was no problem it will return an id.
+			$Abbreviated_result = FN_Product_Abbreviated_Insert($Product_abbreviated_json);
 			if($Abbreviated_result == 'Internal_Server_Error' || $Abbreviated_result == 'Error_Try_Again'){
 				echo 'Error, problem: ' . $Abbreviated_result;
 			}else{
@@ -474,65 +568,42 @@
 				- quantity of sale	
 			*/
 			
-			echo $Long_Description;
-
+		
 			$Long_Description = $Sanitized_Long_Description;
 			$Terms_Of_Sale = $Sanitized_Terms_Of_Sale;
-			$Compressed_Rating = 3.4;
+			$Compressed_Rating = -1; //unrated
 			$Quantity_For_Sale = $Sanitized_Quantity;
 			
 			$Product_extended = array('long_description' => $Long_Description, 'terms_of_sale' => $Terms_Of_Sale, 'compressed_rating' => $Compressed_Rating, 'quantity' => $Quantity_For_Sale);
-
 			
-			$Product_extended_json = json_encode($Product_extended);
-				
+			$Product_extended_json = json_encode($Product_extended);				
 
 			//Insert into the abbreviated
-			$Extended_result = FN_Product_Extended_Insert(100, $Product_extended_json);
+			$Extended_result = FN_Product_Extended_Insert($Abbreviated_result, $Product_extended_json);
 			if($Extended_result == 'Internal_Server_Error' || $Extended_result == 'Error_Try_Again'){
 				echo 'Error, problem: ' . $Extended_result;
 			}else{
 				echo 'No error: :D'; //Debugging
 			}
 			
-			//$User_Name_Balance_result
-			//Subtract the user's credit.
-			function FN_User_Funds_Update($ID, $Funds){
-			
-				$db = new PDO('mysql:dbname=' . DB_NAME . ';host=' . DB_HOST . ';charset=utf8', DB_USER, DB_PASS);
-					
-				$db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
-				$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);	
-				
-				$statement = null; //The statement
-					
-				try {
-					$statement = $db->prepare('UPDATE users_funds SET funds=:funds WHERE id = :id');			
-				} catch (PDOException $e) {
-										
-					//Error code 1146 - unable to find database.
-					return 'Internal_Server_Error'; //Error.
-				}
-					
-				try {
-					$statement->execute(array(':id' => $ID, ':funds' => $Funds));
-				} catch (PDOException $e) {
-				
-					//Error code 23000 - unable to to create because of duplicate id.
-					return 'Error_Try_Again'; //Error.
-				}		
-
-				$result = $statement->fetch();
-
-				return $result['funds'];
-			}
-			
+			//Subtract the user's credit.			
 			$User_Funds_Update_result = FN_User_Funds_Update($User_Name_Id_result, $User_Name_Balance_result - $User_Fee_To_Post);
-			if(User_Funds_Update_result == 'Internal_Server_Error' || $User_Funds_Update_result == 'Error_Try_Again'){
+			if($User_Funds_Update_result == 'Internal_Server_Error' || $User_Funds_Update_result == 'Error_Try_Again'){
 				echo 'Error, problem: ' . $User_Funds_Update_result;
 			}else{
 				echo 'No error: :D';
 			}
+			
+			//Add to their products.
+			
+			$User_Add_Product_result = FN_User_Add_Product($User_Name_Id_result, $Abbreviated_result);
+			if($User_Add_Product_result == 'Internal_Server_Error' || $User_Add_Product_result == 'Error_Try_Again'){
+				echo 'Error, problem: ' . $User_Add_Product_result;
+			}else{
+				//echo 'No error: :D';
+			}
+		
+			
 			
 		}
 
