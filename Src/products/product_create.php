@@ -292,6 +292,33 @@
 			$statement_from = $db_from->prepare('COMMIT');
 			}
 
+			//FN_Search_Add_Product($User_Name_Id_result, $Abbreviated_result, $Product_abbreviated_json, $Product_extended_json);
+			
+	function FN_Search_Add_Product($User_Name_Id_result, $Abbreviated_result, $Product_abbreviated, $Product_extended){
+				//Load the products
+		$db = new PDO('mysql:dbname=' . DB_NAME . ';host=' . DB_HOST . ';charset=utf8', DB_USER, DB_PASS);
+			
+		$db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+		$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);	
+				
+		$statement = null; //The statement
+		
+		var_dump($Product_abbreviated);
+					
+		try {
+			$statement = $db->prepare('INSERT INTO product_search (id, title, description, categorie) VALUES (:id, :title, :description, :categorie)');			
+		} catch (PDOException $e) {										
+			//Error code 1146 - unable to find database.
+			return 'Internal_Server_Error'; //Error.
+		}					
+		try {
+			$statement->execute(array(':id' => $Abbreviated_result, ':title' => $Product_abbreviated['title'], ':description' => $Product_abbreviated['short_description'], ':categorie' => $Product_abbreviated['category']));
+		} catch (PDOException $e) {				
+			//Error code 23000 - unable to to create because of duplicate id.
+			return 'Error_Try_Again'; //Error.
+		}		
+	}
+	
 	//Add to their products.
 	function FN_User_Add_Product($ID, $ProductId){
 				//Load the products
@@ -702,6 +729,17 @@
 			
 	
 			//It is complete so we add it receipt and redirect of finish.
+			
+			//We add the product to the search engine.			
+			$Search_Add_Product_result = FN_Search_Add_Product($User_Name_Id_result, $Abbreviated_result, $Product_abbreviated, $Product_extended);
+			if($Search_Add_Product_result == 'Internal_Server_Error' || $Search_Add_Product_result == 'Error_Try_Again'){
+				echo 'Error, problem: ' . $Search_Add_Product_result;
+			}else{
+				//echo 'No error: :D';
+			}			
+			
+			
+			
 			
 			//Create Receipt
 			$Receipt = hash('md5', $User_Name_Id_result); //Don't actually use this

@@ -32,7 +32,6 @@
 	function FN_User_Search($CATEGORIE, $TITLE, $DESCRIPTION){
 		//SELECT * FROM dwarvencthulhu.search_test WHERE title LIKE '%light%';
 	
-	
 		$db = new PDO('mysql:dbname=' . DB_NAME . ';host=' . DB_HOST . ';charset=utf8', DB_USER, DB_PASS);
 			
 		$db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
@@ -40,7 +39,7 @@
 		
 		$statement = null; //The statement
 		
-		$SQL_search_request = "SELECT id FROM search_test WHERE";
+		$SQL_search_request = "SELECT id FROM product_search WHERE";
 		
 		$Mod = false;
 		
@@ -239,8 +238,6 @@
 	
 	function FN_Product_Load_By_Id($ID, &$Owner, &$Unit, &$Quantity, &$Title, &$Shipping_Cost_Multiple, &$Price){
 		
-		$ID = 141;		
-		
 		$db = new PDO('mysql:dbname=' . DB_NAME . ';host=' . DB_HOST . ';charset=utf8', DB_USER, DB_PASS);
 			
 		$db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
@@ -306,6 +303,39 @@
 		return $Bug_Fix;
 	}
 	
+	
+	
+	/*
+	
+	function FN_Search_Add_Product($User_Name_Id_result, $Abbreviated_result, $Product_abbreviated, $Product_extended){
+				//Load the products
+		$db = new PDO('mysql:dbname=' . DB_NAME . ';host=' . DB_HOST . ';charset=utf8', DB_USER, DB_PASS);
+			
+		$db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+		$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);	
+				
+		$statement = null; //The statement
+		
+		var_dump($Product_abbreviated);
+					
+		try {
+			$statement = $db->prepare('INSERT INTO product_search (id, title, description, categorie) VALUES (:id, :title, :description, :categorie)');			
+		} catch (PDOException $e) {										
+			//Error code 1146 - unable to find database.
+			return 'Internal_Server_Error'; //Error.
+		}					
+		try {
+			$statement->execute(array(':id' => $Abbreviated_result, ':title' => $Product_abbreviated['title'], ':description' => $Product_abbreviated['short_description'], ':categorie' => $Product_abbreviated['categorie']));
+		} catch (PDOException $e) {				
+			//Error code 23000 - unable to to create because of duplicate id.
+			return 'Error_Try_Again'; //Error.
+		}		
+	}
+		
+	
+	echo FN_Search_Add_Product(6, 142, array('title' => 'title', 'short_description' => 'desc', 'categorie' => 'cat'), array());
+	*/
+	
 
 ?>
 
@@ -318,7 +348,7 @@
   
 <div class="container_12 backgroundwhite" style="margin-bottom: 10px;">
 
- <head>
+ <head>  
 	<style>  	
 	.spacer{
 		padding-top: 5px;
@@ -329,19 +359,12 @@
 		border-bottom:1px solid #BDC3C7;
 		text-align:center;
 		color:#06ba8f;
-	}
-	
-	.product {
-
-	  
-	}
-	
+	}	
+	.product {	  }	
 	.product p{
 		color: #333;
 		margin: 2px;
-		
-	}
-	
+	}	
 	.product img {
 		width: 225px;
 		height: 225px;
@@ -352,85 +375,12 @@
 	}	
 	.product_title:hover{
 		color: #2ECC71;	
-	}
-	
-	
-	
-	
-	
-
-
-
-
-.toolbar {
-	font-weight: 400;
-  display: table-cell;
-  padding: 1em;
-  text-align: center;
-  vertical-align: middle;
-}
-
-
-
-
-.btn {
-  color: #fff;
-  cursor: pointer;
-  display: block;
-  font-size: 16px;
-  font-weight: 400;
-  line-height: 45px;
-  margin: 0 auto 2em;
-  max-width: 160px;
-  position: relative;
-  text-decoration: none;
-  text-transform: uppercase;
-  vertical-align: middle;
-  width: 100%;
-}
-
-
-
-.btn-3 {
-  background: #333;
-  border: 1px solid #da251f;
-  box-shadow: 0px 2px 0 #d6251f, 2px 4px 6px #e02a24;
-  font-weight: 900;
-  letter-spacing: 1px;
-  -webkit-transition: all 150ms linear;
-          transition: all 150ms linear;
-}
-
-.btn-3:hover {
-  background: #e02c26;
-  border: 1px solid rgba(0, 0, 0, 0.05);
-  box-shadow: 1px 1px 2px rgba(255, 255, 255, 0.2);
-  color: #ec817d;
-  text-decoration: none;
-  text-shadow: -1px -1px 0 #c2211c;
-  -webkit-transition: all 250ms linear;
-          transition: all 250ms linear;
-}
-
-	
-	
+	}	
 	</style>
- </head>
+ </head> 
  
- 
- 
- <div class="toolbar">
-
-  
-    
-    
-    
-    <a href="https://twitter.com/Dave_Conner" class="btn btn-3" style="width:100px;">Hover</a> 
-    <!--End of Button 3 -->
-  
-
- </div>
- 
+ <style>
+ </style> 
  
 	<?php
 		$Search_Title = base64_decode($_GET['s'], true);
@@ -441,10 +391,11 @@
 		if($Search_Description == false){$Search_Description = "";}	
 		if($Search_Categorie == false){$Search_Categorie = "";}
 				
-		$Result_List = FN_User_Search($Search_Categorie, $Search_Title, $Search_Title);
+		$Result_List = FN_User_Search($Search_Categorie, $Search_Title, $Search_Description);
 		
-		if($Result_List == 'Internal_Server_Error' || $Result_List == 'Error_Try_Again' || $Result_List == null){			
+		if($Result_List == 'Internal_Server_Error' || $Result_List == 'Error_Try_Again' || $Result_List == null){
 			?>		
+			
 			<img style="border-style: none;margin-left: 175px;padding-bottom: 50px;" src="http://www.scriptencryption.com/Assets/Images/search_no_results.png"></img>			
 			<?php			
 		}else{		
@@ -485,7 +436,7 @@
 		</div>
 		
 		<div class="grid_6" style="padding-left: 10px;">
-		 <h2><a href="http://www.scriptencryption.com/products/product_profile.php?p=<?php echo $value[0]; ?>&u=<?php echo $Owner; ?>" style="text-decoration:none;"><b class="product_title"><?php echo $Title;?></b></a></h2>
+		 <h2><a href="http://www.scriptencryption.com/products/product_profile.php?p=<?php echo $value[0]; ?>&u=<?php echo $Owner; ?>" style="text-decoration:none;"><b class="product_title" style="margin-right: 10px"><?php echo $Title;?></b></a></h2>
 		 <p style="font-size: 18px;"><b><a style="color: #000;">$<?php echo number_format($Price, 2, '.', ','); ?></a> / <?php echo $Unit; ?></b></p>
 		 <p>Shipping <b><a style="color: #000;">$<?php echo number_format($Shipping_cost, 2, '.', ','); ?> <?php if($Shipping_Cost_Multiple == false){echo " per " . $Unit; }?></a></b></p>
 		 
@@ -500,44 +451,47 @@
 					$User_Name = FN_User_Get_Id($Owner);
 					$Farm_Name = FN_Farm_Load_Name($User_Name);
 					
+					if($Farm_Name === null){
+						$Farm_Name = $Owner;
+					}
 					
 					?>
 					<a href="http://www.scriptencryption.com/account/profile.php?u=<?php echo $Owner; ?>" style="color: #3A539B;text-decoration: none;" ><?php echo $Farm_Name; ?></a>
 					<br><br>
 					
 					 Feedback for <?php echo FN_Farm_Load_Rating_Count($User_Name); ?> sales: <?php 
-						$Product_Compressed_Rating = 3;
+						
 						
 						if($Product_Compressed_Rating == -1){
-							echo "N/A";
-						}else{
+							$Product_Compressed_Rating = 0;
+						}
 							
-							$How_many_Left = 5;
+						$How_many_Left = 5;
 							
 							
-							$Product_Compressed_Rating = 6 - $Product_Compressed_Rating;
+						$Product_Compressed_Rating = 6 - $Product_Compressed_Rating;
 							
-							while($Product_Compressed_Rating > 1){							
+						while($Product_Compressed_Rating > 1){							
 								
-							echo '<i class="fa fa-star" style="color:#E5E5E5;float:right;"></i>';
-								$Product_Compressed_Rating--;
-								$How_many_Left--;
-							}
+						echo '<i class="fa fa-star" style="color:#E5E5E5;float:right;"></i>';
+							$Product_Compressed_Rating--;
+							$How_many_Left--;
+						}
 														
-							if($Product_Compressed_Rating == 0.5){
-								echo '<i class="fa fa-star-half-empty" style="color:#F9BF3B;float:right;"></i>';
-								$How_many_Left--;
-							}
+						if($Product_Compressed_Rating == 0.5){
+							echo '<i class="fa fa-star-half-empty" style="color:#F9BF3B;float:right;"></i>';
+							$How_many_Left--;
+						}
 							
-							while($How_many_Left > 0){
-								echo '<i class="fa fa-star" style="color:#F9BF3B;float:right;"></i>';
-								$How_many_Left--;
-							}							
+						while($How_many_Left > 0){
+							echo '<i class="fa fa-star" style="color:#F9BF3B;float:right;"></i>';
+							$How_many_Left--;
+						}							
 						
 
 
 							
-						}
+						
 					?>
 					
 					
@@ -546,14 +500,15 @@
 					<?php 
 						//$Product_Compressed_Rating 	
 						if($Product_Compressed_Rating == -1){
-							echo "N/A";
-						}else{
-							$How_many_Left = 5;
+							$Product_Compressed_Rating = 0;
+						}
+						
+						$How_many_Left = 5;
 							
 							
-							$Product_Compressed_Rating = 6 - $Product_Compressed_Rating;
+						$Product_Compressed_Rating = 6 - $Product_Compressed_Rating;
 							
-							while($Product_Compressed_Rating > 1){							
+						while($Product_Compressed_Rating > 1){							
 								
 							echo '<i class="fa fa-star" style="color:#E5E5E5;float:right;"></i>';
 								$Product_Compressed_Rating--;
@@ -569,7 +524,7 @@
 								echo '<i class="fa fa-star" style="color:#F9BF3B;float:right;"></i>';
 								$How_many_Left--;
 							}								
-						}
+						
 					?>
 					
 				<br><br>					

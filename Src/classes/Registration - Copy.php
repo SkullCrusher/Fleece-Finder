@@ -40,7 +40,6 @@ class Registration
 
         // if we have such a POST request, call the registerNewUser() method
         if (isset($_POST["register"])) {
-			
             $this->registerNewUser($_POST['user_name'], $_POST['user_email'], $_POST['user_password_new'], $_POST['user_password_repeat'], $_POST["g-recaptcha-response"], $_POST['user_agree']);
 			//print_r($_POST); //debugging
 	   
@@ -98,8 +97,8 @@ class Registration
 		
 		$findme   = '"success": true';
 		$pos = strpos($homepage, $findme);
-		
-	
+
+
 		if ($pos === false) {
 			//echo "The string '$findme' was not found in the string '$mystring'";
 			$this->errors[] = MESSAGE_USERNAME_WRONGCAPTCHA;

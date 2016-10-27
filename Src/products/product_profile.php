@@ -378,12 +378,24 @@
 				<div class="grid_1" id="mainPhoto" style="float:left;">
 				 <img src="<?php echo urlencode($Picture_1); ?>" id="img_large" style="margin-bottom:1px;" height="300" width="300"> 
 				</div>
+				<?php if($Picture_1 != null){ ?>
 				 <img src="<?php echo urlencode($Picture_1); ?>" onclick="change_img_1()" class="thumbnail" height="30" width="30"> 
+				<?php }?>
+				<?php if($Picture_2 != null){ ?>
 				 <img src="<?php echo urlencode($Picture_2); ?>" onclick="change_img_2()" class="thumbnail" height="30" width="30"> 
-				 <img src="<?php echo urlencode($Picture_3); ?>" onclick="change_img_3()" class="thumbnail" height="30" width="30"> 
+				 <?php }?>
+				 <?php if($Picture_3 != null){ ?>
+				 <img src="<?php echo urlencode($Picture_3); ?>" onclick="change_img_3()" class="thumbnail" height="30" width="30">
+				<?php }?>				 
+				 <?php if($Picture_4 != null){ ?>
 				 <img src="<?php echo urlencode($Picture_4); ?>" onclick="change_img_4()" class="thumbnail" height="30" width="30"> 
+				 <?php }?>
+				 <?php if($Picture_5 != null){ ?>
 				 <img src="<?php echo urlencode($Picture_5); ?>" onclick="change_img_5()" class="thumbnail" height="30" width="30"> 
+				 <?php }?>
+				 <?php if($Picture_6 != null){ ?>
 				 <img src="<?php echo urlencode($Picture_6); ?>" onclick="change_img_6()" class="thumbnail" height="30" width="30"> 
+				 <?php }?>
 				
 							
 			</div>

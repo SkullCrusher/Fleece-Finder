@@ -137,8 +137,8 @@
    <div class="container_12">
     <ul>
    	 <li><a href="../index.php"><i class="fa fa-home"></i></a></li>
-   	 <li><a href="#">Browse</a></li>
-   	 <li><a href="../products/product_categories.php">Categories</a></li>
+   	 <li><a href="../products/product_categories.php">Browse</a></li>
+   	 <li><a href="../products/product_create.php">Create Product</a></li>
    	 <li><a href="../products/product_categories.php">Most Popular</a></li>
   
 	 <?php 	 
