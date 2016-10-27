@@ -18,6 +18,11 @@ define("DB_NAME", "dwarvencthulhu");
 define("DB_USER", "dwarvencthulhu");
 define("DB_PASS", "DB PASSWORD");
 
+define("DB_HOST_SEARCH", "127.0.0.1");
+define("DB_NAME_SEARCH", "dwarvencthulhu_s");
+define("DB_USER_SEARCH", "dwarvencthulhu_s");
+define("DB_PASS_SEARCH", "hSFC3L32Hp4GzZTrSSXd4g8j");
+
 /**
  * Configuration for: Cookies
  * Please note: The COOKIE_DOMAIN needs the domain where your app is,
