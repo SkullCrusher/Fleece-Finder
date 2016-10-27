@@ -214,6 +214,7 @@
 		return json_decode($result['json_server_settings'], true);
 	}
 	
+
 //End of functions.
 
 	// load the login class
@@ -223,12 +224,29 @@
 
 	if ($login->isUserLoggedIn() == true) {
 	   // include("views/edit.php");
-	   echo $_SESSION['user_name'];
+	  // echo $_SESSION['user_name'];
 	} else {
 	   // include("views/not_logged_in.php");
-	   echo "logout";
+		include("index.php");
+		die();
 	}
 
+//Preprocessing
+	//Load categorise.
+	$Categorise = null;
+	
+	$Server_Settings_Results = null;
+	
+	$Server_Settings_Results = FN_Server_Load_Settings();
+	if($Server_Settings_Results == 'Internal_Server_Error' || $Server_Settings_Results == 'Error_Try_Again' || $Server_Settings_Results == null){
+		$Error_Details = 'An error has occurred, if the error continues please contact support and provide them with ERR:P1:480.';
+		$Error = true;		
+	}else{
+		//Set the $Categorise.
+		$Categorise = $Server_Settings_Results['Categories'];
+	}
+//End of Preprocessing
+	
 		
 	//Global Variables.
 	$Error = false;
@@ -237,8 +255,6 @@
 	$Sanitize_Problem = false;
 	$Sanitize_Problem_Details = "No Problem";
 	
-	
-
 //Sanitize Input
 	$Sanitized_Title = null;
 	$Sanitized_Short_Description = null;
@@ -247,9 +263,10 @@
 	$Sanitized_Terms_Of_Sale = null;
 	$Sanitized_Price = 0.0;
 	
+	$Sanitized_Category = null;
+	
 	//Input
-	//Check for the title being posted and if so we continue.
-//---
+
 	//Title (6-300) letters
 	if(strlen($_POST['title']) > 80 ||  strlen($_POST['title']) < 6){
 		//The title can be no longer then 80 characters long and has to be at least 6.
@@ -260,9 +277,7 @@
 		//Replace all non-standard characters.
 		$Sanitized_Title = preg_replace("/[^A-Za-z0-9 \-\(\)]/", '', $_POST['title']);		
 	}
-	
-	
-//---		
+			
 	//Short Description (300 letters)
 	if(strlen($_POST['short_description']) > 300 ||  strlen($_POST['short_description']) < 12){
 		//The title can be no longer then 300 characters long and has to be at least 12.
@@ -273,7 +288,22 @@
 		//Replace all non-standard characters.
 		$Sanitized_Short_Description = preg_replace("/[^A-Za-z0-9 \-\(\)]/", '', $_POST['short_description']);		
 	}
-//---
+
+		
+	//Category (it has to match one from the sql database);	
+	foreach ($Categorise as &$value) {
+		if($value == $_POST['category']){
+			$Sanitized_Category = $value;
+			break;
+		}
+	}
+	if($Sanitized_Category == null){
+		//It was not in the sql database so tell them there was a problem.
+		
+		$Sanitize_Problem = true;
+		$Sanitize_Details = "Unable to find category, please select again.";
+	}
+	
 	//Quantity for sale (Max 9999, Min 1)
 	if(intval($_POST['quantity_for_sale']) > 9999 ||  intval($_POST['quantity_for_sale']) < 1){
 		//The title can be no longer then 300 characters long and has to be at least 12.
@@ -284,18 +314,18 @@
 		//Replace all non-standard characters.
 		$Sanitized_Quantity = intval($_POST['quantity_for_sale']);		
 	}
-//---
+
 	//Long description (0 - 2000);
-	if(strlen($_POST['quantity_for_sale']) > 2000 || strlen($_POST['quantity_for_sale']) < 0){
+	if(strlen($_POST['long_description']) > 2000 || strlen($_POST['long_description']) < 0){
 		//The title can be no longer then 300 characters long and has to be at least 12.
 		
 		$Sanitize_Problem = true;
 		$Sanitize_Details = "The long description is a maximum of 2000 characters.";
 	}else{
 		//Replace all non-standard characters.
-		$Sanitized_Long_Description = preg_replace("/[^A-Za-z0-9 \-\(\)]/", '', $_POST['quantity_for_sale']);		
+		$Sanitized_Long_Description = preg_replace("/[^A-Za-z0-9 \-\(\)]/", '', $_POST['long_description']);		
 	}
-//---
+	
 	//Terms of sale (0 - 2000)
 	if(strlen($_POST['terms_of_sale']) > 2000 || strlen($_POST['terms_of_sale']) < 0){
 		//The title can be no longer then 300 characters long and has to be at least 12.
@@ -306,7 +336,7 @@
 		//Replace all non-standard characters.
 		$Sanitized_Terms_Of_Sale = preg_replace("/[^A-Za-z0-9 \-\(\)]/", '', $_POST['terms_of_sale']);		
 	}
-//---
+
 	//Price ($1.00 to $4,999)
 	if(floatval($_POST['price']) > 4999 || floatval($_POST['price']) < 1){
 		//The price cannot be more then $4,999	
@@ -319,135 +349,194 @@
 	
 			
 	//Debugging
-	echo $Sanitized_Title;
-	echo $Sanitized_Short_Description;
-	echo $Sanitized_Quantity;
-	echo $Sanitized_Long_Description;
-	echo $Sanitized_Terms_Of_Sale;
-	echo $Sanitized_Price;
-	
-	
-	
-//Check account
-	
-	//Local Global Variables.
+//	echo $Sanitized_Title;
+//	echo $Sanitized_Short_Description;
+//	echo $Sanitized_Quantity;
+//	echo $Sanitized_Long_Description;
+//	echo $Sanitized_Terms_Of_Sale;
+//	echo $Sanitized_Price;
+//	echo $Sanitized_Category;
 
-	$User_Name_Id_result = null;
-	$User_Name_Balance_result = null;
+//	echo "--fffffffffffffffffffff--" . $Sanitize_Problem_Details . "---";
 	
-	$User_Fee_To_Post = null;
+	//Check for all the inputs.	
+	if($Sanitized_Title != null && $Sanitized_Short_Description != null && $Sanitized_Quantity != 0 && $Sanitized_Price != 0){
 	
-
-	//Get the user_id
-	if($Error == false){		
-		$User_Name_Id_result = FN_User_Get_Id($_SESSION['user_name']);
-		if($User_Name_Id_result == 'Internal_Server_Error' || $User_Name_Id_result == 'Error_Try_Again' || $User_Name_Id_result == null){
-			$Error_Details = 'An error has occurred, if the error continues please contact support and provide them with ERR:P1:150.';
+		//We got all the requirements, try to post it.				
+		if($Sanitize_Problem == true){
 			$Error = true;
-		}
-	}	
-	
-	//Check account settings to see if they are Banned from posting.
-	if($Error == false){
-		$User_Name_Settings_result = FN_User_Check_Settings($User_Name_Id_result);
-		if($User_Name_Settings_result == 'Internal_Server_Error' || $User_Name_Settings_result == 'Error_Try_Again' || $User_Name_Settings_result == null){
-			$Error_Details = 'An error has occurred, if the error continues please contact support and provide them with ERR:P1:255.';
-			$Error = true;
-		}
-		
-		if($User_Name_Settings_result['Banned_From_Posting'] == 'true'){
-			$Error_Details = 'Your account has been disabled from posting new products onto the market place, if you believe this is an error please contact support.';
-			$Error = true;
-		}
-		
-		//Set the fee
-		$User_Fee_To_Post = $User_Name_Settings_result['Post_Fee'];
-		
-		//Check to make sure it is set and also is not paying to post.
-		if($User_Fee_To_Post == null || $User_Fee_To_Post < 0){
-			$Error_Details = 'An error has occurred, if the error continues please contact support and provide them with ERR:P1:241.';
-			$Error = true;
-		}
-	}	
-		
-	//Check the user funds
-	if($Error == false){
-		$User_Name_Balance_result = FN_User_Check_Balance($User_Name_Id_result);
-		if($User_Name_Balance_result == 'Internal_Server_Error' || $User_Name_Balance_result == 'Error_Try_Again' || $User_Name_Balance_result == null){
-			$Error_Details = 'An error has occurred, if the error continues please contact support and provide them with ERR:P1:189.';
-			$Error = true;
-		}
-		
-		if($User_Name_Balance_result < $User_Fee_To_Post){
-			$Error_Details = 'An error has occurred, you have insufficient funds to post a new product on the market place.';
-			$Error = true;
-		}
+			$Error_Details = $Sanitize_Problem_Details;
+		}else{
+			
+		//	echo "--fffffffffffffffffffff--" . $Sanitize_Problem_Details . "---";
 
-	}
-	
-	
-	echo $Error_Details; //Debugging	
-	echo $User_Name_Balance_result; //Debugging
-	
+		
+	//Check account
+		
+		//Local Global Variables.
 
+		$User_Name_Id_result = null;
+		$User_Name_Balance_result = null;
+		
+		$User_Fee_To_Post = null;
+		
 
+		//Get the user_id
+		if($Error == false){		
+			$User_Name_Id_result = FN_User_Get_Id($_SESSION['user_name']);
+			if($User_Name_Id_result == 'Internal_Server_Error' || $User_Name_Id_result == 'Error_Try_Again' || $User_Name_Id_result == null){
+				$Error_Details = 'An error has occurred, if the error continues please contact support and provide them with ERR:P1:150.';
+				$Error = true;
+			}
+		}	
+		
+		//Check account settings to see if they are Banned from posting.
+		if($Error == false){
+			$User_Name_Settings_result = FN_User_Check_Settings($User_Name_Id_result);
+			if($User_Name_Settings_result == 'Internal_Server_Error' || $User_Name_Settings_result == 'Error_Try_Again' || $User_Name_Settings_result == null){
+				$Error_Details = 'An error has occurred, if the error continues please contact support and provide them with ERR:P1:255.';
+				$Error = true;
+			}
+			
+			if($User_Name_Settings_result['Banned_From_Posting'] == 'true'){
+				$Error_Details = 'Your account has been disabled from posting new products onto the market place, if you believe this is an error please contact support.';
+				$Error = true;
+			}
+			
+			//Set the fee
+			$User_Fee_To_Post = $User_Name_Settings_result['Post_Fee'];
+			
+			//Check to make sure it is set and also is not paying to post.
+			if($User_Fee_To_Post == null || $User_Fee_To_Post < 0){
+				$Error_Details = 'An error has occurred, if the error continues please contact support and provide them with ERR:P1:241.';
+				$Error = true;
+			}
+		}	
+			
+		//Check the user funds
+		if($Error == false){
+			$User_Name_Balance_result = FN_User_Check_Balance($User_Name_Id_result);
+			if($User_Name_Balance_result == 'Internal_Server_Error' || $User_Name_Balance_result == 'Error_Try_Again' || $User_Name_Balance_result == null){
+				$Error_Details = 'An error has occurred, if the error continues please contact support and provide them with ERR:P1:189.';
+				$Error = true;
+			}
+			
+			if($User_Name_Balance_result < $User_Fee_To_Post){
+				$Error_Details = 'An error has occurred, you have insufficient funds to post a new product on the market place.';
+				$Error = true;
+			}
 
-//Post.
-
-/*---------------------------------------------------------------------
-Product_abbreviated
-	- title (80 characters)
-	- short_description (140 characters)
-	- tags
-	- compressed rating
-	- price :lowest
-	- picture url code
-	- username	
-*/
-
-	$tags = array('breakfast', 'Lunch', 'Dinner');
-	$Product_abbreviated = array( 'title' => 'Lucky Charms', 'short_description' => 'A magically delicious breakfast cereal made by General Mills, a 100% American company', 'tags' => $tags, 'price' => '10.21', 'picture' => 'www.scriptencryption.com/pic/11213123.png');
-	
-	$Product_abbreviated_json = json_encode($Product_abbreviated);
+		}
 		
 		
-	//Insert into the abbreviated
-	$Abbreviated_result = FN_Product_Abbreviated_Insert(93, $Product_abbreviated_json);
-	if($Abbreviated_result == 'Internal_Server_Error' || $Abbreviated_result == 'Error_Try_Again'){
-		echo 'Error, problem: ' . $Abbreviated_result;
-	}else{
-		echo 'No error: :D';
-	}
-	
-	
-/*-----------------------------------------------------------------------
-	Product_Extended
-		- long_description
-		- terms of sale
+		//echo $Error_Details; //Debugging	
+		//echo $User_Name_Balance_result; //Debugging
+		
+
+
+
+	//Post.
+
+	/*---------------------------------------------------------------------
+	Product_abbreviated
+		- title (80 characters)
+		- short_description (140 characters)
+		- category
 		- compressed rating
-		- pricing
-		- quantity of sale	
+		- price :lowest
+		- picture url code
+		- username	
 	*/
 
-	$tags = array('breakfast', 'Lunch', 'Dinner');
-	
-	$Long_Description = 'Lucky Charms is a cereal brand produced by the General Mills food company of Golden Valley, Minnesota, United States. It first appeared in stores in 1964. The cereal consists of two main components: toasted oat pieces and multi-colored marshmallow shapes, the latter making up over 25 percent of the cereals volume. The label features a leprechaun mascot, Lucky, animated in commercials.';
-	$Terms_Of_Sale = 'You have to open a can of whoop ass on everyone you see until you get the shipment.';
-	$Compressed_Rating = 3.4;
-	$Quantity_For_Sale = 102;
-	
-	$Product_extended = array('long_description' => $Long_Description, 'terms_of_sale' => $Terms_Of_Sale, 'compressed_rating' => $Compressed_Rating, 'quantity' => $Quantity_For_Sale);
-
-	
-	$Product_extended_json = json_encode($Product_extended);
+		//No error so we can post it.
+		if($Error == false){
 		
+			$category = $Sanitized_Category;
+			$Product_abbreviated = array( 'title' => $Sanitized_Title, 'short_description' => $Sanitized_Short_Description, 'category' => $category, 'price' => $Sanitized_Price, 'picture' => 'www.scriptencryption.com/pic/11213123.png');
+			
+			$Product_abbreviated_json = json_encode($Product_abbreviated);
+					
+			//Insert into the abbreviated
+			$Abbreviated_result = FN_Product_Abbreviated_Insert(100, $Product_abbreviated_json);
+			if($Abbreviated_result == 'Internal_Server_Error' || $Abbreviated_result == 'Error_Try_Again'){
+				echo 'Error, problem: ' . $Abbreviated_result;
+			}else{
+				echo 'No error: :D';
+			}
+			
+			
+		/*-----------------------------------------------------------------------
+			Product_Extended
+				- long_description
+				- terms of sale
+				- compressed rating
+				- pricing
+				- quantity of sale	
+			*/
+			
+			echo $Long_Description;
 
-	//Insert into the abbreviated
-	$Extended_result = FN_Product_Extended_Insert(93, $Product_extended_json);
-	if($Extended_result == 'Internal_Server_Error' || $Extended_result == 'Error_Try_Again'){
-		echo 'Error, problem: ' . $Extended_result;
-	}else{
-		echo 'No error: :D';
+			$Long_Description = $Sanitized_Long_Description;
+			$Terms_Of_Sale = $Sanitized_Terms_Of_Sale;
+			$Compressed_Rating = 3.4;
+			$Quantity_For_Sale = $Sanitized_Quantity;
+			
+			$Product_extended = array('long_description' => $Long_Description, 'terms_of_sale' => $Terms_Of_Sale, 'compressed_rating' => $Compressed_Rating, 'quantity' => $Quantity_For_Sale);
+
+			
+			$Product_extended_json = json_encode($Product_extended);
+				
+
+			//Insert into the abbreviated
+			$Extended_result = FN_Product_Extended_Insert(100, $Product_extended_json);
+			if($Extended_result == 'Internal_Server_Error' || $Extended_result == 'Error_Try_Again'){
+				echo 'Error, problem: ' . $Extended_result;
+			}else{
+				echo 'No error: :D'; //Debugging
+			}
+			
+			//$User_Name_Balance_result
+			//Subtract the user's credit.
+			function FN_User_Funds_Update($ID, $Funds){
+			
+				$db = new PDO('mysql:dbname=' . DB_NAME . ';host=' . DB_HOST . ';charset=utf8', DB_USER, DB_PASS);
+					
+				$db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+				$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);	
+				
+				$statement = null; //The statement
+					
+				try {
+					$statement = $db->prepare('UPDATE users_funds SET funds=:funds WHERE id = :id');			
+				} catch (PDOException $e) {
+										
+					//Error code 1146 - unable to find database.
+					return 'Internal_Server_Error'; //Error.
+				}
+					
+				try {
+					$statement->execute(array(':id' => $ID, ':funds' => $Funds));
+				} catch (PDOException $e) {
+				
+					//Error code 23000 - unable to to create because of duplicate id.
+					return 'Error_Try_Again'; //Error.
+				}		
+
+				$result = $statement->fetch();
+
+				return $result['funds'];
+			}
+			
+			$User_Funds_Update_result = FN_User_Funds_Update($User_Name_Id_result, $User_Name_Balance_result - $User_Fee_To_Post);
+			if(User_Funds_Update_result == 'Internal_Server_Error' || $User_Funds_Update_result == 'Error_Try_Again'){
+				echo 'Error, problem: ' . $User_Funds_Update_result;
+			}else{
+				echo 'No error: :D';
+			}
+			
+		}
+
+	}
 	}
 	
 ?>
@@ -508,7 +597,7 @@ div.desc {
 </style>
 </head>
 <body>
-Kinda just for debugging.
+
 <br>
 <div class="img">
 	<a target="_blank" href="/Assets/img/blank_photo.png"><img src="..\Assets\img\blank_photo.png" width="110" height="90"></a>
@@ -558,19 +647,7 @@ end of debugging stuff
 	//Restore the posted data on error/load the categorise
 	
 		
-	//Load categorise.
-	$Categorise = null;
 	
-	$Server_Settings_Results = null;
-	
-	$Server_Settings_Results = FN_Server_Load_Settings();
-	if($Server_Settings_Results == 'Internal_Server_Error' || $Server_Settings_Results == 'Error_Try_Again' || $Server_Settings_Results == null){
-		$Error_Details = 'An error has occurred, if the error continues please contact support and provide them with ERR:P1:480.';
-		$Error = true;		
-	}else{
-		//Set the $Categorise.
-		$Categorise = $Server_Settings_Results['Categories'];
-	}
 
 ?>
 
@@ -583,12 +660,12 @@ end of debugging stuff
 	<br>
 
     <label for="short_description">short description</label>	
-    <input id="short_description" type="text" pattern="{6,300}" name="short_description" required /></input>
+    <input id="short_description" type="text" pattern="{12,300}" name="short_description" required /></input>
 	<br>
 
-	categories
-	<label for="categorise">categories</label>
-	<select id = "categorise">
+	
+	<label for="category">category</label>
+	<select id="category" name="category">
 	<?php 
 		//Display the Categories.
 		foreach ($Categorise as &$item) {
@@ -599,7 +676,7 @@ end of debugging stuff
 	<br>
   
 	<label for="quantity_for_sale">Quantity for sale</label>
-    <input id="quantity_for_sale" type="text" pattern="[0-9]{1,4}" name="quantity_For_Sale" value="1" required /></input>
+    <input id="quantity_for_sale" type="text" pattern="[0-9]{1,4}" name="quantity_for_sale" value="1" required /></input>
 	<br>
 	
 	<label for="long_description">Long description</label>
