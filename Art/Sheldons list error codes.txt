@@ -1,0 +1,20 @@
+Error codes:
+
+-404.php 
+	:No code - Unable to full fill the request, sorry!
+	:?error=1 - Unable to find product
+	:?error=2 - Internal_Server_Error
+	:?error=3 - Error_Try_Again
+	:?error=17 - A joke.
+
+	
+
+- product_profile.php
+	:redirect to 404 (missing get's)
+
+- product_create.php
+	:ERR:P1:150
+	:ERR:P1:255
+	:ERR:P1:189
+	:ERR:P1:241
+	:ERR:P1:480
