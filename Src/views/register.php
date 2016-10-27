@@ -4,7 +4,7 @@
 <?php if (!$registration->registration_successful && !$registration->verification_successful) { ?>
 <form method="post" action="register.php" name="registerform">
     <label for="user_name"><?php echo WORDING_REGISTRATION_USERNAME; ?></label>
-    <input id="user_name" type="text" pattern="[a-zA-Z0-9]{2,64}" name="user_name" required />
+    <input id="user_name" type="text" pattern="[_a-zA-Z0-9]{2,64}" name="user_name" required />
 
     <label for="user_email"><?php echo WORDING_REGISTRATION_EMAIL; ?></label>
     <input id="user_email" type="email" name="user_email" required />

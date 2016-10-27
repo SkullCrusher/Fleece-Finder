@@ -40,8 +40,8 @@ class Registration
 
         // if we have such a POST request, call the registerNewUser() method
         if (isset($_POST["register"])) {
-            //$this->registerNewUser($_POST['user_name'], $_POST['user_email'], $_POST['user_password_new'], $_POST['user_password_repeat'], $_POST["g-recaptcha-response"]);
-			print_r($_POST);
+            $this->registerNewUser($_POST['user_name'], $_POST['user_email'], $_POST['user_password_new'], $_POST['user_password_repeat'], $_POST["g-recaptcha-response"]);
+			//print_r($_POST); //debugging
 	   
 	   // if we have such a GET request, call the verifyNewUser() method
         } else if (isset($_GET["id"]) && isset($_GET["verification_code"])) {
@@ -122,7 +122,7 @@ class Registration
             $this->errors[] = MESSAGE_PASSWORD_TOO_SHORT;
         } elseif (strlen($user_name) > 64 || strlen($user_name) < 4) {
             $this->errors[] = MESSAGE_USERNAME_BAD_LENGTH;
-        } elseif (!preg_match('/^[a-z\d]{2,64}$/i', $user_name)) {
+        } elseif (!preg_match('/^[_a-z\d]{2,64}$/i', $user_name)) {
             $this->errors[] = MESSAGE_USERNAME_INVALID;
         } elseif (empty($user_email)) {
             $this->errors[] = MESSAGE_EMAIL_EMPTY;
@@ -170,13 +170,104 @@ class Registration
 
                 // id of new user
                 $user_id = $this->db_connection->lastInsertId();
+				
+				//insert the funds column.
+				function FN_User_Create_Funds_Insert($ID){
+								
+					$db = new PDO('mysql:dbname=' . DB_NAME . ';host=' . DB_HOST . ';charset=utf8', DB_USER, DB_PASS);
+								
+					$db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+					$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);	
+							
+					$statement = null; //The statement
+								
+					try {
+						$statement = $db->prepare('INSERT INTO users_funds (id) VALUES (:id)');			
+					} catch (PDOException $e) {
+													
+						//Error code 1146 - unable to find database.
+						return 'Internal_Server_Error'; //Error.
+					}
+								
+					try {
+						$statement->execute(array('id' => $ID));
+					} catch (PDOException $e) {
+															
+						//Error code 23000 - unable to to create because of duplicate id.
+						return 'Error_Try_Again'; //Error.
+					}		
+				}
+				
+				$DC_Error = false;
+				//Insert into the abbreviated
+				$Funds_result = FN_User_Create_Funds_Insert($user_id);
+				
+				if($Funds_result == 'Internal_Server_Error' || $Funds_result == 'Error_Try_Again'){
+					$DC_Error = true;
+				}
 
-                if ($query_new_user_insert) {
+				
+				//Create the default settings and apply them.
+				$Json_User_Banned_From_Site = 'false';
+				$Json_User_Banned_From_Post = 'false';
+				
+				$Json_User_Post_Fee = '0.2'; // 20 cents.
+				
+				$Json_User_Allow_Messages = 'true'; //Can the user be messaged.
+				
+				$Uncompressed_Settings = array('Banned_From_Site' => $Json_User_Banned_From_Site, 'Banned_From_Posting' => $Json_User_Banned_From_Post, 'Post_Fee' => $Json_User_Post_Fee, 'User_Allow_Messages' => $Json_User_Allow_Messages);
+				
+				
+				
+				$Json_Settings = json_encode($Uncompressed_Settings);
+				
+				//The insert into the extended functions.
+				function FN_User_Create_Settings_Insert($ID, $JSON){
+				
+					$db = new PDO('mysql:dbname=' . DB_NAME . ';host=' . DB_HOST . ';charset=utf8', DB_USER, DB_PASS);
+					
+					$db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+					$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);	
+				
+					$statement = null; //The statement
+					
+					try {
+						$statement = $db->prepare('INSERT INTO users_settings (id, json_settings) VALUES (:id, :json_settings)');			
+					} catch (PDOException $e) {
+						
+						//Error code 1146 - unable to find database.
+						return 'Internal_Server_Error'; //Error.
+					}
+					
+					try {
+						$statement->execute(array('id' => $ID,':json_settings' => $JSON));
+					} catch (PDOException $e) {
+						
+						//Error code 23000 - unable to to create because of duplicate id.
+						return 'Error_Try_Again'; //Error.
+					}		
+				}
+				
+				if($DC_Error == false){
+					$Settings_result = FN_User_Create_Settings_Insert($user_id, $Json_Settings);
+					
+					if($Settings_result == 'Internal_Server_Error' || $Settings_result == 'Error_Try_Again'){
+						$DC_Error = true;
+					}
+				}
+				
+				
+
+                if ($query_new_user_insert && $DC_Error == false) {
                     // send a verification email
                     if ($this->sendVerificationEmail($user_id, $user_email, $user_activation_hash)) {
                         // when mail has been send successfully
                         $this->messages[] = MESSAGE_VERIFICATION_MAIL_SENT;
                         $this->registration_successful = true;
+
+						
+					
+						
                     } else {
                         // delete this users account immediately, as we could not send a verification email
                         $query_delete_user = $this->db_connection->prepare('DELETE FROM users WHERE user_id=:user_id');

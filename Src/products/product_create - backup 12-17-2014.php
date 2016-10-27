@@ -1,35 +1,7 @@
 <?php
-/* Copyright (C) DwarvenKnowledge, LLC - All Rights Reserved
- * This product is licensed to a single organization or user and must not be distributed
- * Unauthorized copying of this file, via any medium is strictly prohibited.
- */
 
-
-/*
-	Create a new product.
-		-Check account
-			:is banned from posting?
-			:does have required funds to post?
-		-Sanitize input
-			:Does it have javascript or html or links?
-			:special characters?
-		-Post
-			:Add to Product_abbreviated.
-			:Add to Product_rating (leave blank).
-			:Add to Product_extended.
-		-Subtract funds.
-			:Check to insure funds were removed
-				-Failure to remove
-					.Remove product and show error.
-				-Successful remove of funds.
-					.transfer to admin account
-		-Thank you for posting new product
-			:Link to the product page.
-			:Receipt (Print/email?)
-*/
-
-	// include the configure file
-	require_once('../config/config.php');
+// include the config
+require_once('../config/config.php');
 
 //Functions.
 	//The insert into the abbreviated functions.
@@ -52,7 +24,7 @@
 		}
 		
 		try {
-			$statement->execute(array(':id' => $ID,':json_condensed' => $JSON));
+			$statement->execute(array('id' => $ID,':json_condensed' => $JSON));
 		} catch (PDOException $e) {
 			//echo 'Connection failed: ' . $e->getCode(); //Debug
 			
@@ -81,7 +53,7 @@
 		}
 		
 		try {
-			$statement->execute(array(':id' => $ID,':json_extended' => $JSON));
+			$statement->execute(array('id' => $ID,':json_extended' => $JSON));
 		} catch (PDOException $e) {
 			//echo 'Connection failed: ' . $e->getCode(); //Debug
 			
@@ -90,117 +62,47 @@
 		}		
 	}
 	
-	//Get the id of a user by username
-	function FN_User_Get_Id($Username){
-
-	$db = new PDO('mysql:dbname=' . DB_NAME . ';host=' . DB_HOST . ';charset=utf8', DB_USER, DB_PASS);
-		
-	$db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
-	$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);	
-	
-	$statement = null; //The statement
-		
-	try {
-		$statement = $db->prepare('SELECT user_id FROM users WHERE user_name = :user_name');			
-	} catch (PDOException $e) {
-			
-		//Error code 1146 - unable to find database.
-		return 'Internal_Server_Error'; //Error.
-	}
-		
-	try {
-		$statement->execute(array(':user_name' => $Username));
-	} catch (PDOException $e) {
-	
-		//Error code 23000 - unable to to create because of duplicate id.
-		return 'Error_Try_Again'; //Error.
-	}		
-	
-	$result = $statement->fetch();
-
-	return $result['user_id'];
-}
-	
-	//Get the funds in a users account by id.
-	function FN_User_Check_Balance($ID){
-
-		$db = new PDO('mysql:dbname=' . DB_NAME . ';host=' . DB_HOST . ';charset=utf8', DB_USER, DB_PASS);
-			
-		$db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
-		$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);	
-		
-		$statement = null; //The statement
-			
-		try {
-			$statement = $db->prepare('SELECT funds FROM users_funds WHERE id = :id');			
-		} catch (PDOException $e) {
-								
-			//Error code 1146 - unable to find database.
-			return 'Internal_Server_Error'; //Error.
-		}
-			
-		try {
-			$statement->execute(array(':id' => $ID));
-		} catch (PDOException $e) {
-		
-			//Error code 23000 - unable to to create because of duplicate id.
-			return 'Error_Try_Again'; //Error.
-		}		
-
-		$result = $statement->fetch();
-
-		return $result['funds'];
-	}
-	
 //End of functions.
 
 
-	// load the login class
-	require_once('../classes/Login.php');
+/*
+// load the login class
+require_once('classes/Login.php');
 
-	$login = new Login();
+$login = new Login();
 
-	if ($login->isUserLoggedIn() == true) {
-	   // include("views/edit.php");
-	   echo $_SESSION['user_name'];
-	} else {
-	   // include("views/not_logged_in.php");
-	   echo "logout";
-	}
-
-//Check account
-	
-	//Global Variables.
-	$Error = false;
-	$Error_Details = "No Error";
-
-	$User_Name_Id_result = null;
-	$User_Name_Balance_result = null;
+if ($login->isUserLoggedIn() == true) {
+    include("views/edit.php");
+} else {
+    include("views/not_logged_in.php");
+}
+*/
 
 
-	//Get the user_id
-	if($Error == false){		
-		$User_Name_Id_result = FN_User_Get_Id($_SESSION['user_name']);
-		if($User_Name_Id_result == 'Internal_Server_Error' || $User_Name_Id_result == 'Error_Try_Again'){
-			$Error_Details = 'An error has occoured, if the error presits please contact support and provide them with ERR:P1:150.';
-			$Error = true;
-		}
-	}	
-	
-	//Get the user funds
-	if($Error == false){
-		$User_Name_Balance_result = FN_User_Check_Balance($User_Name_Id_result);
-		if($User_Name_Balance_result == 'Internal_Server_Error' || $User_Name_Balance_result == 'Error_Try_Again'){
-			$Error_Details = 'An error has occoured, if the error presits please contact support and provide them with ERR:P1:189.';
-			$Error = true;
-		}
-	}
-	
-	
-	
-	echo $User_Name_Balance_result;
-	
+/*
+	Create a new product.
+		-Check account
+			:is banned from posting?
+			:does have required funds to post?
+		-Sanitize input
+			:Does it have javascript or html or links?
+			:special characters?
+		-Post
+			:Add to Product_abbreviated.
+			:Add to Product_rating (leave blank).
+			:Add to Product_extended.
+		-Subtract funds.
+			:Check to insure funds were removed
+				-Failure to remove
+					.Remove product and show error.
+				-Successful remove of funds.
+					.transfer to admin account
+		-Thank you for posting new product
+			:Link to the product page.
+			:Receipt (Print/email?)
+*/
 
+//Check account - (Skipped)
 
 //Sanitize Input - (Skipped)
 
