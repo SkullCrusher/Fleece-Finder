@@ -827,13 +827,14 @@ Product_Extended
 			</div><br>
 
 			
-
+				
 				 <input type="hidden" name="pic_1" id="pic_1" value="">
 				 <input type="hidden" name="pic_2" id="pic_2" value=""> 
 				 <input type="hidden" name="pic_3" id="pic_3" value=""> 
 				 <input type="hidden" name="pic_4" id="pic_4" value=""> 
 				 <input type="hidden" name="pic_5" id="pic_5" value="">
-				 <input type="hidden" name="pic_6" id="pic_6" value=""> 					 
+				 <input type="hidden" name="pic_6" id="pic_6" value=""> 	
+		
 				
 				<div class="grid_12"><input type="submit"  class="buynow addtocart" style="border: 0;margin-left:400px;" name="register" value="Submit" />	</div>
 				</form>
@@ -927,6 +928,7 @@ Product_Extended
 				}); 
 		</script>
 			
+			<div class="grid_12" style="padding-left: 10px; padding-top:10px;">
 			<div style="width:300px">
 				<form id="imageform1" method="post" enctype="multipart/form-data" action='../images/ajaximage.php'>
 				Upload your image <input type="file" name="photoimg1" id="photoimg1" />
@@ -974,7 +976,7 @@ Product_Extended
 				<div id='preview_6' name="img_6" onclick="Delete_Image('6')">
 				</div>
 			</div>
-			
+			</div>
 	
 		</div>
 			

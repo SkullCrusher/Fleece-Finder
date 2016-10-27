@@ -100,6 +100,23 @@
 	if(strlen($User_Data['profile_picture']) >= 1){
 		$Profile_Picture = $User_Data['profile_picture'];
 	}
+	if(strlen($_POST['pic_1']) > 0){
+	
+		$Profile_Picture = substr(preg_replace("/[^a-z0-9._]+/i", "", $_POST['pic_1']), 0, 80);
+		
+		$myFile_1 = '..\\images\\upload_images\\' . $_SESSION['user_name'] . '\\' . $Profile_Picture;
+
+			
+		$result_1 = glob ($myFile_1 . ".*");	
+		
+		$Profile_Picture = str_replace('..', "", current($result_1));
+		$Profile_Picture = str_replace('\\', "//", $Profile_Picture);
+		
+		//var_dump($myFile_1);
+		
+		//var_dump($Profile_Picture);
+		//die();
+	}
 	//$Profile_Picture = substr(preg_replace("/[^a-z0-9.]+/i", "", $_POST['']), 0, 1000);
 	//limit 80
 	$Profile_Name = null;
@@ -261,12 +278,46 @@
 ?>
 	
 		<div class="container_12 backgroundwhite">
+		<div class="grid_12">
+				<p style="text-align:center;font-size: 200%;margin-top:-10px;"><b>Edit your profile</b></p>
+			</div>
+		
+		
+			<script type="text/javascript" >
+			 $(document).ready(function() {		
+				$('#photoimg1').live('change', function(){ 
+			    $("#preview1").html('');
+				$("#preview1").html('<img src="../Assets/Images/loader.gif" alt="Uploading...."/>');
+				$("#imageform1").ajaxForm({
+					target: '#preview_1'
+				}).submit();
+				});
+				});
+
+		</script>
+			
+		<div class="grid_12" style="padding-left: 10px; padding-top:10px;">
+			<div style="width:300px">
+				<form id="imageform1" method="post" enctype="multipart/form-data" action='../images/ajaximageprofile.php'>
+				Upload a new profile image <input type="file" name="photoimg1" id="photoimg1" />
+				</form>
+				<div id='preview_1' name="img_1" onclick="Delete_Image('1')" style="margin-bottom:1px;" height="300" width="300">
+				</div>
+			</div>  
+		</div>
 			
 			<form method="post" action="profile_edit.php" id="create_rating_new" name="create_rating_new">
 
-			<div class="grid_6">
-				<label for="profile_name"><b>profile picture</b></label>
+			
+						
+			<div class="grid_5">
+				<label for="profile_name"><b>Current profile picture</b></label>
+				<img src="<?php echo 'http://'. $_SERVER["HTTP_HOST"] . $Profile_Picture; ?>" id='currentpicture_1' name="currentpicture_1"  style="margin-bottom:1px;" height="300" width="300"> 					
 			</div>
+			
+
+			
+		
 			
 			<input type="hidden" name="post" id="post" value="true">
 			
@@ -274,6 +325,23 @@
 			<label for="profile_name"><b>Profile name</b></label>	
 			<input id="profile_name" type="text" pattern="[ ()a-zA-Z0-9-]{6,80}" name="profile_name" value="<?php echo $Profile_Name; ?>" style="width:350px;" placeholder="Jimmy's farm" required /></input>
 			</div>
+			
+			<div class="grid_6" style="padding-top: 15px;padding-bottom: 10px;">
+			<label for="phonenumber"><b>Phone Number</b></label>	
+			<input id="phonenumber" type="text" pattern="[ ()a-zA-Z0-9-\(\)]{6,80}" name="phonenumber" value="<?php echo $Phone_number; ?>" style="width:350px;" placeholder="500-500-5000"/></input>
+			</div>
+			<div class="grid_6" style="padding-top: 10px;padding-bottom: 10px;">
+			<label for="email"><b>Email</b></label>	
+			<input id="email" type="text" pattern="[ ()a-zA-Z0-9-@.]{6,80}" name="email" value="<?php echo $Email; ?>" style="width:350px;" placeholder="email@domain.com"/></input>
+			</div>
+			<div class="grid_6" style="padding-top: 10px;padding-bottom: 10px;">
+			<label for="website"><b>Website</b></label>	
+			<input id="website" type="text" pattern="[ ()a-zA-Z0-9-.]{6,80}" name="website" value="<?php echo $Website; ?>" style="width:350px;" placeholder="www.example.com/user/homepage.html"/></input>
+			</div>
+			<div class="grid_6" style="padding-top: 10px;padding-bottom: 10px;">
+			<label for="mobile_phone"><b>Mobile Phone</b></label>	
+			<input id="mobile_phone" type="text" pattern="[ ()a-zA-Z0-9-\(\)]{6,80}" name="mobile_phone" value="<?php echo $Mobile_Phone; ?>" style="width:350px;" placeholder="500-500-5000"/></input>
+			</div>		
 			
 			<div class="grid_12" style="padding-top:15px;">
 				<label for="short_description"><b>Short Description</b></label>	
@@ -292,33 +360,26 @@
 				<textarea rows="0" cols="50" id="general_terms_of_sale" name="general_terms_of_sale" type="text" pattern="[ ()a-zA-Z0-9-]{6,1000}"  class="textbox" style="resize: none;width:938px;height:100px;" placeholder="Ex: You have to send me a message to tell me what you think of my products."><?php echo $General_terms_of_sale; ?></textarea> 
 			</div><br>		
 			
-			<div class="grid_6" style="padding-top: 5px;padding-bottom: 5px;">
-			<label for="phonenumber"><b>Phone Number</b></label>	
-			<input id="phonenumber" type="text" pattern="[ ()a-zA-Z0-9-\(\)]{6,80}" name="phonenumber" value="<?php echo $Phone_number; ?>" style="width:350px;" placeholder="500-500-5000"/></input>
-			</div>
-			<div class="grid_6" style="padding-top: 5px;padding-bottom: 5px;">
-			<label for="email"><b>Email</b></label>	
-			<input id="email" type="text" pattern="[ ()a-zA-Z0-9-@.]{6,80}" name="email" value="<?php echo $Email; ?>" style="width:350px;" placeholder="email@domain.com"/></input>
-			</div>
-			<div class="grid_6" style="padding-top: 5px;padding-bottom: 5px;">
-			<label for="website"><b>Website</b></label>	
-			<input id="website" type="text" pattern="[ ()a-zA-Z0-9-.]{6,80}" name="website" value="<?php echo $Website; ?>" style="width:350px;" placeholder="www.example.com/user/homepage.html"/></input>
-			</div>
-			<div class="grid_6" style="padding-top: 5px;padding-bottom: 5px;">
-			<label for="mobile_phone"><b>Mobile Phone</b></label>	
-			<input id="mobile_phone" type="text" pattern="[ ()a-zA-Z0-9-\(\)]{6,80}" name="mobile_phone" value="<?php echo $Mobile_Phone; ?>" style="width:350px;" placeholder="500-500-5000"/></input>
-			</div>			
+				
 			
 			<div class="grid_12" style="padding-top:15px;">
 				<label for="extra_contact_information"><b>Extra contact information</b></label>					
 				<textarea rows="0" cols="50" id="extra_contact_information" name="extra_contact_information" type="text" pattern="[ ()a-zA-Z0-9-]{6,1000}"  class="textbox" style="resize: none;width:938px;height:100px;" placeholder="Ex: Please call between 9am - 5 pm"><?php echo $Extra_contact_information; ?></textarea> 
-			</div><br>		
+			</div><br>	
+
+			<input type="hidden" name="pic_1" id="pic_1" value="">
 			
-			<div class="grid_12" style="padding-top: 15px;padding-bottom: 15px;"><input type="submit"  class="buynow addtocart" style="border: 0;margin-left:400px;" name="register" value="Submit" /></div>
+			<div class="grid_12" style="padding-top: 15px;padding-bottom: 15px;"><input type="submit"  class="buynow addtocart" style="border: 0;margin-left:400px;" name="register" value="UPDATE" /></div>
 		</form>
 			
-  
-		</div>
+				<script type="text/javascript" src="../Assets/Javascript/jquery.min.js"></script>
+			<script type="text/javascript" src="../Assets/Javascript/jquery.form.js"></script>
+	
+		
+	
+			
+		
+		</div>	
 
 
 <?php 
