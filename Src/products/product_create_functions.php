@@ -1,5 +1,7 @@
 <?php
 
+echo "ss";
+
 //The insert into the abbreviated functions.
 function FN_Product_Abbreviated_Insert($ID, $JSON){
 	
