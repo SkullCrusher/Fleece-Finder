@@ -41,7 +41,7 @@ html, body {
 width: 260px;
 height: 25px;
 margin: 5px auto;
-padding: 15px;
+
 box-sizing: border-box;
 font-size: .8em;
 border: 1.5px solid #cccccc;
@@ -51,15 +51,24 @@ color: #000;
 }
 
 .textbox:focus {
-	border: thin solid #9A12B3;
+	border: thin solid #2ECC71;
 outline: none;
 
 }
 
 
 
+.login-container{
+	width:300px;
+	margin-left:35%;
+	margin-bottom:100px;
+}
 
+.login-container a{
+	color: #000;
+	text-decoration: none;
 
+}
 
 
 

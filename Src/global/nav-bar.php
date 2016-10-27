@@ -4,6 +4,18 @@
  * Unauthorized copying of this file, via any medium is strictly prohibited.
  */
 
+ 
+ 	// include the configure file
+	require_once( $_SERVER['DOCUMENT_ROOT'] . '/config/config.php');
+
+	// load the login class
+	require_once( $_SERVER['DOCUMENT_ROOT'] . '/classes/Login.php');
+
+	$login = new Login();
+
+
+	
+ 
  ?>
 
 
@@ -36,12 +48,30 @@
   <div class="bottom-nav">
    <div class="container_12">
     <ul>
-   	 <li><a href="index.php"><i class="fa fa-home"></i></a></li>
+   	 <li><a href="<?php echo $_SERVER['DOCUMENT_ROOT']; ?>/index.php"><i class="fa fa-home"></i></a></li>
    	 <li><a href="#">Browse</a></li>
    	 <li><a href="#">Categories</a></li>
    	 <li><a href="#">Most Popular</a></li>
-   	 <li><a href="#">Create an Account</a></li>
-   	 <li><a href="#">Login</a></li>
+  
+	 <?php 	 
+	 	if ($login->isUserLoggedIn() == true) {
+			echo '<li><a href="index.php">My account</a></li>';
+		} else {	
+			echo '<li><a href="index.php">Login</a></li>';
+			echo '<li><a href=account/profile.php">Create an Account</a></li>';
+		}	 
+	 ?>
+	 
+	 <li><a href="<?php echo '/cart/cart_checkout.php'; ?>">Cart (<?php 
+		$Count = 0;
+		foreach ($_SESSION['cart'] as &$value) {	
+			$Count++;
+		}		
+		echo $Count;
+	 ?>)
+	 
+	 </a></li>	 
+   	 
     </ul>
    </div>
   </div>

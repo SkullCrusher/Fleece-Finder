@@ -236,6 +236,7 @@
 	//Everything is inside pagewrapper
 ?>
 	
+	
 		<div class="container_12 backgroundwhite">
 		
 			<div class="grid_4">
@@ -261,7 +262,8 @@
 			</div>
 			
 			<div class="grid_4" >
-				<form method="post" class="sellinginformation aligncenter" action="index.php" id="buynow" name="buynow">
+				
+				<form method="post" class="sellinginformation aligncenter" action=" <?php echo "http://".$_SERVER['HTTP_HOST'].'/cart/cart_add.php'; ?>">	
 				<b style="margin-left:10px;">Selling Price: </b>$<?php echo $Product_Price; ?>/ <?php echo $Product_Amount . ' ' . $Product_Unit; ?><br>
 				<b style="margin-left:10px;">Shipping Costs: </b>$<?php echo $Shipping_Cost; ?><br>
 				<b style="margin-left:10px;">Quantity: </b>
@@ -280,7 +282,18 @@
 				  <option value="50">50</option>
 				</select><br>
 				
-				<a href="index.php?fleece" class="buynow addtocart" style="margin-top: 8px;"><span><i class="icon-github"></i></span>Add to cart</a>
+				
+						
+					<input type="hidden" name="return_url" value="<?php echo base64_encode($url="http://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']); ?>" />
+						
+					<input type="hidden" name="product_code" value="<?php echo $_GET['p']; ?>" />
+					<input type="hidden" name="product_owner" value="<?php echo $Product_Owner; ?>" />
+					<input type="hidden" name="product_quantity" value="001" />
+						
+						
+					<input type="submit" name="login" class="buynow addtocart" style="margin-top: 8px;border-style:none;" value="Add to cart" />
+				</form>
+				
 				</form>
 			</div>
 			<div class="grid_3">
@@ -316,7 +329,6 @@
 						}
 					?>
 					
-					<!-- <i class="fa fa-star" style="color:#F9BF3B;"></i><i class="fa fa-star" style="color:#E5E5E5"></i><i class="fa fa-star" style="color:#E5E5E5"></i><i class="fa fa-star" style="color:#E5E5E5"></i><i class="fa fa-star" style="color:#E5E5E5"></i> -->
 				<br><br>					
 					
 				</form>
@@ -410,7 +422,7 @@
 								<div class="review-container" style="padding: 0px 0px 0px 0px;">					
 									<div class="review-header" >
 									<b>
-									<?php echo $value['title']; ?> - <div class="review-header-name"><?php echo $value['username']; ?></div> 
+									<?php echo ' - ' . $value['title']; ?><div class="review-header-name" style="padding-right:5px;"><?php echo ucfirst ($value['username']) . '<br>'; ?></div> 
 									<div class="review-header-stars">								
 									<?php 
 										$StarsLeft = 5;

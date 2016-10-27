@@ -1,3 +1,9 @@
+<?php 
+/* Copyright (C) DwarvenKnowledge, LLC - All Rights Reserved
+ * This product is licensed to a single organization or user and must not be distributed
+ * Unauthorized copying of this file, via any medium is strictly prohibited.
+ */
+?>
 <?php
 
 // check for minimum PHP version
@@ -12,9 +18,6 @@ if (version_compare(PHP_VERSION, '5.3.7', '<')) {
 // include the config
 require_once('config/config.php');
 
-// include the to-be-used language, english by default. feel free to translate your project and include something else
-require_once('translations/en.php');
-
 // include the PHPMailer library
 require_once('libraries/PHPMailer.php');
 
@@ -23,11 +26,31 @@ require_once('classes/Login.php');
 
 $login = new Login();
 
-if ($login->isUserLoggedIn() == true) {
-   header('Location: http://www.scriptencryption.com/views/edit.php');
-	die();   
-} else {
-	header('Location: http://www.scriptencryption.com/views/not_logged_in.php');
+if ($login->isUserLoggedIn() == false) {
+	header('Location: http://www.scriptencryption.com/account/login.php');
 	die();
 }
+
+//home page?
+
 ?>
+
+<?php 
+	
+	require_once($_SERVER['DOCUMENT_ROOT'] . '/global/nav-bar.php');	
+	//Everything is inside pagewrapper
+
+?>
+
+
+<div class="container_12 backgroundwhite">
+
+
+Homepage maybe?
+
+</div>
+
+<?php 
+	//End of page wrap.
+	require_once($_SERVER['DOCUMENT_ROOT'] . '/global/footer-bar.php');	
+?> 
