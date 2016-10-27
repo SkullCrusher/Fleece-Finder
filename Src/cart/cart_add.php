@@ -52,7 +52,7 @@
 	}
 
 	print_r($_SESSION['cart']);
-	
+	//$_SESSION['cart'] = null;
 	//header('Location: ');
 	//die();	
 ?>
@@ -63,9 +63,9 @@ CART
 	<input type="hidden" name="return_url" value="<?php echo base64_encode($url="http://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']); ?>" />
 		
 	
-	<input type="hidden" name="product_code" value="001" />
+	<input type="hidden" name="product_code" value="141" />
 	<input type="hidden" name="product_owner" value="user" />
-	<input type="hidden" name="product_quantity" value="001" />
+	<input type="hidden" name="product_quantity" value="1" />
 	
 	
 	<input type="submit" name="login" class="buynow addtocart" value="Login" />

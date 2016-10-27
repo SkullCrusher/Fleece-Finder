@@ -4,6 +4,32 @@
 	//Everything is inside pagewrapper
 ?>
 
+<?php 
+	if(isset($_POST['update_qty']) && $_POST['update_qty'] == 'neat'){
+		
+		$Current = 1;
+		
+		foreach($_SESSION['cart'] as &$value){
+		
+			$value['product_quantity'] = preg_replace("/[^0-9,.]/", "", $_POST['product_' . $Current]);
+						
+			$Current++;
+		}	
+	}
+		
+	$counter = 0;
+	
+	//remove empty products.
+	foreach($_SESSION['cart'] as &$value){
+		if($value['product_quantity'] == "0"){		
+			unset($_SESSION['cart'][$counter]);
+		}	
+		$counter++;
+	}	
+	
+	$total_cost = 0;
+?>
+
 
 <style>
 .cart-container{
@@ -50,9 +76,15 @@
 	padding-top: 15px;
 }
 
+.cart-item-description a{
+	 text-decoration: none;
+	 
+	 color: #000;
+}
+
 .cart-item-seller{
 	
-	margin-left: -315px;
+	margin-left: 110px;
 	padding-top: 50px;	
 }
 
@@ -109,18 +141,34 @@ padding-bottom:10px;
 
 </style>
 
-<script language="JavaScript">
-	function product_1(element) {
-		document.getElementById("product_1").value = "";
-	}			
+<script>	
+	<?php 	
+	$Counter = 1;
+				
+	foreach($_SESSION['cart'] as &$value){
+		
+		echo 'function duplicate_' . $Counter . '() {';
+		echo 'var elem = document.getElementById("QTY_' . $Counter .'");';
+		echo 'var elem2 = document.getElementById("product_' . $Counter . '").value = elem.value;';
+		echo '}';
+		
+		$Counter++;
+	}	
+	
+	
+	
+	
+	?>	
 </script>
 
 
-		<?php 
-			//output the items.
-			
-			print_r($_SESSION['cart']);		
-		?>
+<?php 
+	//output the items.	
+	//echo '<br><br>';	
+	//print_r($_SESSION['cart']);	
+
+	//echo count($_SESSION['cart']);
+?>
 
 <div class="container_12 backgroundwhite">
 
@@ -128,31 +176,20 @@ padding-bottom:10px;
 	
 	<div class="cart-container">
 		<div class="cart-nav">
-			<p style="textinside"><b>Cart has 0 items</b></p>
+			<p style="textinside"><b>Cart has <?php echo count($_SESSION['cart']); ?> items</b></p>
 		</div>
-		<div class="splitter"></div>
-		<div class="cart-item">
-			<img src="http://www.scriptencryption.com/images/upload_images/user/1419625634.jpg" width="100" height="100">	
-
-			<div class="cart-item-description">Title about the item that is a link to the product</div>
-						
-			<input id="QTY_" type="text" class="textbox" style="float:right;margin-right: 20px;margin-top:14px;" name="QTY_" maxlength="4" value="1" onchange="product_1('f')" required /></input>
-			<label for="QTY_" style="float:right;margin-right: 5px;margin-top:15px;"><b>QTY</b></label>
-				
-			<div class="cart-item-seller">Sold by <a href="#">Seller's name</a></div>
-			
-			<div class="cart-item-price"><b>$10.32</b> / unit</div>
-		</div>
+		
 		
 		<div class="splitter"></div>
 		
 		<?php 
 			//output the items.
-						
+				$Counter = 1;
+				
 			foreach($_SESSION['cart'] as &$value){
 				//print_r($value);
 				
-				$value['product_code'] = 142;
+				//$value['product_code'] = 142;
 				
 				$Product_ID = filter_var($value['product_code'], FILTER_SANITIZE_NUMBER_INT); //product code
 				
@@ -184,18 +221,21 @@ padding-bottom:10px;
 				
 				//print_r($Json_Decode);
 				
+				$total_cost += $Json_Decode['price'] * $value['product_quantity'];
+				
+				//var_dump(glob ("../images/upload_images/" . $Json_Decode['owner'] ."/" . $Json_Decode['picture'] . ".*"));
 				
 				echo '<div class="cart-item">';
-				echo '<img src="http://www.scriptencryption.com/images/upload_images/user/1419625634.jpg" width="100" height="100">';
+				echo '<img src="' . glob ("../images/upload_images/" . $Json_Decode['owner'] ."/" . $Json_Decode['picture'] . ".*")[0] .'" style="border-style: solid;border-width: 1px;border-color: #D83C3C;" width="100" height="100">';
 
-				echo '<div class="cart-item-description">' . $Json_Decode['title'] .'</div>';
+				echo '<div class="cart-item-description"><a href="/products/product_profile.php?p=' . $Product_ID . '&u=' . $Json_Decode['owner'] . '">' . substr($Json_Decode['title'],0,90) .'</a></div>';
 									
-				echo '<input id="QTY_" type="text" class="textbox" style="float:right;margin-right: 20px;margin-top:14px;" name="QTY_" maxlength="4" value="1" onchange="product_1("f")" required /></input>';
-				echo '<label for="QTY_" style="float:right;margin-right: 5px;margin-top:15px;"><b>QTY</b></label>';
+				echo '<input id="QTY_' . $Counter . '" type="text" class="textbox" style="float:right;margin-right: 20px;margin-top:14px;" name="QTY_' . $Counter .'" maxlength="4" value="' . $value['product_quantity'] .'" onchange="duplicate_' . $Counter .'()" required /></input>';
+				echo '<label for="QTY_' . $Counter . '" style="float:right;margin-right: 5px;margin-top:15px;"><b>QTY</b></label>';
 							
 				echo '<div class="cart-item-seller">Sold by <a href="#">' . $Json_Decode['owner'] . '</a></div>';
 						
-				echo '<div class="cart-item-price"><b>$10.32</b> / unit</div>';
+				echo '<div class="cart-item-price"><b>$ ' . $Json_Decode['price'] . '</b> / ' . $Json_Decode['unit'] . '</div>';
 				echo '</div>';
 				
 				
@@ -215,27 +255,32 @@ padding-bottom:10px;
 				*/
 				
 				echo '<div class="splitter"></div>';
+				$Counter++;
 			}
-		
-		
 		?>
-		
-		
-		
-	
-		
-		
+				
 		<div class="cart-footer">
 			<input type="submit" name="login" class="buynow addtocart" style="border-style:none;float:right;margin-left: -120px;margin-top: -8px;margin-right: 5px;" value="Purchase" />
 		
-			<form method="post" action="cart_checkout.php">		
-				<input type="hidden" name="product_1" id="product_1" value="001" />					
-					
+			<form method="post" action="cart_checkout.php">
+			
+				<input type="hidden" name="update_qty" id="update_qty" value="neat" />	
+						
+				<?php
+					$Counter = 1;
+								
+					foreach($_SESSION['cart'] as &$value){						
+						echo '<input type="hidden" name="product_' . $Counter . '" id="product_' . $Counter . '" value="' . $value['product_quantity'] .'" />';
+						
+						$Counter++;
+					}						
+				?>
+
 				<input type="submit" name="login" class="buynow addtocart cart-footer-update" style="border-style:none;margin-left: 0px;margin-top: -8px; background-color: #D83C3C;" value="Update QTY" />
 			</form>
 			
 			
-			<div class="cart-footer-description"><a>Cart total: $10,000.32</a></div>			
+			<div class="cart-footer-description"><a>Cart total: $<?php echo $total_cost; ?></a></div>			
 		</div>		
 	</div>
 	
