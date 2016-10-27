@@ -28,6 +28,8 @@
 	}	
 	
 	$total_cost = 0;
+	
+	
 ?>
 
 
@@ -233,9 +235,22 @@ padding-bottom:10px;
 				echo '<input id="QTY_' . $Counter . '" type="text" class="textbox" style="float:right;margin-right: 20px;margin-top:14px;" name="QTY_' . $Counter .'" maxlength="4" value="' . $value['product_quantity'] .'" onchange="duplicate_' . $Counter .'()" required /></input>';
 				echo '<label for="QTY_' . $Counter . '" style="float:right;margin-right: 5px;margin-top:15px;"><b>QTY</b></label>';
 							
-				echo '<div class="cart-item-seller">Sold by <a href="#">' . $Json_Decode['owner'] . '</a></div>';
+				echo '<div class="cart-item-seller">Sold by <a href="../account/profile.php?u='. $Json_Decode['owner'] .'">' . $Json_Decode['owner'] . '</a></div>';
+				
+				$Shipping_Cost = $Json_Decode['shipping_cost'];
+				if($Json_Decode['shipping_cost_multiple'] == true){
+					$Shipping_Cost = $Json_Decode['shipping_cost'] * $value['product_quantity'];
+				}
+				
+				if($Shipping_Cost == "0"){
+					$Shipping_Cost = "Free";
+				}
+				
+				setlocale(LC_MONETARY, 'en_US');
+				//number_format( , 2, ".", ",")
+				$Shipping_Cost = number_format( $Shipping_Cost, 2, ".", ",");
 						
-				echo '<div class="cart-item-price"><b>$ ' . $Json_Decode['price'] . '</b> / ' . $Json_Decode['unit'] . '</div>';
+				echo '<div class="cart-item-price"><b>$ ' . number_format($Json_Decode['price'], 2, ".", ",") . '</b> / ' . $Json_Decode['unit'] . ' + $' . $Shipping_Cost . ' Shipping</div>';
 				echo '</div>';
 				
 				
@@ -260,7 +275,7 @@ padding-bottom:10px;
 		?>
 				
 		<div class="cart-footer">
-			<input type="submit" name="login" class="buynow addtocart" style="border-style:none;float:right;margin-left: -120px;margin-top: -8px;margin-right: 5px;" value="Purchase" />
+			<a href="../paypal/process.php?b=t" style="padding-right: 10px;"><input type="submit" name="login" class="buynow addtocart" style="border-style:none;float:right;margin-left: -120px;margin-top: -8px;margin-right: 5px;" value="Purchase" /></a>
 		
 			<form method="post" action="cart_checkout.php">
 			
@@ -280,7 +295,7 @@ padding-bottom:10px;
 			</form>
 			
 			
-			<div class="cart-footer-description"><a>Cart total: $<?php echo $total_cost; ?></a></div>			
+			<div class="cart-footer-description"><a>Cart total: $<?php echo number_format($total_cost + $Shipping_Cost, 2, '.', ','); ?></a></div>			
 		</div>		
 	</div>
 	

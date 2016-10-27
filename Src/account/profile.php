@@ -59,7 +59,7 @@
 	$IsYours = false;
 		
 	if(strlen($_GET['u']) >= 1){
-		$User_Id_Uncleaned = preg_replace("/[^0-9]/", "", $_GET['u']);
+		$User_Id_Uncleaned = FN_User_Get_Id(preg_replace("/[^0-9a-z]/", "", $_GET['u']));
 		$IsYours = true;
 	}
 	

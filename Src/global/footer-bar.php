@@ -13,11 +13,11 @@
 	 
 	 <div class="options">
 		<ul>
-			<a href="#"><li>What is FleeceFinder.com?</li></a>
-			<a href="#"><li>FAQ</li></a>
-			<a href="#"><li>Support</li></a>
-			<a href="#"><li>Report bug</li></a>
-			<a href="#"><li>Terms of use</li></a>
+			<a href="../global/FAQ.php"><li>What is FleeceFinder.com?</li></a>
+			<a href="../global/FAQ.php"><li>FAQ</li></a>
+			<a href="../support/support.php"><li>Support</li></a>
+			<a href="../support/support.php"><li>Report bug</li></a>
+			<a href="../legal/termsandconditions.php"><li>Terms of use</li></a>
 		</ul>
 	  </div>
 	  
@@ -26,7 +26,7 @@
 		  <li><i>Copyright <?php echo date('Y'); ?> </i><b>Dwarven Knowledge, LLC</b></li>
 		  <li><i>All rights reserved.</i></li>
 		  
-		  <a href="#"><li style="padding-top:10px;"><b>Contact us</b></li></a>
+		  <a href="../support/support.php"><li style="padding-top:10px;"><b>Contact us</b></li></a>
 		  <li style="padding-top:5px;"><a href="http://www.twitter.com/DearRicky" target="_blank" title="Twitter"><img src="https://g.twimg.com/Twitter_logo_blue.png" width="25" height="25" /></a></li>
 		</ul> 
 	  </div>

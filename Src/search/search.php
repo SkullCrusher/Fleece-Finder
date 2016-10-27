@@ -17,8 +17,8 @@
 	   //echo $_SESSION['user_name'];
 	} else {	
 		//just for the nav bar and if they click add to cart it forces login.
-		header('Location: http://www.scriptencryption.com/error/404.php?error=100');
-		die();
+		//header('Location: http://www.scriptencryption.com/error/404.php?error=100');
+		//die();
 	}
 	
 ?>

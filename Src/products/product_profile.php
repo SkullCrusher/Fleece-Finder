@@ -264,10 +264,10 @@
 			<div class="grid_4" >
 				
 				<form method="post" class="sellinginformation aligncenter" action=" <?php echo "http://".$_SERVER['HTTP_HOST'].'/cart/cart_add.php'; ?>">	
-				<b style="margin-left:10px;">Selling Price: </b>$<?php echo $Product_Price; ?>/ <?php echo $Product_Amount . ' ' . $Product_Unit; ?><br>
-				<b style="margin-left:10px;">Shipping Costs: </b>$<?php echo $Shipping_Cost; ?><br>
+				<b style="margin-left:10px;">Selling Price: </b>$<?php echo $Product_Price; ?>/ <?php echo number_format($Product_Amount, 2, '.', ',') . ' ' . $Product_Unit; ?><br>
+				<b style="margin-left:10px;">Shipping Costs: </b>$<?php echo number_format($Shipping_Cost, 2, '.', ','); ?><br>
 				<b style="margin-left:10px;">Quantity: </b>
-				 <select>
+				 <select name="product_quantity">
 				  <option value="1">1</option>
 				  <option value="2">2</option>
 				  <option value="3">3</option>
@@ -288,7 +288,7 @@
 						
 					<input type="hidden" name="product_code" value="<?php echo $_GET['p']; ?>" />
 					<input type="hidden" name="product_owner" value="<?php echo $Product_Owner; ?>" />
-					<input type="hidden" name="product_quantity" value="001" />
+					<input type="hidden" name="product_quantity2" value="1" />
 						
 						
 					<input type="submit" name="login" class="buynow addtocart" style="margin-top: 8px;border-style:none;" value="Add to cart" />

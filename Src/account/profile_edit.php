@@ -124,7 +124,7 @@
 		$Profile_Name = $User_Data['profile_name'];
 	}
 	if(strlen($_POST['post']) > 0){
-		$Profile_Name = substr(preg_replace("/[^a-z0-9.]+/i", "", $_POST['profile_name']), 0, 80);
+		$Profile_Name = substr(preg_replace("/[^a-z0-9. ]+/i", "", $_POST['profile_name']), 0, 80);
 	}
 	//limit 500
 	$Profile_Short_Description = null;
@@ -132,7 +132,7 @@
 		$Profile_Short_Description = $User_Data['profile_short_description'];
 	}
 	if(strlen($_POST['post']) > 0){
-		$Profile_Short_Description = substr(preg_replace("/[^a-z0-9.]+/i", "", $_POST['short_description']), 0, 500);
+		$Profile_Short_Description = substr(preg_replace("/[^a-z0-9. ]+/i", "", $_POST['short_description']), 0, 500);
 	}
 	//limit 5,000
 	$Profile_Short_Biography = null;
@@ -140,7 +140,7 @@
 	 $Profile_Short_Biography = $User_Data['short_biography'];
 	}
 	if(strlen($_POST['post']) > 0){
-		$Profile_Short_Biography = substr(preg_replace("/[^a-z0-9.]+/i", "", $_POST['short_biography']), 0, 5000);
+		$Profile_Short_Biography = substr(preg_replace("/[^a-z0-9. ]+/i", "", $_POST['short_biography']), 0, 5000);
 	}
 	//limit 5,000
 	$General_terms_of_sale = null;
@@ -148,7 +148,7 @@
 		$General_terms_of_sale = $User_Data['terms_of_sale'];
 	}
 	if(strlen($_POST['post']) > 0){
-		$General_terms_of_sale = substr(preg_replace("/[^a-z0-9.]+/i", "", $_POST['general_terms_of_sale']), 0, 5000);
+		$General_terms_of_sale = substr(preg_replace("/[^a-z0-9. ]+/i", "", $_POST['general_terms_of_sale']), 0, 5000);
 	}
 	//limit 15 (0-9 -()
 	$Phone_number = null;
@@ -156,7 +156,7 @@
 		$Phone_number = $User_Data['phone_number'];
 	}
 	if(strlen($_POST['post']) > 0){
-		$Phone_number = substr(preg_replace("/[^0-9-]+/i", "", $_POST['phonenumber']), 0, 80);
+		$Phone_number = substr(preg_replace("/[^0-9- ]+/i", "", $_POST['phonenumber']), 0, 80);
 	}
 	//limit 255
 	$Email = null;
@@ -180,7 +180,7 @@
 		$Mobile_Phone = $User_Data['mobile_phone'];
 	}
 	if(strlen($_POST['post']) > 0){
-		$Mobile_Phone = substr(preg_replace("/[^a-z0-9.\(\)]+/i", "", $_POST['mobile_phone']), 0, 15);
+		$Mobile_Phone = substr(preg_replace("/[^0-9-.\(\) ]+/i", "", $_POST['mobile_phone']), 0, 15);
 	}
 	//limit 1,000
 	$Extra_contact_information = null;
@@ -190,7 +190,7 @@
 	}
 	
 	if(strlen($_POST['post']) > 0){
-		$Extra_contact_information = substr(preg_replace("/[^a-z0-9.\(\)]+/i", "", $_POST['extra_contact_information']), 0, 1000);
+		$Extra_contact_information = substr(preg_replace("/[^a-z0-9.\(\) ]+/i", "", $_POST['extra_contact_information']), 0, 1000);
 	}
 	$Json_packed_collection = null;
 	

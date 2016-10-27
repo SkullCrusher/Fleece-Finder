@@ -326,7 +326,7 @@
 		$NewProduct = array('product_id' => $ProductId, 'post_date' => date('m/d/Y'));
 					
 		if($Product_ids == null){
-			$Product_ids = $NewProduct;			
+			$Product_ids = $NewProduct;
 		}else{
 			array_push($Product_ids, $NewProduct);
 		}
@@ -641,7 +641,7 @@
 		
 		
 			$category = $Sanitized_Category;
-			$Product_abbreviated = array( 'title' => $Sanitized_Title, 'owner' => $_SESSION['user_name'], 'short_description' => $Sanitized_Short_Description, 'amount' => $Sanitized_Amount, 'unit' => $Sanitized_Units,  'category' => $category, 'price' => $Sanitized_Price, 'picture' => $Sanitized_Picture_1);
+			$Product_abbreviated = array( 'title' => $Sanitized_Title, 'owner' => $_SESSION['user_name'], 'short_description' => $Sanitized_Short_Description, 'amount' => $Sanitized_Amount, 'unit' => $Sanitized_Units, 'shipping_cost' => $Sanitized_Shipping, 'shipping_cost_multiple' => $Sanitized_Cost_Multiple,  'category' => $category, 'price' => $Sanitized_Price, 'picture' => $Sanitized_Picture_1);
 			
 			$Product_abbreviated_json = json_encode($Product_abbreviated);
 					

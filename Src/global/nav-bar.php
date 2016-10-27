@@ -46,13 +46,14 @@
   <div class="bottom-nav">
    <div class="container_12">
     <ul>
-   	 <li><a href="<?php echo $_SERVER['DOCUMENT_ROOT']; ?>/index.php"><i class="fa fa-home"></i></a></li>
+   	 <li><a href="../index.php"><i class="fa fa-home"></i></a></li>
    	 <li><a href="#">Browse</a></li>
    	 <li><a href="../products/product_categories.php">Categories</a></li>
    	 <li><a href="#">Most Popular</a></li>
   
 	 <?php 	 
 	 	if ($login->isUserLoggedIn() == true) {
+			echo '<li><a href="../message/inbox.php">Inbox (0)</a></li>';
 			echo '<li><a href="../account/profile.php">My account</a></li>';
 			echo '<li><a href="../index.php?logout">Logout</a></li>';
 		} else {	
