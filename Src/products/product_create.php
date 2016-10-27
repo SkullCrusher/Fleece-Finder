@@ -416,6 +416,19 @@
 	
 	$Sanitized_Category = null;
 	
+	$Sanitized_Amount = 1;
+	$Sanitized_Units = "Unit";
+	
+//Pictures
+	$Sanitized_Picture_1 = "none";
+	$Sanitized_Picture_2 = "none";
+	$Sanitized_Picture_3 = "none";
+	$Sanitized_Picture_4 = "none";
+	$Sanitized_Picture_5 = "none";
+	$Sanitized_Picture_6 = "none";
+	
+	//preg_replace("/[^A-Za-z0-9 ]/", '', $string)
+	
 	//shipping_cost_multiple
 	//Input
 
@@ -581,6 +594,25 @@
 			}
 		}
 
+		//Validate the unit and amount 
+		if($Error == false){
+			if(strlen($_POST['amount']) > 0 && strlen($_POST['amount']) < 9999){
+				$Sanitized_Amount = preg_replace("/[^0-9]/", "", $_POST['amount']);
+			}else{
+				$Error_Details = 'An error has occurred, the amount must be between 0 and 9999.';
+				$Error = true;
+			}
+		}
+		//Amount
+		if($Error == false){
+			if($_POST['unit'] == "LB" || $_POST['unit'] == "Square foot" || $_POST['unit'] == "Unit"){
+				$Sanitized_Units = preg_replace("/[^A-Za-z ]/", "", $_POST['unit']);
+			}else{
+				$Error_Details = 'An error has occurred, an invalid unit.';
+				$Error = true;
+			}
+		}
+		
 	//Post.
 
 	/*---------------------------------------------------------------------
@@ -596,9 +628,20 @@
 
 		//No error so we can post it.
 		if($Error == false){
+				
+			//Units
+			if(strlen($_POST['pic_1']) > 1){$Sanitized_Picture_1 = preg_replace("/[^A-Za-z0-9_]/", '',$_POST['pic_1']);}
+			if(strlen($_POST['pic_2']) > 1){$Sanitized_Picture_2 = preg_replace("/[^A-Za-z0-9_]/", '',$_POST['pic_2']);}
+			if(strlen($_POST['pic_3']) > 1){$Sanitized_Picture_3 = preg_replace("/[^A-Za-z0-9_]/", '',$_POST['pic_3']);}
+			if(strlen($_POST['pic_4']) > 1){$Sanitized_Picture_4 = preg_replace("/[^A-Za-z0-9_]/", '',$_POST['pic_4']);}
+			if(strlen($_POST['pic_5']) > 1){$Sanitized_Picture_5 = preg_replace("/[^A-Za-z0-9_]/", '',$_POST['pic_5']);}
+			if(strlen($_POST['pic_6']) > 1){$Sanitized_Picture_6 = preg_replace("/[^A-Za-z0-9_]/", '',$_POST['pic_6']);}
+	
+		
+		
 		
 			$category = $Sanitized_Category;
-			$Product_abbreviated = array( 'title' => $Sanitized_Title, 'owner' => $_SESSION['user_name'], 'short_description' => $Sanitized_Short_Description, 'category' => $category, 'price' => $Sanitized_Price, 'picture' => 'www.scriptencryption.com/pic/11213123.png');
+			$Product_abbreviated = array( 'title' => $Sanitized_Title, 'owner' => $_SESSION['user_name'], 'short_description' => $Sanitized_Short_Description, 'amount' => $Sanitized_Amount, 'unit' => $Sanitized_Units,  'category' => $category, 'price' => $Sanitized_Price, 'picture' => $Sanitized_Picture_1);
 			
 			$Product_abbreviated_json = json_encode($Product_abbreviated);
 					
@@ -626,7 +669,7 @@
 			$Compressed_Rating = -1; //unrated
 			$Quantity_For_Sale = $Sanitized_Quantity;
 			
-			$Product_extended = array('long_description' => $Long_Description, 'terms_of_sale' => $Terms_Of_Sale, 'compressed_rating' => $Compressed_Rating, 'quantity' => $Quantity_For_Sale, 'shipping_cost' => $Sanitized_Shipping, 'shipping_cost_multiple' => $Sanitized_Cost_Multiple);
+			$Product_extended = array('long_description' => $Long_Description, 'terms_of_sale' => $Terms_Of_Sale, 'compressed_rating' => $Compressed_Rating, 'quantity' => $Quantity_For_Sale,'shipping_cost' => $Sanitized_Shipping, 'shipping_cost_multiple' => $Sanitized_Cost_Multiple, 'picture2' => $Sanitized_Picture_2, 'picture3' => $Sanitized_Picture_3, 'picture4' => $Sanitized_Picture_4, 'picture5' => $Sanitized_Picture_5, 'picture6' => $Sanitized_Picture_6);
 			
 			$Product_extended_json = json_encode($Product_extended);				
 
@@ -750,11 +793,24 @@ Product_Extended
 			
 				<label for="price"><b>Price</b></label>
 				<input id="price" class="textbox" type="text" name="price" style="width:60px;" placeholder="19.99" pattern="[0-9.]{1,6}" value="<?php echo $_POST['price']; ?>"  required /></input>
+				
+				
+				<label for="amount"><b>Amount in each</b></label>
+				<input id="amount" class="textbox" type="text" name="amount" style="width:60px;" placeholder="50" pattern="[0-9.]{1,6}" value="<?php echo $_POST['amount']; ?>"  required /></input>
+				
+				<label for="unit"><b>Units</b></label>
+				<div class="select-style">
+				<select id="unit" name="unit">				
+					<option value="LB">LB</option>	
+					<option value="Square foot">Square foot</option>
+					<option value="Unit">Unit</option>
+				</select>
+				</div>
+				
 		
 				<label for="shipping_cost"><b>Shipping Cost</b></label>
 				<input id="shipping_cost" class="textbox" type="text" style="width:50px;" pattern="[0-9.]{1,4}" name="shipping_cost" placeholder="4.99" value="<?php echo $_POST['shipping_cost']; ?>"  required /></input>
-		
-			
+
 									
 				<input type="checkbox" class="textbox" name="shipping_cost_multiple" value="yes">Should each unit charge an additional shipping?<br>			
 		
@@ -776,30 +832,11 @@ Product_Extended
 				 <input type="hidden" name="pic_3" id="pic_3" value=""> 
 				 <input type="hidden" name="pic_4" id="pic_4" value=""> 
 				 <input type="hidden" name="pic_5" id="pic_5" value="">
-				 <input type="hidden" name="pic_6" id="pic_6" value=""> 				 
-				 
-
-
+				 <input type="hidden" name="pic_6" id="pic_6" value=""> 					 
 			
-			
-		
-		
-		
-			
-				<input type="submit"  class="buynow addtocart" style="border: 0;" name="register" value="Submit" />
-
-				
-		
-		
-
+				<input type="submit"  class="buynow addtocart" style="border: 0;" name="register" value="Submit" />	
 	</form>
-	
-			<script>
-			var x = document.getElementById("pic_1")
-			
-			x.value = "yresss";
-			</script>
-			
+
 			<script>
 			function Delete_Image(index){
 			
@@ -971,9 +1008,6 @@ div.desc {
 </style>
 
 	
-
-
-
 
 <?php 
 	//End of page wrap.

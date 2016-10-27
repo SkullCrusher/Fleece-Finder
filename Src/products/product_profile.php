@@ -43,7 +43,17 @@
 	//The ratings
 	$Product_Ratings			= array();
 	
+	//The amount
+	$Product_Amount				= null;
+	//The unit
+	$Product_Unit				= "Unit";
 	
+	$Picture_1 = "../Assets/Images/300x300.gif";
+	$Picture_2 = "../Assets/Images/300x300.gif";
+	$Picture_3 = "../Assets/Images/300x300.gif";
+	$Picture_4 = "../Assets/Images/300x300.gif";
+	$Picture_5 = "../Assets/Images/300x300.gif";
+	$Picture_6 = "../Assets/Images/300x300.gif";
 	
 	
 	//We need both the owner and the product id.
@@ -150,10 +160,41 @@
 		$Shipping_Cost = $Product_Json_Decoded_Extended['shipping_cost'];
 		$Shipping_Cost_Multiple = $Product_Json_Decoded_Extended['shipping_cost_multiple'];
 		
+		//The pictures
+		$myFile_1 = "..\\images\\upload_images\\" . $Product_Json_Decoded_Abbreviated['owner'] . '\\' . $Product_Json_Decoded_Abbreviated['picture'];				
+		$result_1 = glob ($myFile_1 . ".*");			
+		$Picture_1 = current($result_1);
 		
+		$myFile_2 = "..\\images\\upload_images\\" . $Product_Json_Decoded_Abbreviated['owner'] . '\\' . $Product_Json_Decoded_Extended['picture2'];				
+		$result_2 = glob ($myFile_2 . ".*");			
+		$Picture_2 = current($result_2);
+		
+		$myFile_3 = "..\\images\\upload_images\\" . $Product_Json_Decoded_Abbreviated['owner'] . '\\' . $Product_Json_Decoded_Extended['picture3'];				
+		$result_3 = glob ($myFile_3 . ".*");			
+		$Picture_3 = current($result_3);
+		
+		$myFile_4 = "..\\images\\upload_images\\" . $Product_Json_Decoded_Abbreviated['owner'] . '\\' . $Product_Json_Decoded_Extended['picture4'];				
+		$result_4 = glob ($myFile_4 . ".*");			
+		$Picture_4 = current($result_4);
+		
+		echo $Picture_3;
+		
+		$myFile_5 = "..\\images\\upload_images\\" . $Product_Json_Decoded_Abbreviated['owner'] . '\\' . $Product_Json_Decoded_Extended['picture5'];				
+		$result_5 = glob ($myFile_5 . ".*");			
+		$Picture_5 = current($result_5);
+		
+		$myFile_6 = "..\\images\\upload_images\\" . $Product_Json_Decoded_Abbreviated['owner'] . '\\' . $Product_Json_Decoded_Extended['picture6'];				
+		$result_6 = glob ($myFile_6 . ".*");			
+		$Picture_6 = current($result_6);
+		
+		//The amount
+		$Product_Amount				= $Product_Json_Decoded_Abbreviated['amount'];
+		//The unit
+		$Product_Unit				= $Product_Json_Decoded_Abbreviated['unit'];
+		
+				
 		//Get the rating information.
-		//$Product_Ratings			= array();
-		
+		//$Product_Ratings			= array();		
 		
 		$db_Ratings = new PDO('mysql:dbname=' . DB_NAME . ';host=' . DB_HOST . ';charset=utf8', DB_USER, DB_PASS);
 			
@@ -200,14 +241,14 @@
 		
 			<div class="grid_4">
 				<div class="grid_1" id="mainPhoto" style="float:left;">
-				 <img src="http://i.gyazo.com/091998f67a1e5115e7a5632d8a86f8ad.png" id="img_large" style="margin-bottom:1px;" height="300" width="300"> 
+				 <img src="<?php echo urlencode($Picture_1); ?>" id="img_large" style="margin-bottom:1px;" height="300" width="300"> 
 				</div>
-				 <img src="http://i.gyazo.com/091998f67a1e5115e7a5632d8a86f8ad.png" onclick="change_img_1()" class="thumbnail" height="30" width="30"> 
-				 <img src="http://i.gyazo.com/091998f67a1e5115e7a5632d8a86f8ad.png" onclick="change_img_2()" class="thumbnail" height="30" width="30"> 
-				 <img src="http://i.gyazo.com/091998f67a1e5115e7a5632d8a86f8ad.png" onclick="change_img_3()" class="thumbnail" height="30" width="30"> 
-				 <img src="http://i.gyazo.com/091998f67a1e5115e7a5632d8a86f8ad.png" onclick="change_img_4()" class="thumbnail" height="30" width="30"> 
-				 <img src="http://i.gyazo.com/091998f67a1e5115e7a5632d8a86f8ad.png" onclick="change_img_5()" class="thumbnail" height="30" width="30"> 
-				 <img src="http://i.gyazo.com/091998f67a1e5115e7a5632d8a86f8ad.png" onclick="change_img_6()" class="thumbnail" height="30" width="30"> 
+				 <img src="<?php echo urlencode($Picture_1); ?>" onclick="change_img_1()" class="thumbnail" height="30" width="30"> 
+				 <img src="<?php echo urlencode($Picture_2); ?>" onclick="change_img_2()" class="thumbnail" height="30" width="30"> 
+				 <img src="<?php echo urlencode($Picture_3); ?>" onclick="change_img_3()" class="thumbnail" height="30" width="30"> 
+				 <img src="<?php echo urlencode($Picture_4); ?>" onclick="change_img_4()" class="thumbnail" height="30" width="30"> 
+				 <img src="<?php echo urlencode($Picture_5); ?>" onclick="change_img_5()" class="thumbnail" height="30" width="30"> 
+				 <img src="<?php echo urlencode($Picture_6); ?>" onclick="change_img_6()" class="thumbnail" height="30" width="30"> 
 				
 							
 			</div>
@@ -222,7 +263,7 @@
 			
 			<div class="grid_4" >
 				<form method="post" class="sellinginformation aligncenter" action="index.php" id="buynow" name="buynow">
-				<b style="margin-left:10px;">Selling Price: </b>$<?php echo $Product_Price; ?>/Unit<br>
+				<b style="margin-left:10px;">Selling Price: </b>$<?php echo $Product_Price; ?>/ <?php echo $Product_Amount . ' ' . $Product_Unit; ?><br>
 				<b style="margin-left:10px;">Shipping Costs: </b>$<?php echo $Shipping_Cost; ?><br>
 				<b style="margin-left:10px;">Quantity: </b>
 				 <select>
@@ -468,13 +509,13 @@
   
   
   <script>
-	function change_img_1(){document.getElementById("img_large").src="Assets/Images/300x300.gif";}
-	function change_img_2(){document.getElementById("img_large").src="Assets/Images/300x300.gif";}
-	function change_img_3(){document.getElementById("img_large").src="Assets/Images/300x300.gif";}
+	function change_img_1(){document.getElementById("img_large").src='<?php echo urlencode($Picture_1); ?>';}
+	function change_img_2(){document.getElementById("img_large").src='<?php echo urlencode($Picture_2); ?>';}
+	function change_img_3(){document.getElementById("img_large").src='<?php echo urlencode($Picture_3); ?>';}
 	
-	function change_img_4(){document.getElementById("img_large").src="Assets/Images/300x300.gif";}
-	function change_img_5(){document.getElementById("img_large").src="Assets/Images/300x300.gif";}
-	function change_img_6(){document.getElementById("img_large").src="http://i.gyazo.com/091998f67a1e5115e7a5632d8a86f8ad.png";}   
+	function change_img_4(){document.getElementById("img_large").src='<?php echo urlencode($Picture_4); ?>';}
+	function change_img_5(){document.getElementById("img_large").src='<?php echo urlencode($Picture_5); ?>';}
+	function change_img_6(){document.getElementById("img_large").src='<?php echo urlencode($Picture_6); ?>';}   
   </script>
 
 <?php 

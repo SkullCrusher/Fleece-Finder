@@ -47,6 +47,7 @@ font-size: .8em;
 border: 1.5px solid #cccccc;
 transition: all .2s ease;
 
+color: #000;
 }
 
 .textbox:focus {

@@ -37,7 +37,10 @@
 				if(in_array($ext,$valid_formats)){
 					
 				if($size<(2048*1024)){
-						$actual_image_name = time().substr(str_replace(" ", "_", $txt), 5).".".$ext;
+				
+						$vowels = array("-", " ");
+				
+						$actual_image_name = time().substr(str_replace($vowels, "_", $txt), 5).".".$ext;
 						$tmp = current($_FILES)['tmp_name'];
 						if(move_uploaded_file($tmp, $path.$actual_image_name)){
 														
