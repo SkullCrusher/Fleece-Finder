@@ -350,8 +350,8 @@ if(isset($_GET["token"]) && isset($_GET["PayerID"]))
 	if("SUCCESS" == strtoupper($httpParsedResponseAr["ACK"]) || "SUCCESSWITHWARNING" == strtoupper($httpParsedResponseAr["ACK"])) 
 	{
 
-			//echo '<h2>Success</h2>';
-			//echo 'Your Transaction ID : '.urldecode($httpParsedResponseAr["PAYMENTINFO_0_TRANSACTIONID"]);
+			echo '<h2>Success</h2>';
+			echo 'Your Transaction ID : '.urldecode($httpParsedResponseAr["PAYMENTINFO_0_TRANSACTIONID"]);
 			
 			$ID = urldecode($httpParsedResponseAr["PAYMENTINFO_0_TRANSACTIONID"]);
 			
@@ -360,17 +360,14 @@ if(isset($_GET["token"]) && isset($_GET["PayerID"]))
 				//hence we need to notify user about it and ask him manually approve the transiction
 				*/
 				
-				$Pending = false;
-				
-				if('Completed' == $httpParsedResponseAr["PAYMENTINFO_0_PAYMENTSTATUS"]){
-					//echo '<div style="color:green">Payment Received! Your product will be sent to you very soon!</div>';
+				if('Completed' == $httpParsedResponseAr["PAYMENTINFO_0_PAYMENTSTATUS"])
+				{
+					echo '<div style="color:green">Payment Received! Your product will be sent to you very soon!</div>';
 				}
 				elseif('Pending' == $httpParsedResponseAr["PAYMENTINFO_0_PAYMENTSTATUS"])
 				{
-					/*echo '<div style="color:red">Transaction Complete, but payment is still pending! '.
-					'You need to manually authorize this payment in your <a target="_new" href="http://www.paypal.com">Paypal Account</a></div>';*/
-					
-					$Pending = true;
+					echo '<div style="color:red">Transaction Complete, but payment is still pending! '.
+					'You need to manually authorize this payment in your <a target="_new" href="http://www.paypal.com">Paypal Account</a></div>';
 				}
 
 				// we can retrive transection details using either GetTransactionDetails or GetExpressCheckoutDetails
@@ -382,7 +379,7 @@ if(isset($_GET["token"]) && isset($_GET["PayerID"]))
 				if("SUCCESS" == strtoupper($httpParsedResponseAr["ACK"]) || "SUCCESSWITHWARNING" == strtoupper($httpParsedResponseAr["ACK"])) 
 				{
 					
-					//echo '<br /><b>Stuff to store in database :</b><br /><pre>';
+					echo '<br /><b>Stuff to store in database :</b><br /><pre>';
 					
 			
 					
@@ -406,44 +403,27 @@ if(isset($_GET["token"]) && isset($_GET["PayerID"]))
 						}
 						
 						
-						//clear out the cart
-						$_SESSION['cart'] = array();						
 						
-						if($Pending == true){
-							header('Location: http://www.scriptencryption.com/paypal/payment_complete.php?result=pending&id=' . $ID);
-						}else{
-							header('Location: http://www.scriptencryption.com/paypal/payment_complete.php?result=success&id=' . $ID);
-						}
 						
-						die();					
+						
 					
-					//echo '<pre>';
-					//print_r($httpParsedResponseAr);
-					//echo '</pre>';
+					
+					echo '<pre>';
+					print_r($httpParsedResponseAr);
+					echo '</pre>';
 				} else  {
-					//Payment failed
-					
-					
-					//echo '<div style="color:red"><b>GetTransactionDetails failed:</b>'.urldecode($httpParsedResponseAr["L_LONGMESSAGE0"]).'</div>';
-					//echo '<pre>';
-					//print_r($httpParsedResponseAr);
-					//echo '</pre>';
+					echo '<div style="color:red"><b>GetTransactionDetails failed:</b>'.urldecode($httpParsedResponseAr["L_LONGMESSAGE0"]).'</div>';
+					echo '<pre>';
+					print_r($httpParsedResponseAr);
+					echo '</pre>';
 
-					header('Location: http://www.scriptencryption.com/paypal/payment_complete.php?result=error&id=' . $ID);
-					die();
-					
 				}
 	
 	}else{
-		//Payment error
-		
-		//	echo '<div style="color:red"><b>Error : </b>'.urldecode($httpParsedResponseAr["L_LONGMESSAGE0"]).'</div>';
-		//	echo '<pre>';
-		//	print_r($httpParsedResponseAr);
-		//	echo '</pre>';
-		
-		header('Location: http://www.scriptencryption.com/paypal/payment_complete.php?result=error&id=' . $ID);
-		die();
+			echo '<div style="color:red"><b>Error : </b>'.urldecode($httpParsedResponseAr["L_LONGMESSAGE0"]).'</div>';
+			echo '<pre>';
+			print_r($httpParsedResponseAr);
+			echo '</pre>';
 	}
 }
 ?>

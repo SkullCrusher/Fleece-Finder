@@ -5,6 +5,7 @@
 	
 	echo "asd";
 	
+	
 	define("DEBUG", 1);
 	// Set to 0 once you're ready to go live
 	define("USE_SANDBOX", 0);
@@ -148,9 +149,9 @@
 		//Error code 23000 - unable to to create because of duplicate id.
 	}	
 	
-	/*
-	$FetchResult = $statement_check->fetch();	
 	
+	$FetchResult = $statement_check->fetch();	
+	/*
 	if($FetchResult['price'] == $payment_amount){
 		file_put_contents('ssda.txt', $FetchResult);	
 	}else{		
@@ -160,6 +161,8 @@
 	//check if the payment is valid.
 	
 	if($FetchResult['price'] == $payment_amount){
+		
+		
 		$db_update = new PDO('mysql:dbname=' . DB_NAME . ';host=' . DB_HOST . ';charset=utf8', DB_USER, DB_PASS);
 			
 		$db_update->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
@@ -174,7 +177,7 @@
 		}
 		
 		try {
-			$statement_update->execute(array(':ipn_paid_date' => date('Y-m-d h:i:s'), ':status' = 'paid', ':shipping_id' => $address_street));
+			$statement_update->execute(array(':ipn_paid_date' => date('Y-m-d h:i:s'), ':status' => 'paid', ':shipping_id' => $address_street));
 		} catch (PDOException $e) {				
 			//Error code 23000 - unable to to create because of duplicate id.
 		}
@@ -207,37 +210,6 @@
 	}*/
 
 
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	
 	
