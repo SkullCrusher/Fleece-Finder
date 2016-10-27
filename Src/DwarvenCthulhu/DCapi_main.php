@@ -232,7 +232,6 @@ require_once('../classes/Login.php');
 			
 			//$statement_from = $db_from->prepare('COMMIT');
 			
-			$statement_from = $db_from->prepare('ROLLBACK');
 			/*
 			
 			try {
