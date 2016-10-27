@@ -22,11 +22,82 @@
 	//	die();
 	}
 	
+	//FUNCTIONS
+	function FN_User_Get_Id($Username){
+
+		$db = new PDO('mysql:dbname=' . DB_NAME . ';host=' . DB_HOST . ';charset=utf8', DB_USER, DB_PASS);
+			
+		$db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+		$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);	
+		
+		$statement = null; //The statement
+			
+		try {
+			$statement = $db->prepare('SELECT user_id FROM users WHERE user_name = :user_name');			
+		} catch (PDOException $e) {
+				
+			//Error code 1146 - unable to find database.
+			return 'Internal_Server_Error'; //Error.
+		}
+			
+		try {
+			$statement->execute(array(':user_name' => $Username));
+		} catch (PDOException $e) {
+		
+			//Error code 23000 - unable to to create because of duplicate id.
+			return 'Error_Try_Again'; //Error.
+		}		
+		
+		$result = $statement->fetch();
+
+		return $result['user_id'];
+	}	
+	
+	function FN_Farm_Load_Name($Id){
+		$db = new PDO('mysql:dbname=' . DB_NAME . ';host=' . DB_HOST . ';charset=utf8', DB_USER, DB_PASS);
+		
+		$db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+		$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);	
+		
+		$statement = null; //The statement
+			
+		try {
+			$statement = $db->prepare('SELECT json_farminformation FROM users_farminformation WHERE id = :id');			
+		} catch (PDOException $e) {
+				
+			//Error code 1146 - unable to find database.
+			return 'Internal_Server_Error'; //Error.
+		}
+			
+		try {
+			$statement->execute(array(':id' => $Id));
+		} catch (PDOException $e) {
+		
+			//Error code 23000 - unable to to create because of duplicate id.
+			return 'Error_Try_Again'; //Error.
+		}		
+		
+		$result = $statement->fetch();
+
+		$result = $result['json_farminformation'];
+		
+		$result = json_decode($result, true);
+		
+		var_dump($result);
+		
+		return $result['user_id'];
+	}
+	
+	
+	
+	//END OF FUNCTIONS
+	
 	//Global variables. 
 	
 	//(Abbreviated)
 	$Product_Title				= null;
 	$Product_Owner 				= null;
+		
 	$Product_Short_Description 	= null;
 	$Product_Category			= null;
 	$Product_Pictures			= array();	
@@ -142,6 +213,11 @@
 		//(Abbreviated)
 		$Product_Title				= $Product_Json_Decoded_Abbreviated['title'];
 		$Product_Owner 				= $Product_Json_Decoded_Abbreviated['owner'];
+		
+		var_dump($result['json_extended']);
+		
+		echo "sdasdf";
+		
 		$Product_Short_Description 	= $Product_Json_Decoded_Abbreviated['short_description'];
 		$Product_Category			= $Product_Json_Decoded_Abbreviated['category'];
 		$Product_Price				= $Product_Json_Decoded_Abbreviated['price'];
@@ -299,7 +375,7 @@
 			<div class="grid_3">
 				<form method="post" class="sellerinformation" action="index.php" id="buynow" name="buynow">
 					<b>Seller information</b><br>
-					Awesome farm name!<br><br>
+					<?php echo $Product_Owner;?><br><br>
 					
 					100% feedback for 1,302 sales<br>
 					

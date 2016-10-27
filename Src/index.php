@@ -50,7 +50,7 @@ if ($login->isUserLoggedIn() == false) {
 
  <head>
 
-  <link rel="stylesheet" type="text/css" href="Assets/theme.css"> 
+  <link rel="stylesheet" type="text/css" href="../Assets/theme.css"> 
   
  </head>
 

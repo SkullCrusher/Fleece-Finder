@@ -264,3 +264,36 @@ Strict-Transport-Security: max-age=63072000
 
 INVALID
 [2015-02-14 17:22 America/Los_Angeles] Invalid IPN: cmd=_notify-validate
+[2015-02-19 18:18 America/Los_Angeles] HTTP request of validation request:POST /cgi-bin/webscr HTTP/1.1
+Host: www.paypal.com
+Accept: */*
+Connection: Close
+Content-Length: 20
+Content-Type: application/x-www-form-urlencoded
+
+ for IPN payload: cmd=_notify-validate
+[2015-02-19 18:18 America/Los_Angeles] HTTP response of validation request: HTTP/1.1 200 OK
+Server: Apache
+X-Frame-Options: SAMEORIGIN
+Cache-Control: max-age=0, no-cache, no-store, must-revalidate
+Pragma: no-cache
+Cache-Control: max-age=0, no-cache, no-store, must-revalidate
+Pragma: no-cache
+Content-Type: text/html; charset=UTF-8
+DC: slc-a-origin-www-1.paypal.com
+Date: Fri, 20 Feb 2015 02:18:35 GMT
+Content-Length: 7
+Connection: close
+Set-Cookie: cwrClyrK4LoCV1fydGbAxiNL6iG=WxUA8WOgpkg2nqWN7NcbhEhb7gDJwiT2DbdYiUVLiSCRPYJ1kgoQDJxgX7haCTL-bRO_BtcP8l5B6Q9w6-DZPoKvVL5s82qzo2fR8AB7J1qTWIEUFHwbgFHlxDpxw9MB7X13BWcyLBWYy-x5Y-St6F5dJKxun0bVbywcd0woYT04kAq-YgNalG-vIYkebkplN9Dw4tFQlaSDItMLMqbLaBUDd7leYvms4KymalxBNEX4PXG_txd1ttW5s-1QfUS7-RuBsBFw0D4ty_dgQQxHduoooRptRhKOxNC7WukvzpuR006e_anm7VIZ9QmnqOaRZ70UU9ozjFmVwOhAS37hlTz3Mc7uWhf9RrCy_FAQpXRKalkRnZXuhwEQ2keAHWlUrgPUhuEP_Z5weZz6brXivlhWzhOV_8akZSvI7pvgFh9CPU7LJVQustBgaWO; domain=.paypal.com; path=/; Secure; HttpOnly
+Set-Cookie: cookie_check=yes; expires=Mon, 17-Feb-2025 02:18:35 GMT; domain=.paypal.com; path=/; Secure; HttpOnly
+Set-Cookie: navcmd=_notify-validate; domain=.paypal.com; path=/; Secure; HttpOnly
+Set-Cookie: navlns=0.0; expires=Sun, 19-Feb-2017 02:18:35 GMT; domain=.paypal.com; path=/; Secure; HttpOnly
+Set-Cookie: Apache=10.73.8.134.1424398715141888; path=/; expires=Sun, 12-Feb-45 02:18:35 GMT
+Set-Cookie: X-PP-SILOVER=name%3DLIVE5.WEB.1%26silo_version%3D880%26app%3Dappdispatcher%26TIME%3D2073683540; domain=.paypal.com; path=/; Secure; HttpOnly
+Set-Cookie: X-PP-SILOVER=; Expires=Thu, 01 Jan 1970 00:00:01 GMT
+Set-Cookie: Apache=10.73.8.32.1424398715132239; path=/; expires=Sun, 12-Feb-45 02:18:35 GMT
+Set-Cookie: AKDC=slc-a-origin-www-1.paypal.com; expires=Fri, 20-Feb-2015 02:48:35 GMT; path=/; secure
+Strict-Transport-Security: max-age=63072000
+
+INVALID
+[2015-02-19 18:18 America/Los_Angeles] Invalid IPN: cmd=_notify-validate
