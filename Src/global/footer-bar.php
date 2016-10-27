@@ -27,7 +27,7 @@
 		  <li><i>All rights reserved.</i></li>
 		  
 		  <a href="../support/support.php"><li style="padding-top:10px;"><b>Contact us</b></li></a>
-		  <li style="padding-top:5px;"><a href="http://www.facebook.com" target="_blank" title="Twitter"><img src="https://www.facebook.com/images/fb_icon_325x325.png" width="25" height="25" /></a></li>
+		  <li style="padding-top:5px;"><a href="https://www.facebook.com/fleecefinder" target="_blank" title="Twitter"><img src="https://www.facebook.com/images/fb_icon_325x325.png" width="25" height="25" /></a></li>
 		</ul> 
 	  </div>
 	  

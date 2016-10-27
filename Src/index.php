@@ -57,35 +57,35 @@ if ($login->isUserLoggedIn() == false) {
 
   <div class="scontainer" id="welcome">
    <section>
-    <h2><b>Let's create something <a href="" id="about">new</a></b></h2>
+    <h2><b style="color: #333;"><a href="" id="about">The number one place to buy and sell fleece</a></b></h2>
    </section>
    <div class="arrow-down"></div>
   </div>
   <div class="scontainer">
    <div class="container_12">
     <div class="grid_4">
-     <h2><b><i style="color:#06ba8f" class="fa fa-mobile"></i> About #1</b></h2>
-     <p>Lorem ipsum dolor sit amet, consectetur adipiuisat venenatis orci ultricies vel velit massa, at venenatis orci ultricies vel..</p>
+     <h2><b><i style="color:#06ba8f;text-align:center;" class=""></i> Sheep</b></h2>
+     <p>There are over 200 breeds of sheep, with a wide variety of softness and color</p>
     </div>
     <div class="grid_4" style="padding-left:20px">
-     <h2><b><a href="#about" style="text-decoration:none;color:#06ba8f"><i style="color:#06ba8f" class="fa fa-code"></i></a> About #2</b></h2>
-     <p>Lorem ipsum dolor sit amet, consectetur adipiuisat venenatis orci ultricies vel velit massa, at venenatis orci ultricies vel..</p>
+     <h2><b><a href="#about" style="text-decoration:none;color:#06ba8f"><i style="color:#06ba8f" class="fa fa-code"></i></a> Alpaca</b></h2>
+     <p>Suri is silky with straight locks while Huacayas have a crimpy dense fleece</p>
     </div>
     <div class="grid_4">
-     <h2><b><i style="color:#06ba8f" class="fa fa-pencil"></i> About #3</b></h2>
-     <p>Lorem ipsum dolor sit amet, consectetur adipiuisat venenatis orci ultricies vel velit massa, at venenatis orci ultricies vel...</p>
+     <h2><b><i style="color:#06ba8f" class=""></i> Angora Goat </b></h2>
+     <p>Angora fleece is called Mohair and comes in white, black, red and brown</p>
     </div>
     <div class="grid_4">
-     <h2><b><i style="color:#06ba8f" class="fa fa-graduation-cap"></i> About #4</b></h2>
-     <p>Lorem ipsum dolor sit amet, consectetur adipiuisat venenatis orci ultricies vel velit massa, at venenatis orci ultricies vel...</p>
+     <h2><b><i style="color:#06ba8f" class=""></i> Raw Fleece</b></h2>
+     <p>This is as it comes off of the animal.  It may be skirted.</p>
     </div>
     <div class="grid_4" style="padding-left:20px">
-     <h2><b><i style="color:#06ba8f" class="fa fa-wordpress"></i> About #5</b></h2>
-     <p>Lorem ipsum dolor sit amet, consectetur adipiuisat venenatis orci ultricies vel velit massa, at venenatis orci ultricies vel..</p>
+     <h2><b><i style="color:#06ba8f" class=""></i> Finished projects</b></h2>
+     <p>from socks, to hats, to shawls and anything made with homespun natural fibers or natural fiber yarns..</p>
     </div>
     <div class="grid_4">
-     <h2><b><i style="color:#06ba8f" class="fa fa-steam-square"></i> About #6</b></h2>
-     <p>Lorem ipsum dolor sit amet, consectetur adipiuisat venenatis orci ultricies vel velit massa, at venenatis orci ultricies vel..</p>
+     <h2><b><i style="color:#06ba8f" class=""></i> Who are we?</b></h2>
+     <p>What is fleece finder? Fleecefinder is a place to connect farmers and small mill owners with hand spinners and knitters with hand spinners.</p>
     </div>
    </div>
   </div>
