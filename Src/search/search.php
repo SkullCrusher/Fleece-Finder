@@ -27,6 +27,38 @@
 		header('Location: http://www.scriptencryption.com/search/search.php?s=' . base64_encode($_POST['nav-search']));
 		die();
 	}
+	
+	function FN_Product_Stock($ID){		
+		
+		$db = new PDO('mysql:dbname=' . DB_NAME . ';host=' . DB_HOST . ';charset=utf8', DB_USER, DB_PASS);
+			
+		$db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+		$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);	
+		
+		$statement = null; //The statement
+			
+		try {
+			$statement = $db->prepare('SELECT stock_free FROM product_abbreviated WHERE id = :id');			
+		} catch (PDOException $e) {
+				
+			//Error code 1146 - unable to find database.
+			return 'Internal_Server_Error'; //Error.
+		}
+			
+		try {
+			$statement->execute(array(':id' => $ID));
+		} catch (PDOException $e) {
+		
+			//Error code 23000 - unable to to create because of duplicate id.
+			return 'Error_Try_Again'; //Error.
+		}		
+		
+		$result = $statement->fetch();
+
+		return $result['stock_free'];
+		
+	}
+	
 		
 	//Do a search request.
 	function FN_User_Search($CATEGORIE, $TITLE, $DESCRIPTION){
@@ -304,7 +336,6 @@
 	}
 	
 	
-	
 	/*
 	
 	function FN_Search_Add_Product($User_Name_Id_result, $Abbreviated_result, $Product_abbreviated, $Product_extended){
@@ -440,7 +471,19 @@
 		 <p style="font-size: 18px;"><b><a style="color: #000;">$<?php echo number_format($Price, 2, '.', ','); ?></a> / <?php echo $Unit; ?></b></p>
 		 <p>Shipping <b><a style="color: #000;">$<?php echo number_format($Shipping_cost, 2, '.', ','); ?> <?php if($Shipping_Cost_Multiple == false){echo " per " . $Unit; }?></a></b></p>
 		 
-		 <p>This product is <b><a style="color: #000;">Out of stock</a></b></p>
+		 <p>Stock: <b><a style="color: #000;">
+		 
+		 <?php 
+			$Stock_count = FN_Product_Stock($value[0]);		
+			
+			if($Stock_count < 1){
+				echo "Out of stock";
+			}else{
+				echo $Stock_count;
+			}		 
+		 ?>
+		 
+		 </a></b></p>
 		 </div>
 		 
 		 <div class="grid_3" style="padding-left: 10px;">

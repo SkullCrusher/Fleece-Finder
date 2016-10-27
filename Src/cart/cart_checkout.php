@@ -30,6 +30,41 @@
 	$total_cost = 0;
 	
 	
+	function FN_Product_Stock($ID){		
+		
+		$db = new PDO('mysql:dbname=' . DB_NAME . ';host=' . DB_HOST . ';charset=utf8', DB_USER, DB_PASS);
+			
+		$db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+		$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);	
+		
+		$statement = null; //The statement
+			
+		try {
+			$statement = $db->prepare('SELECT stock_free FROM product_abbreviated WHERE id = :id');			
+		} catch (PDOException $e) {
+				
+			//Error code 1146 - unable to find database.
+			return 'Internal_Server_Error'; //Error.
+		}
+			
+		try {
+			$statement->execute(array(':id' => $ID));
+		} catch (PDOException $e) {
+		
+			//Error code 23000 - unable to to create because of duplicate id.
+			return 'Error_Try_Again'; //Error.
+		}		
+		
+		$result = $statement->fetch();
+
+		return $result['stock_free'];
+		
+	}
+	
+		
+	
+	
+	
 ?>
 
 
@@ -168,7 +203,8 @@ padding-bottom:10px;
 	//output the items.	
 	//echo '<br><br>';	
 	//print_r($_SESSION['cart']);	
-
+	//dont allow them to buy because of stock
+	$Disable_Button = false;
 	//echo count($_SESSION['cart']);
 ?>
 
@@ -194,7 +230,7 @@ padding-bottom:10px;
 				//$value['product_code'] = 142;
 				
 				$Product_ID = filter_var($value['product_code'], FILTER_SANITIZE_NUMBER_INT); //product code
-				
+								
 				
 				$db = new PDO('mysql:dbname=' . DB_NAME . ';host=' . DB_HOST . ';charset=utf8', DB_USER, DB_PASS);
 			
@@ -230,7 +266,27 @@ padding-bottom:10px;
 				echo '<div class="cart-item">';
 				echo '<img src="' . glob ("../images/upload_images/" . $Json_Decode['owner'] ."/" . $Json_Decode['picture'] . ".*")[0] .'" style="border-style: solid;border-width: 1px;border-color: #D83C3C;" width="100" height="100">';
 
-				echo '<div class="cart-item-description"><a href="/products/product_profile.php?p=' . $Product_ID . '&u=' . $Json_Decode['owner'] . '">' . substr($Json_Decode['title'],0,90) .'</a></div>';
+				
+				$stock = FN_Product_Stock($Product_ID);
+				
+				$StockCount = 0;
+				
+				//stock
+				if($stock < $value['product_quantity']){
+					
+					if($stock < 1){
+						$StockCount = 'Out of stock';
+						$Disable_Button = true;
+					}else{
+						$StockCount = 'Unable to fill';		
+						$Disable_Button = true;						
+					}
+				}else{
+					$StockCount = $stock;
+				}
+				
+				
+				echo '<div class="cart-item-description"><a href="/products/product_profile.php?p=' . $Product_ID . '&u=' . $Json_Decode['owner'] . '">' . substr($Json_Decode['title'],0,90) . ' <b>Stock: (' . $StockCount . ')</b>' .'</a></div>';
 									
 				echo '<input id="QTY_' . $Counter . '" type="text" class="textbox" style="float:right;margin-right: 20px;margin-top:14px;" name="QTY_' . $Counter .'" maxlength="4" value="' . $value['product_quantity'] .'" onchange="duplicate_' . $Counter .'()" required /></input>';
 				echo '<label for="QTY_' . $Counter . '" style="float:right;margin-right: 5px;margin-top:15px;"><b>QTY</b></label>';
@@ -275,8 +331,13 @@ padding-bottom:10px;
 		?>
 				
 		<div class="cart-footer">
-			<a href="../cart/cart_shipping.php" style="padding-right: 10px;"><input type="submit" name="login" class="buynow addtocart" style="border-style:none;float:right;margin-left: -120px;margin-top: -8px;margin-right: 5px;" value="Purchase" /></a>
-		
+		<?php 
+			//Disable button if they can't fill the order
+			if($Disable_Button){?>
+				<a href="" style="padding-right: 10px;"><input type="submit" name="login" class="buynow addtocart" style="border-style:none;float:right;margin-left: -120px;margin-top: -8px;margin-right: 5px;" value="Purchase" /></a>
+			<?php }else{ ?>
+				<a href="../cart/cart_shipping.php" style="padding-right: 10px;"><input type="submit" name="login" class="buynow addtocart" style="border-style:none;float:right;margin-left: -120px;margin-top: -8px;margin-right: 5px;" value="Purchase" /></a>
+			<?php } ?>
 			<form method="post" action="cart_checkout.php">
 			
 				<input type="hidden" name="update_qty" id="update_qty" value="neat" />	

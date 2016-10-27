@@ -82,7 +82,55 @@ if ($login->isUserLoggedIn() == true) {
 		return $result['user_id'];
 	}
 
+	
+	//Check the qty and if has enough update the database
+	function FN_Product_Stock($ID, $QTY){		
+			
+		$db = new PDO('mysql:dbname=' . DB_NAME . ';host=' . DB_HOST . ';charset=utf8', DB_USER, DB_PASS);
+				
+		$db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+		$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);	
+			
+		$statement = null; //The statement
+				
+		try {
+			$statement = $db->prepare('SELECT stock_free FROM product_abbreviated WHERE id = :id');			
+		} catch (PDOException $e) {
+				
+			//Error code 1146 - unable to find database.
+			return 'Internal_Server_Error'; //Error.
+		}
+				
+		try {
+			$statement->execute(array(':id' => $ID));
+		} catch (PDOException $e) {
+			
+			//Error code 23000 - unable to to create because of duplicate id.
+			return 'Error_Try_Again'; //Error.
+		}		
+			
+		$result = $statement->fetch();
+		
+		
+		if($result['stock_free'] >= $QTY){
+			$statement = $db->prepare('UPDATE product_abbreviated SET stock_free = :stock_free WHERE id = :id');		
+			$statement->execute(array(':id' => $ID, ':stock_free' => ($result['stock_free'] - $QTY)));
+			
+			$statement = $db->prepare('SELECT stock_inhold FROM product_abbreviated WHERE id = :id');
+			$statement->execute(array(':id' => $ID));
+			$result = $statement->fetch();
+			
+			
+			$statement = $db->prepare('UPDATE product_abbreviated SET stock_inhold = :stock_inhold WHERE id = :id');		
+			$statement->execute(array(':id' => $ID, ':stock_inhold' => ($result['stock_inhold'] + $QTY)));
 
+			return false;
+			
+		}else{			
+			return true;
+		}
+	}
+	
 
 
 //echo 'Hey there.';
@@ -121,6 +169,7 @@ if($_GET['b'] == 't') //Post Data received from product list page.
 	//for packing into order_information
 	$Order_Information_Pack = array();
 	
+	$Out_Of_Stock = false;
 		
 	foreach($_SESSION['cart'] as &$value){
 		
@@ -160,10 +209,20 @@ if($_GET['b'] == 't') //Post Data received from product list page.
 		array_push($Item_List, $Product_Current);
 		
 		
+		if(FN_Product_Stock($Product_ID, $value['product_quantity'])){
+			$Out_Of_Stock = true;
+		}
+		
 		//Order_Information_pack
 		$Order_in = array('item_id' => $value['product_code'], 'qty' => $value['product_quantity'], 'price' => $Json_Decode['price']);
 		array_push($Order_Information_Pack, $Order_in);
 	}
+	
+	if($Out_Of_Stock){
+		header('Location: ../cart/cart_checkout.php');
+		die();
+	}
+	
 	
 	//Grand total including all tax, insurance, shipping cost and discount
 	$GrandTotal = ($ItemTotalPrice + $TotalTaxAmount + $HandalingCost + $InsuranceCost + $ShippinCost + $ShippinDiscount);

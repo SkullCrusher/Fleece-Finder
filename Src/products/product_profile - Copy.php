@@ -474,8 +474,8 @@
 				<form method="post" class="sellinginformation aligncenter" action=" <?php echo "http://".$_SERVER['HTTP_HOST'].'/cart/cart_add.php'; ?>">	
 				<b style="margin-left:10px;">Selling Price: </b>$<?php echo $Product_Price; ?>/ <?php echo number_format($Product_Amount, 2, '.', ',') . ' ' . $Product_Unit; ?><br>
 				<b style="margin-left:10px;">Shipping Costs: </b>$<?php echo number_format($Shipping_Cost, 2, '.', ','); ?><br>
-				<b style="margin-left:10px;">Quantity (<?php $Stocks = FN_Get_Instock_Amount($_GET['p']); if($Stocks < 1){ echo 'Out of stock'; }else{ echo $Stocks; } ?>): </b>
-				<select name="product_quantity">
+				<b style="margin-left:10px;">Quantity: </b>
+				 <select name="product_quantity">
 				 
 				 
 				 <?php 
@@ -484,25 +484,15 @@
 					$Amount = FN_Get_Instock_Amount($_GET['p']);
 					
 					//echo '<option value="' . $i . '">' . $Amount . '</option>';
-				 
-					for ($i = 1; $i <= 100; $i += 1) {
-
-						if($i >= $Amount){
-							echo '<option value="' . $Amount . '">' . $i . '</option>';
-							break;
-						}else{
-							echo '<option value="' . $i . '">' . $i . '</option>';
-						}
+				 /*
+					for ($i = 1; $i < 10; $i += 1) {
+						echo '<option value="' . $i . '">' . $i . '</option>';
 						
-						if($i >= 10){
-							$i += 5;
-							
-							if($i > 100){ 
-								$i = 100;
-							}
+						if($i >= $Amount){
+							$i = $Amount + 1;
 						}
 					}
-					/*
+					
 					for ($i = 10; $i < $Amount; $i += 5) {
 						echo '<option value="' . $i . '">' . $i . '</option>';
 						
@@ -511,8 +501,7 @@
 						}
 					}
 					*/
-					//echo '<option value="' . $Amount . '">' . $Amount . '</option>';
-				
+					echo '<option value="' . $Amount . '">' . $Amount . '</option>';
 					
 
 				 
