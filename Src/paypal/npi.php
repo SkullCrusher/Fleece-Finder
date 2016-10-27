@@ -10,6 +10,73 @@
 	define("DB_USER", "IPN");
 	define("DB_PASS", "NvndSAdA8nnK2VLUVQzgGkr2");
 	
+	
+	
+	function FN_User_Get_Id($Username){
+
+		$db = new PDO('mysql:dbname=' . DB_NAME . ';host=' . DB_HOST . ';charset=utf8', DB_USER, DB_PASS);
+			
+		$db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+		$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);	
+		
+		$statement = null; //The statement
+			
+		try {
+			$statement = $db->prepare('SELECT user_id FROM users WHERE user_name = :user_name');			
+		} catch (PDOException $e) {
+				
+			//Error code 1146 - unable to find database.
+			return 'Internal_Server_Error'; //Error.
+		}
+			
+		try {
+			$statement->execute(array(':user_name' => $Username));
+		} catch (PDOException $e) {
+		
+			//Error code 23000 - unable to to create because of duplicate id.
+			return 'Error_Try_Again'; //Error.
+		}		
+		
+		$result = $statement->fetch();
+
+		return $result['user_id'];
+	}
+	
+	
+	
+	function FN_Get_Product_Owner($id){
+
+		$db = new PDO('mysql:dbname=' . DB_NAME . ';host=' . DB_HOST . ';charset=utf8', DB_USER, DB_PASS);
+			
+		$db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+		$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);	
+		
+		$statement = null; //The statement
+			
+		try {
+			$statement = $db->prepare('SELECT * FROM product_abbreviated WHERE id = :id');			
+		} catch (PDOException $e) {
+				
+			//Error code 1146 - unable to find database.
+			return 'Internal_Server_Error'; //Error.
+		}
+			
+		try {
+			$statement->execute(array(':id' => $id));
+		} catch (PDOException $e) {
+		
+			//Error code 23000 - unable to to create because of duplicate id.
+			return 'Error_Try_Again'; //Error.
+		}		
+		
+		$result = $statement->fetch();
+		
+		$Decompiled = json_decode($result['json_condensed'], true);
+
+		return $Decompiled['owner'];
+	}
+	
+	
 
 		
 	$db_update = new PDO('mysql:dbname=' . DB_NAME . ';host=' . DB_HOST . ';charset=utf8', DB_USER, DB_PASS);
@@ -54,11 +121,14 @@
 		
 	foreach ($json_depacked as &$row) {			
 			
-		try {
-			
+		try {			
 			var_dump($row);
 			
-			$statement_insert->execute(array(':shipping_id' => $values['shipping_id'], ':order_information_id' => $values['id'], ':customer_id' => $values['buyer_id'], ':seller_id' => '65', ':product_id' => $row['item_id'], ':quantity' => $row['qty'], ':price' => $row['price']));
+			$Vas = FN_User_Get_Id(FN_Get_Product_Owner($row['item_id']));
+			
+			echo "--" . $values['buyer_id'] . '-- ' . $Vas . "--";
+			
+			$statement_insert->execute(array(':shipping_id' => $values['shipping_id'], ':order_information_id' => $values['id'], ':customer_id' => $values['buyer_id'], ':seller_id' => $Vas, ':product_id' => $row['item_id'], ':quantity' => $row['qty'], ':price' => $row['price']));
 		} catch (PDOException $e) {				
 			//Error code 23000 - unable to to create because of duplicate id.
 		}				
