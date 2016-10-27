@@ -33,7 +33,7 @@
 
 //Functions.
 	//The insert into the abbreviated functions.
-		function FN_Product_Abbreviated_Insert($JSON){
+	function FN_Product_Abbreviated_Insert($JSON){
 	
 		$db = new PDO('mysql:dbname=' . DB_NAME . ';host=' . DB_HOST . ';charset=utf8', DB_USER, DB_PASS);
 		
@@ -447,17 +447,7 @@
 		$Sanitized_Price = floatval($_POST['price']);		
 	}
 	
-			
-	//Debugging
-//	echo $Sanitized_Title;
-//	echo $Sanitized_Short_Description;
-//	echo $Sanitized_Quantity;
-//	echo $Sanitized_Long_Description;
-//	echo $Sanitized_Terms_Of_Sale;
-//	echo $Sanitized_Price;
-//	echo $Sanitized_Category;
-
-//	echo "--fffffffffffffffffffff--" . $Sanitize_Problem_Details . "---";
+	$Debug_amountleft = 0;
 	
 	//Check for all the inputs.	
 	if($Sanitized_Title != null && $Sanitized_Short_Description != null && $Sanitized_Quantity != 0 && $Sanitized_Price != 0){
@@ -467,9 +457,7 @@
 			$Error = true;
 			$Error_Details = $Sanitize_Problem_Details;
 		}else{
-			
-		//	echo "--fffffffffffffffffffff--" . $Sanitize_Problem_Details . "---";
-
+		
 		
 	//Check account
 		
@@ -479,7 +467,7 @@
 		
 		$User_Fee_To_Post = null;
 		
-
+		
 		//Get the user_id
 		if($Error == false){		
 			$User_Name_Id_result = FN_User_Get_Id($_SESSION['user_name']);
@@ -527,7 +515,7 @@
 
 		}
 
-
+	$Debug_amountleft = $User_Name_Balance_result - $User_Fee_To_Post;
 
 	//Post.
 
@@ -609,6 +597,17 @@
 
 	}
 	}
+	
+	
+	
+	//$Error = true;
+	//$Error_Details = $Sanitize_Problem_Details;
+	if($Error == true){
+		echo "Error: " . $Error_Details;
+	}else{
+		echo "You posted it, your account has " . $Debug_amountleft;
+	}
+	
 	
 ?>
 
