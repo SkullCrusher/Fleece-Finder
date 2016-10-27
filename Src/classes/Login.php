@@ -108,11 +108,38 @@ class Login
 
         // checking if user requested a password reset mail
         if (isset($_POST["request_password_reset"]) && isset($_POST['user_name'])) {
-            $this->setPasswordResetDatabaseTokenAndSendMail($_POST['user_name']);
+			
+			if(strlen($_POST["g-recaptcha-response"]) > 1){
+				
+				
+				// Get a key from https://www.google.com/recaptcha/admin/create				
+				$homepage = file_get_contents('https://www.google.com/recaptcha/api/siteverify?secret=6LfWOv8SAAAAAHLwslU3txrRZK3bo_focQBO2Z23&response=' . $_POST["g-recaptcha-response"]);
+				//echo $homepage;
+				
+				$findme   = '"success": true';
+				$pos = strpos($homepage, $findme);
+				
+			
+				if ($pos === false) {
+					//echo "The string '$findme' was not found in the string '$mystring'";
+					$this->errors[] = MESSAGE_USERNAME_WRONGCAPTCHA;
+					
+				}else{				
+
+					$this->setPasswordResetDatabaseTokenAndSendMail($_POST['user_name']);
+					
+					header("Location: http://www.scriptencryption.com/account/password_reset_check.php"); //Error code 1146 - unable to find database. //return 'Internal_Server_Error'; //Error.
+					die();					
+				}
+			}
+			
+			
         } elseif (isset($_GET["user_name"]) && isset($_GET["verification_code"])) {
             $this->checkIfEmailVerificationCodeIsValid($_GET["user_name"], $_GET["verification_code"]);
         } elseif (isset($_POST["submit_new_password"])) {
+			
             $this->editNewPassword($_POST['user_name'], $_POST['user_password_reset_hash'], $_POST['user_password_new'], $_POST['user_password_repeat']);
+			
         }
     }
 
@@ -420,6 +447,8 @@ class Login
      */
     public function editUserPassword($user_password_old, $user_password_new, $user_password_repeat)
     {
+		
+
         if (empty($user_password_new) || empty($user_password_repeat) || empty($user_password_old)) {
             $this->errors[] = MESSAGE_PASSWORD_EMPTY;
         // is the repeat password identical to password
@@ -429,6 +458,7 @@ class Login
         } elseif (strlen($user_password_new) < 6) {
             $this->errors[] = MESSAGE_PASSWORD_TOO_SHORT;
 
+		
         // all the above tests are ok
         } else {
             // database query, getting hash of currently logged in user (to check with just provided password)
@@ -436,6 +466,8 @@ class Login
 
             // if this user exists
             if (isset($result_row->user_password_hash)) {
+				
+				
 
                 // using PHP 5.5's password_verify() function to check if the provided passwords fits to the hash of that user's password
                 if (password_verify($user_password_old, $result_row->user_password_hash)) {
@@ -450,6 +482,7 @@ class Login
                     // want the parameter: as an array with, currently only used with 'cost' => XX.
                     $user_password_hash = password_hash($user_password_new, PASSWORD_DEFAULT, array('cost' => $hash_cost_factor));
 
+				
                     // write users new hash into database
                     $query_update = $this->db_connection->prepare('UPDATE users SET user_password_hash = :user_password_hash WHERE user_id = :user_id');
                     $query_update->bindValue(':user_password_hash', $user_password_hash, PDO::PARAM_STR);
@@ -587,7 +620,7 @@ class Login
             $this->errors[] = MESSAGE_LINK_PARAMETER_EMPTY;
         } else {
 			
-			echo $user_name;
+			//echo $user_name;
 			
             // database query, getting all the info of the selected user
             $result_row = $this->getUserData($user_name);
@@ -599,14 +632,15 @@ class Login
 
                 if ($result_row->user_password_reset_timestamp > $timestamp_one_hour_ago) {
                     // set the marker to true, making it possible to show the password reset edit form view
-					echo "TRUES";
+				
                     $this->password_reset_link_is_valid = true;
+					
                 } else {
-					echo "FALSERS exp";
+					
                     $this->errors[] = MESSAGE_RESET_LINK_HAS_EXPIRED;
                 }
             } else {
-				echo "FALSERS EXIST no";
+				
                 $this->errors[] = MESSAGE_USER_DOES_NOT_EXIST;
             }
         }
@@ -620,6 +654,7 @@ class Login
         // TODO: timestamp!
         $user_name = trim($user_name);
 
+		
         if (empty($user_name) || empty($user_password_reset_hash) || empty($user_password_new) || empty($user_password_repeat)) {
             $this->errors[] = MESSAGE_PASSWORD_EMPTY;
         // is the repeat password identical to password
@@ -630,6 +665,7 @@ class Login
             $this->errors[] = MESSAGE_PASSWORD_TOO_SHORT;
         // if database connection opened
         } else if ($this->databaseConnection()) {
+			
             // now it gets a little bit crazy: check if we have a constant HASH_COST_FACTOR defined (in config/hashing.php),
             // if so: put the value into $hash_cost_factor, if not, make $hash_cost_factor = null
             $hash_cost_factor = (defined('HASH_COST_FACTOR') ? HASH_COST_FACTOR : null);

@@ -73,20 +73,20 @@ define("EMAIL_SMTP_ENCRYPTION", "ssl");
  * Configuration for: password reset email data
  * Set the absolute URL to password_reset.php, necessary for email password reset links
  */
-define("EMAIL_PASSWORDRESET_URL", "http://www.scriptencryption.com/password_reset.php");
-define("EMAIL_PASSWORDRESET_FROM", "no-reply@scriptencryption.com");
-define("EMAIL_PASSWORDRESET_FROM_NAME", "My Project");
-define("EMAIL_PASSWORDRESET_SUBJECT", "Password reset for PROJECT XY");
+define("EMAIL_PASSWORDRESET_URL", "http://www.scriptencryption.com/account/password_reset.php");
+define("EMAIL_PASSWORDRESET_FROM", "Support@scriptencryption.com");
+define("EMAIL_PASSWORDRESET_FROM_NAME", "Support");
+define("EMAIL_PASSWORDRESET_SUBJECT", "Password reset for Fleece Finder");
 define("EMAIL_PASSWORDRESET_CONTENT", "Please click on this link to reset your password:");
 
 /**
  * Configuration for: verification email data
  * Set the absolute URL to register.php, necessary for email verification links
  */
-define("EMAIL_VERIFICATION_URL", "http://www.scriptencryption.com/register.php");
-define("EMAIL_VERIFICATION_FROM", "no-reply@scriptencryption.com");
-define("EMAIL_VERIFICATION_FROM_NAME", "My Project");
-define("EMAIL_VERIFICATION_SUBJECT", "Account activation for PROJECT XY");
+define("EMAIL_VERIFICATION_URL", "http://www.scriptencryption.com/account/register.php");
+define("EMAIL_VERIFICATION_FROM", "Support@scriptencryption.com");
+define("EMAIL_VERIFICATION_FROM_NAME", "Support");
+define("EMAIL_VERIFICATION_SUBJECT", "Account activation for Fleece Finder");
 define("EMAIL_VERIFICATION_CONTENT", "Please click on this link to activate your account:");
 
 /**
