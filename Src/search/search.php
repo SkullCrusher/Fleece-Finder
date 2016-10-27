@@ -232,13 +232,83 @@
 	}
 	
 	
+	function FN_Product_Load_By_Id($ID, &$Owner, &$Unit, &$Quantity, &$Title, &$Shipping_Cost_Multiple, &$Price){
+		
+		$ID = 141;		
+		
+		$db = new PDO('mysql:dbname=' . DB_NAME . ';host=' . DB_HOST . ';charset=utf8', DB_USER, DB_PASS);
+			
+		$db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+		$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);	
+		
+		$statement = null; //The statement	
+			
+		try {
+			$statement = $db->prepare('SELECT json_condensed FROM product_abbreviated WHERE id = :id');			
+		} catch (PDOException $e) {	
+			header("Location: http://www.scriptencryption.com/error/404.php?error=2"); //Error code 1146 - unable to find database. //return 'Internal_Server_Error'; //Error.
+			die();
+		}
+			
+		try {
+			$statement->execute(array(':id' => $ID));
+		} catch (PDOException $e) {				
+			header("Location: http://www.scriptencryption.com/error/404.php?error=3"); //Error code 23000 - unable to to create because of duplicate id. //return 'Error_Try_Again'; //Error.
+			die();
+		}		
+
+		$result = $statement->fetch();
+		
+		//Check to see if there was a product to match it.
+		if($result == null){
+			//We did not get anything back so it must not be valid.
+			header("Location: http://www.scriptencryption.com/error/404.php?error=1"); //Handle error
+			die();		
+		}
+		
+		//Decode the json and check to see if the owner matches.		
+		$Product_Json_Decoded_Abbreviated = json_decode($result['json_condensed'], true);
+		
+		//var_dump($Product_Json_Decoded_Abbreviated);
+				
+		//(Abbreviated)
+		$Title	= $Product_Json_Decoded_Abbreviated['title'];
+		$Owner	= $Product_Json_Decoded_Abbreviated['owner'];
+
+		$Price	= $Product_Json_Decoded_Abbreviated['price'];
+		
+		//echo $Price;
+		
+		
+		$Product_Pictures = $Product_Json_Decoded_Abbreviated['picture'];		
+		
+	
+		
+		//The pictures
+		$myFile_1 = "..\\images\\upload_images\\" . $Owner . '\\' . $Product_Pictures;				
+		$result_1 = glob ($myFile_1 . ".*");			
+		$Picture_1 = current($result_1);
+		
+			
+		//The amount
+		//$Product_Amount				= $Product_Json_Decoded_Abbreviated['amount'];
+		//The unit
+		$Unit				= $Product_Json_Decoded_Abbreviated['unit'];
+		
+		$Bug_Fix = array('price' => $Price, 'title' => $Title, 'picture' => $Picture_1, 'shipping_cost_multiple' => $Product_Json_Decoded_Abbreviated['shipping_cost_multiple'], 'shipping_cost' => $Product_Json_Decoded_Abbreviated['shipping_cost']);
+		
+		
+		return $Bug_Fix;
+	}
+	
+	//FN_Product_Load_By_Id(141);
 	
 	
 	
 	
 	
 	
-	
+
 ?>
 
 <?php 
@@ -251,7 +321,6 @@
 <div class="container_12 backgroundwhite">
 
  <head>
-  
 	<style>  	
 	.spacer{
 		padding-top: 5px;
@@ -281,6 +350,7 @@
 	}	
 	.product_title{
 		color: #000000;	
+		padding-right: 10px;
 	}	
 	.product_title:hover{
 		color: #2ECC71;	
@@ -290,39 +360,6 @@
 	</style>
  </head>
  
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
-
 	<?php
 		$Search_Title = base64_decode($_GET['s'], true);
 		$Search_Description = base64_decode($_GET['d'], true);
@@ -339,6 +376,31 @@
 		}else{		
 			foreach ($Result_List as &$value) {
 				//var_dump($value);
+				
+				
+				//FN_Product_Load_By_Id($value[0], &$Owner, &$Unit, &$Title, &$Shipping_Cost_Multiple, &$Price){
+					
+				$Owner = null;
+				$Unit = null;
+				$Title = null;
+				$Shipping_Cost_Multiple = null;
+				$Price = null;
+				
+				$Product_ID = $value[0];
+				
+									
+				$Bug_Fix = FN_Product_Load_By_Id($value[0], $Owner, $Unit, $Title, $Shipping_Cost_Multiple, $Price);
+				
+				$Price = $Bug_Fix['price'];
+				$Title = $Bug_Fix['title'];
+				$Picture_url = $Bug_Fix['picture'];
+				$Shipping_Cost_Multiple = $Bug_Fix['shipping_cost_multiple'];
+				$Shipping_cost = $Bug_Fix['shipping_cost'];
+				
+				if($Picture_url == null){
+					$Picture_url = "http://www.scriptencryption.com/Assets/img/blank_photo.png";
+				}
+				
 			?>
 			
 			
@@ -348,13 +410,13 @@
 		<div class="container_12">
 		
 		<div class="grid_3">
-		 <a href="projects/tic/index.php"><img class="work" src="../Assets/Images/section1.png"></a>
+		 <a href="http://www.scriptencryption.com/products/product_profile.php?p=<?php echo $value[0]; ?>&u=<?php echo $Owner; ?>"><img class="work" src="<?php echo $Picture_url; ?>"></a>
 		</div>
 		
 		<div class="grid_6" style="padding-left: 10px;">
-		 <h2><b class="product_title">Your a bitch, bitch!</b></h2>
-		 <p style="font-size: 18px;"><b><a style="color: #000;">$84,723</a> / Unit</b></p>
-		 <p>Shipping <b><a style="color: #000;">$4.32</a></b></p>
+		 <h2><a href="http://www.scriptencryption.com/products/product_profile.php?p=<?php echo $value[0]; ?>&u=<?php echo $Owner; ?>" style="text-decoration:none;"><b class="product_title"><?php echo $Title;?></b></a></h2>
+		 <p style="font-size: 18px;"><b><a style="color: #000;">$<?php echo number_format($Price, 2, '.', ','); ?></a> / <?php echo $Unit; ?></b></p>
+		 <p>Shipping <b><a style="color: #000;">$<?php echo number_format($Shipping_cost, 2, '.', ','); ?> <?php if($Shipping_Cost_Multiple == false){echo " per " . $Unit; }?></a></b></p>
 		 
 		 <p>This product is <b><a style="color: #000;">Out of stock</a></b></p>
 		 </div>
@@ -364,13 +426,12 @@
 				<form method="post" class="sellerinformation" style="float:right;margin-top:10px;padding-right:10px" action="index.php" id="buynow" name="buynow">
 					<b style="text-align: center;">Seller information</b><br>
 					<?php 
-					$User_Name = FN_User_Get_Id($Product_Owner);
+					$User_Name = FN_User_Get_Id($Owner);
 					$Farm_Name = FN_Farm_Load_Name($User_Name);
 					
-					$User_Name = "buttholetown";
-					$Farm_Name = "buttholetown";
+					
 					?>
-					<a href="http://www.scriptencryption.com/account/profile.php?u=<?php echo $Product_Owner; ?>" style="color: #3A539B;text-decoration: none;" ><?php echo $Farm_Name; ?></a>
+					<a href="http://www.scriptencryption.com/account/profile.php?u=<?php echo $Owner; ?>" style="color: #3A539B;text-decoration: none;" ><?php echo $Farm_Name; ?></a>
 					<br><br>
 					
 					 Feedback for <?php echo FN_Farm_Load_Rating_Count($User_Name); ?> sales: <?php 
@@ -379,25 +440,7 @@
 						if($Product_Compressed_Rating == -1){
 							echo "N/A";
 						}else{
-							/*
-							$How_many_Left = 5;
-							while($Product_Compressed_Rating > 1){							
-								echo '<i class="fa fa-star" style="color:#F9BF3B;float:right;"></i>';
 							
-								$Product_Compressed_Rating--;
-								$How_many_Left--;
-							}
-														
-							if($Product_Compressed_Rating == 0.5){
-								echo '<i class="fa fa-star-half-empty" style="color:#F9BF3B;float:right;"></i>';
-								$How_many_Left--;
-							}
-							
-							while($How_many_Left > 0){
-								echo '<i class="fa fa-star" style="color:#E5E5E5;float:right;"></i>';
-								$How_many_Left--;
-							}	*/
-
 							$How_many_Left = 5;
 							
 							
@@ -474,8 +517,8 @@
 						
 			<input name="return_url" value="<?php echo base64_encode("http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]"); ?>" type="hidden">
 
-			<input name="product_code" value="142" type="hidden">
-			<input name="product_owner" value="user" type="hidden">
+			<input name="product_code" value="<?php echo $Product_ID; ?>" type="hidden">
+			<input name="product_owner" value="<?php echo $Owner; ?>" type="hidden">
 			<input name="product_quantity" value="1" type="hidden">		
 
 			<input name="I amma unicorn." value="I AM TEH UNICORN AND I LIKE TO MAGIC RANDBOS ADN NO IS SCARE OF NO ONE!" type="hidden">	
