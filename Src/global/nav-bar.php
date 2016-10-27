@@ -48,7 +48,7 @@
     <ul>
    	 <li><a href="<?php echo $_SERVER['DOCUMENT_ROOT']; ?>/index.php"><i class="fa fa-home"></i></a></li>
    	 <li><a href="#">Browse</a></li>
-   	 <li><a href="#">Categories</a></li>
+   	 <li><a href="../products/product_categories.php">Categories</a></li>
    	 <li><a href="#">Most Popular</a></li>
   
 	 <?php 	 
