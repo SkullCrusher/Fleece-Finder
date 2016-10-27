@@ -129,34 +129,26 @@
 	
 	
 	$db_check = new PDO('mysql:dbname=' . DB_NAME . ';host=' . DB_HOST . ';charset=utf8', DB_USER, DB_PASS);
-	
+			
 	$db_check->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 	$db_check->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-		
+					
 	$statement_check = null; //The statement
-	
+				
 	try {
-		$statement_check = $db_check->prepare('SELECT * FROM order_information WHERE shipping_id = :shipping_id');			
-	} catch (PDOException $e){
+		$statement_check = $db_check->prepare('SELECT * FROM order_information WHERE id = :id');			
+	} catch (PDOException $e) {										
 		//Error code 1146 - unable to find database.		
 	}
-	
-	try {
-		$statement_check->execute(array(':shipping_id' => $address_street));
-		//$FetchResult = $statement_check->fetch();	
+		
+	try {				
+		$statement_check->execute(array(':id' => $address_street));
 	} catch (PDOException $e) {				
 		//Error code 23000 - unable to to create because of duplicate id.
-	}	
+	}
 	
-	/*
+	
 	$FetchResult = $statement_check->fetch();	
-	
-	if($FetchResult['price'] == $payment_amount){
-		file_put_contents('ssda.txt', $FetchResult);	
-	}else{		
-		file_put_contents('failure.txt', $FetchResult);		
-	}*/
-		
 	//check if the payment is valid.
 	
 	if($FetchResult['price'] == $payment_amount){
@@ -166,21 +158,18 @@
 		$db_update->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 						
 		$statement_update = null; //The statement
-		
+					
 		try {
-			$statement_update = $db_update->prepare('UPDATE order_information SET ipn_paid_date = :ipn_paid_date, status = :status WHERE shipping_id = :shipping_id');			
-		} catch (PDOException $e){
-			//Error code 1146 - unable to find database.
+			$statement_update = $db_update->prepare('UPDATE order_information SET ipn_paid_date = :ipn_paid_date WHERE id = :id');			
+		} catch (PDOException $e) {										
+			//Error code 1146 - unable to find database.		
 		}
-		
-		try {
-			$statement_update->execute(array(':ipn_paid_date' => date('Y-m-d h:i:s'), ':status' = 'paid', ':shipping_id' => $address_street));
+			
+		try {				
+			$statement_update->execute(array(':ipn_paid_date' => date('Y-m-d h:i:s'), ':id' => $address_street));
 		} catch (PDOException $e) {				
 			//Error code 23000 - unable to to create because of duplicate id.
 		}
-		
-		
-		//split the order into chunks and put into product_order
 		
 	}
 	

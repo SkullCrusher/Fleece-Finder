@@ -157,7 +157,7 @@ if($_GET['b'] == 't') //Post Data received from product list page.
 		
 	try {				
 		$statement_order->execute(array(':buyer_id' => FN_User_Get_Id($_SESSION['user_name']), ':product_order_ids_json' => json_encode($Order_Information_Pack), ':shipping_id' => $_SESSION['shipping_id'], ':price' => $GrandTotal, ':status' => 'unpaid', ':ip' => $_SERVER['REMOTE_ADDR'], ':order_date' => date('Y-m-d h:i:s')));
-	} catch (PDOException $e) {				
+	} catch (PDOException $e) {
 		//Error code 23000 - unable to to create because of duplicate id.
 	}			
 
@@ -165,9 +165,8 @@ if($_GET['b'] == 't') //Post Data received from product list page.
 	
 	
 	
-	var_dump($Order_Information_Pack);
-	die();
-
+	//var_dump($Order_Information_Pack);
+	//die();
 
 
 	
@@ -354,6 +353,8 @@ if(isset($_GET["token"]) && isset($_GET["PayerID"]))
 			echo '<h2>Success</h2>';
 			echo 'Your Transaction ID : '.urldecode($httpParsedResponseAr["PAYMENTINFO_0_TRANSACTIONID"]);
 			
+			$ID = urldecode($httpParsedResponseAr["PAYMENTINFO_0_TRANSACTIONID"]);
+			
 				/*
 				//Sometimes Payment are kept pending even when transaction is complete. 
 				//hence we need to notify user about it and ask him manually approve the transiction
@@ -379,32 +380,33 @@ if(isset($_GET["token"]) && isset($_GET["PayerID"]))
 				{
 					
 					echo '<br /><b>Stuff to store in database :</b><br /><pre>';
-					/*
-					#### SAVE BUYER INFORMATION IN DATABASE ###
-					//see (http://www.sanwebe.com/2013/03/basic-php-mysqli-usage) for mysqli usage
 					
-					$buyerName = $httpParsedResponseAr["FIRSTNAME"].' '.$httpParsedResponseAr["LASTNAME"];
-					$buyerEmail = $httpParsedResponseAr["EMAIL"];
+			
 					
-					//Open a new connection to the MySQL server
-					$mysqli = new mysqli('host','username','password','database_name');
+						$db_update = new PDO('mysql:dbname=' . DB_NAME . ';host=' . DB_HOST . ';charset=utf8', DB_USER, DB_PASS);
+			
+						$db_update->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+						$db_update->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+										
+						$statement_update = null; //The statement
+						
+						try {
+							$statement_update = $db_update->prepare('UPDATE order_information SET paid_date = :paid_date, status = :status, transaction_id = :transaction_id, paypal_completion_pack = :paypal_completion_pack WHERE shipping_id = :shipping_id');			
+						} catch (PDOException $e){
+							//Error code 1146 - unable to find database.
+						}
+						
+						try {
+							$statement_update->execute(array(':paid_date' => date('Y-m-d h:i:s'), ':status' => 'ipn_pending', 'transaction_id' => $ID, ':paypal_completion_pack' => json_encode($httpParsedResponseAr), ':shipping_id' => $httpParsedResponseAr['SHIPTOSTREET']));
+						} catch (PDOException $e) {				
+							//Error code 23000 - unable to to create because of duplicate id.
+						}
+						
+						
+						
+						
+						
 					
-					//Output any connection error
-					if ($mysqli->connect_error) {
-						die('Error : ('. $mysqli->connect_errno .') '. $mysqli->connect_error);
-					}		
-					
-					$insert_row = $mysqli->query("INSERT INTO BuyerTable 
-					(BuyerName,BuyerEmail,TransactionID,ItemName,ItemNumber, ItemAmount,ItemQTY)
-					VALUES ('$buyerName','$buyerEmail','$transactionID','$ItemName',$ItemNumber, $ItemTotalPrice,$ItemQTY)");
-					
-					if($insert_row){
-						print 'Success! ID of last inserted record is : ' .$mysqli->insert_id .'<br />'; 
-					}else{
-						die('Error : ('. $mysqli->errno .') '. $mysqli->error);
-					}
-					
-					*/
 					
 					echo '<pre>';
 					print_r($httpParsedResponseAr);
