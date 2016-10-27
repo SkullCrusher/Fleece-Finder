@@ -22,6 +22,47 @@
 	}
 	
 	
+	function FN_Is_Shipped($id, $Value){
+
+		$db = new PDO('mysql:dbname=' . DB_NAME . ';host=' . DB_HOST . ';charset=utf8', DB_USER, DB_PASS);
+			
+		$db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+		$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);	
+		
+		$statement = null; //The statement
+			
+		try {
+			$statement = $db->prepare('UPDATE product_order SET shipping_date = :shipping_date WHERE id = :id');			
+		} catch (PDOException $e) {				
+			//Error code 1146 - unable to find database.
+			return 'Internal_Server_Error'; //Error.
+		}
+			
+		try {
+			$statement->execute(array(':id' => $id, ':shipping_date' => date('Y-m-d h:i:s')));
+		} catch (PDOException $e) {
+		
+			//Error code 23000 - unable to to create because of duplicate id.
+			return 'Error_Try_Again'; //Error.
+		}		
+		
+		//$result = $statement->fetch();
+
+		//return $result;
+	}	
+	
+	
+	
+	
+	
+	//Mark as shipped
+	if(strlen($_GET['id']) > 1){
+		FN_Is_Shipped($_GET['id'], $_GET['ship']);
+		
+	}
+	
+	
+	
 	//Load all of the information.
 	//FUNCTIONS
 	function FN_Product_Order($Username){
@@ -171,6 +212,113 @@
 	}	
 	
 	
+	function FN_Mark_As_Shipped($id){
+		
+		$db = new PDO('mysql:dbname=' . DB_NAME . ';host=' . DB_HOST . ';charset=utf8', DB_USER, DB_PASS);
+			
+		$db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+		$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);	
+		
+		$statement = null; //The statement
+			
+		try {
+			$statement = $db->prepare('UPDATE product_order SET status = :status WHERE id = :id');			
+		} catch (PDOException $e) {
+			
+			//Error code 1146 - unable to find database.
+			return 'Internal_Server_Error'; //Error.
+		}
+			
+		try {
+			$statement->execute(array(':id' => $id, ':status' => 'shipped'));
+		} catch (PDOException $e) {
+		
+			//Error code 23000 - unable to to create because of duplicate id.
+			return 'Error_Try_Again'; //Error.
+		}		
+		
+	}
+	
+	function FN_Set_Tracking_Code($id, $trackingcode){
+		
+		strip_tags ($trackingcode);		
+		$str = substr($trackingcode, 0, 50);
+		
+		
+		$db = new PDO('mysql:dbname=' . DB_NAME . ';host=' . DB_HOST . ';charset=utf8', DB_USER, DB_PASS);
+			
+		$db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+		$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);	
+		
+		$statement = null; //The statement
+			
+		try {
+			$statement = $db->prepare('UPDATE product_order SET tracking_code = :tracking_code WHERE id = :id');			
+		} catch (PDOException $e) {
+			
+			//Error code 1146 - unable to find database.
+			return 'Internal_Server_Error'; //Error.
+		}
+	
+			
+		try {
+			$statement->execute(array(':id' => $id, ':tracking_code' => $str));
+		} catch (PDOException $e) {
+		
+			//Error code 23000 - unable to to create because of duplicate id.
+			return 'Error_Try_Again'; //Error.
+		}		
+		
+	}
+	
+	function FN_Set_Company_Code($id, $companycode){
+		
+		strip_tags ($companycode);		
+		$str = substr($companycode, 0, 45);
+		
+		
+		$db = new PDO('mysql:dbname=' . DB_NAME . ';host=' . DB_HOST . ';charset=utf8', DB_USER, DB_PASS);
+			
+		$db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+		$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);	
+		
+		$statement = null; //The statement
+			
+		try {
+			$statement = $db->prepare('UPDATE product_order SET package_carrier = :package_carrier WHERE id = :id');			
+		} catch (PDOException $e) {
+			
+			//Error code 1146 - unable to find database.
+			return 'Internal_Server_Error'; //Error.
+		}
+	
+			
+		try {
+			$statement->execute(array(':id' => $id, ':package_carrier' => $str));
+		} catch (PDOException $e) {
+		
+			//Error code 23000 - unable to to create because of duplicate id.
+			return 'Error_Try_Again'; //Error.
+		}		
+		
+	}
+	
+	
+	//FN_Mark_As_Shipped(
+	if(strlen($_GET['ship']) > 1){
+		FN_Mark_As_Shipped($_GET['id']);		
+	}
+	
+	if(strlen($_POST['trackingnumber']) > 0){
+		FN_Set_Tracking_Code($_GET['id'], $_POST['trackingnumber']);
+	}
+	
+	if(strlen($_POST['companycode']) > 0){
+		FN_Set_Company_Code($_GET['id'], $_POST['companycode']);
+	}
+	
+	
+	
 	$Product_Loaded = FN_Product_Order($_GET['id']);
 	$Order_Information = FN_Order_Information($Product_Loaded['order_information_id']);	
 	$Shipping_Information = FN_Ship_Information($Product_Loaded['shipping_id']);
@@ -207,7 +355,12 @@
 	$Canceled = htmlspecialchars($Product_Loaded['canceled'], ENT_QUOTES);	
 
 	//$new = htmlspecialchars("<a href='test'>Test</a>", ENT_QUOTES);
-	//echo $new; // &lt;a href=&#039;test&#039;&gt;Test&lt;/a&gt;		
+	//echo $new; // &lt;a href=&#039;test&#039;&gt;Test&lt;/a&gt;	
+	
+	
+	
+
+	
 ?>
 	
 <?php 
@@ -330,27 +483,27 @@
 			  </tr>
 			  <tr>
 			  	<th>Quantity</th>
-				<td><?php echo $Quantity; ?></td>					
+				<td><?php echo $Quantity; ?></td>				
 			  </tr>
 			  <tr>
 				<th>Unit Price</th>
-				<td>$<?php echo number_format($Unit_Price, 2, '.', ','); ?></td>				
+				<td>$<?php echo number_format($Unit_Price, 2, '.', ','); ?></td>		
 			  </tr>			  
 			  <tr>
 			  	<th>Shipping collected</th>
-				<td>$<?php echo number_format($Shipping_Price, 2, '.', ','); ?></td>					
+				<td>$<?php echo number_format($Shipping_Price, 2, '.', ','); ?></td>				
 			  </tr>
 			  <tr>
 			  	<th>Total collected</th>
-				<td>$<?php echo number_format($Total_price, 2, '.', ','); ?></td>					
+				<td>$<?php echo number_format($Total_price, 2, '.', ','); ?></td>			
 			  </tr>
 			  <tr>
 			  	<th>Shipping address</th>
-				<td><?php echo $Address . ', ' . $City; ?></td>					
+				<td><?php echo $Address . ', ' . $City; ?></td>				
 			  </tr>
 			   <tr>
 			  	<th>Shipping state</th>
-				<td><?php echo $State; ?></td>					
+				<td><?php echo $State; ?></td>			
 			  </tr>
 			   <tr>
 			  	<th>Shipping country</th>
@@ -362,18 +515,18 @@
 			  </tr>
 			  <tr>
 			  	<th>Special message</th>
-				<td><?php echo $Special_Message; ?></td>					
+				<td><?php echo $Special_Message; ?></td>			
 			  </tr>
 			  <tr>
 			  	<th>Shipped: <?php echo $Status; ?></th>
-				<td><a href="#" class="btn">Mark as Shipped</a></td>				
+				<td><a href="sellers_order_details.php?id=<?php echo $_GET['id']; ?>&ship=true" class="btn">Mark as Shipped</a></td>				
 			  </tr> 
 			  
 			  <tr>
-			  	<th>Tracking Number: <?php echo $Tracking_Number; ?></th>				
+			  	<th>Tracking Number: <?php echo $Tracking_Number; ?></th>
 				<td>
-				<form method="post" action="product_create.php" id="create_product_new" name="create_product_new">
-					<input id="title" class="textbox" style="width: 100px;margin-top: 0px;" type="text" name="title" placeholder="Ex: 102937825401"/></input>					 
+				<form method="post" action="sellers_order_details.php?id=<?php echo $_GET['id']; ?>&trackingnumber=true" id="create_product_new" name="create_product_new">
+					<input id="trackingnumber" class="textbox" style="width: 100px;margin-top: 0px;" type="text" name="trackingnumber" placeholder="Ex: 102937825401"/></input>					 
 					<input type="submit" class="btn" style="margin-top: 0px;padding-top:3px" name="register" value="Set tracking number" />
 				</form>
 				</td>			
@@ -382,8 +535,8 @@
 			  <tr>
 			  	<th>Shipping company: <?php echo $Tracking_Company; ?></th>
 				<td>
-				<form method="post" action="product_create.php" id="create_product_new" name="create_product_new">
-					<input id="title" class="textbox" style="width: 100px;margin-top: 0px;" type="text" name="title" placeholder="Ex: USPS"/></input>					 
+				<form method="post" action="sellers_order_details.php?id=<?php echo $_GET['id']; ?>&ship=true" id="create_product_new" name="create_product_new">
+					<input id="companycode" class="textbox" style="width: 100px;margin-top: 0px;" type="text" name="companycode" placeholder="Ex: USPS"/></input>					 
 					<input type="submit" class="btn" style="margin-top: 0px;padding-top:3px" name="register" value="Set shipping company" />
 				</form>
 				</td>
