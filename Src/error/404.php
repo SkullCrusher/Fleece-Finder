@@ -42,6 +42,10 @@
 		if($_GET['error'] == 17){
 			$Error_Reason = "OH NO SQL ERR0RS HAVE 0CC0URED PLEAS7 ndon' Accue\$s Page - The Administration.";
 		}
+		//profile.php error
+		if($_GET['error'] == 18){
+		$Error_Reason = "A internal server error has occurred, please wait 30 seconds and try again. If this problem continues please contact support.";
+		}
 		
 		if($_GET['error'] == 100){
 			$Error_Reason = "You must be logged in to do that!";
