@@ -1,3 +1,11 @@
 FROM ubuntu
 
+# install the required libraries.
+RUN apt-get install -y lamp-server^
+RUN apt-get install -y git
 RUN apt-get update
+
+# clone the git repo.
+RUN mkdir /fleece-finder
+RUN cd /fleece-finder && git clone https://github.com/SkullCrusher/Fleece-Finder/
+
